@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="robots" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Fillow : Fillow Saas Admin  Bootstrap 5 Template">
+    <meta property="og:title" content="Fillow : Fillow Saas Admin  Bootstrap 5 Template">
+    <meta property="og:description" content="Fillow : Fillow Saas Admin  Bootstrap 5 Template">
+    <meta property="og:image" content="https://fillow.dexignlab.com/xhtml/social-image.png">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- PAGE TITLE HERE -->
+    <title>Token Display</title>
+
+    <link href="/src/styles/style.css" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .preloader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        .preloader img {
+            width: 1000px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .authincation {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        .authincation.show {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+
+    <style>
+        .error-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: red;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+    </style>
+
+
+
+    </style>
+</head>
+
+<body class="vh-100">
+    <div class="preloader">
+        <img src="/src/images/1 (3).png" alt="Preloader Image">
+    </div>
+    <div class="authincation h-100" style="display: none;">
+        <div class="container h-100">
+            <div class="row justify-content-center h-100 align-items-center">
+                <div class="col-md-6">
+                    <div class="authincation-content">
+                        <div class="row no-gutters">
+                            <div class="col-xl-12">
+                                <div class="auth-form" style="padding-bottom: 20px !important;">
+                                    <div class="text-center mb-3">
+                                        <a href="index.html">
+                                            <img id="logoImage" src="/src/images/logo.png" alt="" height="50px"
+                                                width="70px" style="text-align: center;">
+                                        </a>
+                                    </div>
+                                    <h4 class="text-center mb-4">Sign in to your account</h4>
+                                    <form action="/login" method="post">
+                                        <% if (typeof error !=='undefined' && check ) { %>
+                                            <div class="alert alert-danger" role="alert">
+                                                <%= error %>
+                                            </div>
+                                            <% } %>
+                                                <div class="mb-3">
+                                                    <label><strong>User ID:</strong></label>
+                                                    <input type="text" class="form-control" name="userId"
+                                                        placeholder="UserId" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label><strong>Password:</strong></label>
+                                                    <input type="password" class="form-control" name="password"
+                                                        placeholder="Password" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label><strong>Counter:</strong></label>
+                                                    <select id="modalKioskId" class="form-control" name="counter">
+                                                        <option value="" disabled selected>Select Counter</option>
+                                                        <% datas.forEach(data=> { %>
+                                                            <option value="<%= data.counter %>">
+                                                                <%= data.counter %>
+                                                            </option>
+                                                            <% }); %>
+                                                    </select>
+
+                                                </div>
+                                                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- <% if (error) { %>
+                                <div class="error-popup">
+                                    <%= error %>
+                                </div>
+                                <script>
+                                    setTimeout(() => {
+                                        console.log("Called");
+                                        document.querySelector('.error-popup').remove();
+                                    }, 500000000); 
+                                </script>
+                                <% } %> -->
+
+                                    <style>
+                                        .footer-image {
+                                            display: flex;
+                                            justify-content: center;
+                                            /* This centers the child horizontally */
+                                            align-items: center;
+                                            padding-bottom: 20PX;
+                                        }
+
+                                        .footer-image img {
+                                            max-width: 30%;
+                                            height: auto;
+                                        }
+                                    </style>
+                        </div>
+                        <div class="footer-image">
+                            <img src="/src/images/Quesys.png" alt="">
+                        </div>
+                        <!-- <br /> <br /> <br/> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function showLoginForm() {
+                const preloader = document.querySelector('.preloader');
+                const authincation = document.querySelector('.authincation');
+
+                preloader.style.opacity = '0';
+
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+
+                    authincation.style.display = 'block';
+
+                    setTimeout(() => {
+                        authincation.classList.add('show');
+                    }, 10);
+                }, 1000);
+            }
+
+            fetch('/src/uploads/companyLogo.png')
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('logoImage').src = '/src/uploads/companyLogo.png';
+                    }
+                })
+                .catch(error => {
+                });
+
+            setTimeout(showLoginForm, 2000);
+        });
+    </script>
+</body>
+
+
+
+
+</html>

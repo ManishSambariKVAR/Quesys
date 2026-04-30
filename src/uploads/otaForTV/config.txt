@@ -1,0 +1,12 @@
+SG=0
+Server=192.168.131.107:4000
+IP=192.168.131.107
+DN=Counter No: 1
+Gateway=192.168.131.135
+SubnetMask=0.0.0.0
+DNS1=192.168.131.135
+ScrollText='**Old aged,divyaang, Mentally Challenged,Pregnant women would be given priority token numbers**'
+DeviceID=1
+SoundOn=1
+SoundOverride=0
+DeviceType=3

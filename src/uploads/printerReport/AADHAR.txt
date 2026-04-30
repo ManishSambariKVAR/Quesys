@@ -1,0 +1,12 @@
+{{0A}}{{1B}}{{40}}{{1B}}{{61}}{{01}}Unique Identification Authority of India,{{0A}}
+Regional Office, Mumbai-5{{0A}}
+Date: {{DD/MM/YYYY}}  Time: {{HH:MM}}{{0A}}
+RECEPTION-7TH FLOOR {{0A}}{{1B}}{{33}}{{30}}
+************************************************{{0A}}
+{{1B}}{{40}}{{1B}}{{33}}{{30}}{{1B}}{{61}}{{01}}{{1B}}{{21}}{{31}}
+TOKEN NO: {{TOKEN}}{{0A}}{{1B}}{{40}}{{1B}}{{33}}{{30}}{{0A}}
+Grievance type:- %$grievance$% {{0A}}
+************************************************{{0A}}
+*This token should be handed over to the counter representative.{{0A}}
+     {{0A}}
+     {{0A}}{{1B}}{{69}}

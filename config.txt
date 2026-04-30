@@ -1,0 +1,5 @@
+NodePath=C:/Users/Admin/Desktop/KVAR/Token Display1/main.js
+Logo=C:/Users/Admin/Desktop/KVAR/Final1/Token Display1/src/images/logo.png
+width=800
+height=500
+BackgroundImage=C:/Users/Admin/Desktop/KVAR/Token Display1/bg.png

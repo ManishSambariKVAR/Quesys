@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="robots" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:title" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:description" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:image" content="https://zenix.dexignzone.com/xhtml/social-image.png">
+    <meta name="format-detection" content="telephone=no">
+    <title>KVAR Tech Token Displays</title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <link rel="stylesheet" href="/src/vendor/chartist/css/chartist.min.css">
+    <link href="/src/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha384-k6vP0kho8N9+IR8H0sY5JcQzjFiTUDDhCyUrqjbbVCLTzY3eC0qx/lZAs6oA7EaE" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
+    <link href="/src/vendor/owl-carousel/owl.carousel.css" rel="stylesheet">
+    <link href="/src/styles/style.css" rel="stylesheet">
+    <link href="/src/styles/style2.css" rel="stylesheet">
+    <script src="/src/js/script.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+
+
+    <style>
+        .export-btn-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-export {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-export:hover {
+            background-color: #0056b3;
+        }
+
+        .dropdown-menu {
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item {
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+         <div class="nav-header">
+            <center>
+                <img src="/src/images/logo.png" height="50" width="70" id="logoImage" style="margin-top: 10px;">
+            </center>
+            <script>
+                fetch('/src/uploads/companyLogo.png')
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('logoImage').src = '/src/uploads/companyLogo.png';
+                        }
+                    })
+                    .catch(error => {
+                    });
+            </script>
+
+            <div class="nav-control">
+                <div class="hamburger" style="color: black !important;">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand" style="padding-right: 0px !important;">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <h1 class="krystal-header"><%= companyName %></h1>
+                        </div>
+                        <style>
+                            .krystal-header {
+                                font-size: 30px;
+                                color: #484848;
+                                font-weight: 600;
+                                margin: 0;
+                                padding: 0;
+                                text-transform: uppercase;
+                                font-family: Roboto, sans-serif;
+                            }
+                        </style>
+                        <ul class="navbar-nav header-right main-notification">
+                            <li class="nav-item dropdown header-profile-1">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <div style="text-align: center !important;">
+                                        <img src="/src/images/1 (3).png"
+                                            style="width: 280px !important; height: 190px !important; margin-bottom: 10px;">
+                                        <!-- <div class="header-info" style="display: block !important;">
+                                            <span style="display: block !important; margin-top: 5px !important;">A product
+                                                by KVAR Tech</span>
+                                        </div> -->
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="sub-header">
+                    <div class="d-flex align-items-center flex-wrap mr-auto">
+                        <h5 class="dashboard_bar">Welcome Admin</h5>
+
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <h5>
+                        </h5>
+                        &nbsp; &nbsp;<h5>
+
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function updateCurrentTime() {
+                const currentTime = new Date();
+                const formattedTime = formatTime(currentTime);
+                document.getElementById("currentTimeDisplay").innerText = formattedTime;
+            }
+
+            function formatTime(date) {
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let seconds = date.getSeconds();
+                const AM_PM = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                return `${hours}:${minutes}:${seconds} ${AM_PM}`;
+            }
+
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+        </script>
+
+
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="deznav">
+            <div class="deznav-scroll">
+                <div class="main-profile">
+                    <div class="image-bx">
+                        <img src="/src/images/settings.png" alt="">
+                    </div>
+                    <h5 class="name"><span class="font-w400">Hello,</span>
+                        <%= user.name %>
+                    </h5>
+                </div>
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label first">Main Menu</li>
+                    <li><a href="/admin?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>"
+                            aria-expanded="false">
+                            <img src="/src/images/Dashboard-1.png" alt="" height="25px" width="25px">
+                            <span class="nav-text" style="margin-left: 8%;">Dashboard</span>
+                        </a>
+                    </li>
+                    <li><a href="/logout?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+                            class="dropdown-item ai-icon">
+                            <img src="/src/images/logout.png" alt="" height="25px" width="25px">
+                            <span class="nav-text" style="margin-left: 20px;">Logout</span>
+                        </a>
+                    </li>
+                    <% if (user.name==="kvar" ) { %>
+                        <li><a href="/CompanyReg?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>"
+                                aria-expanded="false">
+                                <img src="/src/images/Company Settings.png" alt="" height="25px" width="25px">
+                                <span class="nav-text" style="margin-left: 8%;">Company Settings</span>
+                            </a>
+                        </li>
+                        <% } %>
+
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/Department Settings.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">Department Settings</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                            href="/viewDepartments?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                            Departments</a></li>
+                                    <li><a
+                                            href="/DepartmentReg?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Add
+                                            Departments</a></li>
+                                    <li><a
+                                            href="/deleteDept?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Delete
+                                            Departments</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/User Settings.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">User Settings</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                            href="/viewUser?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                            users</a></li>
+                                    <li><a
+                                            href="/register?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Add
+                                            Users</a></li>
+                                    <li><a
+                                            href="/deleteUser?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Delete
+                                            Users</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/Counter Settings.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">Counter Settings</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                            href="/viewCounter?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                            Counter</a></li>
+                                    <li><a
+                                            href="/addCOunter?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Add
+                                            Counter</a></li>
+                                    <li><a
+                                            href="/deleteCounter?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Delete
+                                            Counter</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/hall.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">Waiting Room Display</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                            href="/viewWaitingRoomDisplay?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                            Waiting Room Display</a></li>
+                                    <li><a
+                                            href="/addWaitingRoomDisplay?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Add
+                                            Waiting Room Display</a></li>
+                                    <li><a
+                                            href="/deleteWaitingRoomDisplay?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Delete
+                                            Waiting Room Display</a></li>
+                                </ul>
+                            </li>
+                            <% if (user.name==="kvar" ) { %>
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/TVsettings.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">TV Setting</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                        href="/otaForTV?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">OTA Editor</a></li>
+                                    <li><a
+                                            href="/viewOTA?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View OTA List</a></li>
+                                    <li><a
+                                            href="/chooseOTATV?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Choose OTA</a></li>
+                                </ul>
+                            </li>
+                            <% }%>
+                            <% if (user.name==="kvar" ) { %>
+                                <li><a href="/KioskReg?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>"
+                                        aria-expanded="false">
+                                        <img src="/src/images/KIOSK Registration.png" alt="" height="25px" width="25px">
+                                        <span class="nav-text" style="margin-left: 8%;">Kiosk Registration</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void()" aria-expanded="false">
+                                        <img src="/src/images/Factory Settings.png" alt="" height="25px" width="25px">
+                                        <span class="nav-text" style="margin-left: 8%;">Factory Settings</span>
+                                    </a>
+                                    <ul aria-expanded="false">
+                                        <li><a
+                                            href="/factorySettings?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Factory Settings</a></li>
+                                        <li><a
+                                                href="/softwareSettings?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Software Settings</a></li>
+                                    </ul>
+                                </li>
+
+                                <li><a href="javascript:void()" aria-expanded="false">
+                                        <img src="/src/images/Printer Settings.png" alt="" height="25px" width="25px">
+                                        <span class="nav-text" style="margin-left: 8%;">Printer Settings</span>
+                                    </a>
+                                    <ul aria-expanded="false">
+                                        <li><a
+                                                href="/printerEditor?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Printer
+                                                Editor
+                                            </a></li>
+                                        <li><a
+                                                href="/printerSummary?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Choose
+                                                summary report</a>
+                                            </a></li>
+                                        <li><a
+                                                href="/printerToken?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Choose
+                                                token report
+                                            </a></li>
+                                        <li><a
+                                                href="/printerView?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                                Report Linking
+                                            </a></li>
+                                    </ul>
+                                    </a>
+                                </li>
+                                <% }%>
+                                <li>
+                                    <a href="javascript:void()" aria-expanded="false">
+                                        <img src="/src/images/Reports.png" alt="" height="25px" width="25px">
+                                        <span class="nav-text" style="margin-left: 8%;">Reports</span>
+                                    </a>
+                                    <ul aria-expanded="false">
+                                        <li><a
+                                                href="/userReports?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">User
+                                                Reports</a></li>
+                                        <li><a
+                                                href="/summaryReports?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Summary
+                                                Reports</a></li>
+                                        <li><a
+                                                href="/reports1?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Grievance Report</a></li>
+                                        <li><a
+                                                href="/reports2?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Operator Report</a></li>
+                                        <li><a
+                                                href="/reports3?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Grievance Report</a></li>
+                                    </ul>
+                                </li>
+                </ul>
+            </div>
+        </div>
+
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="card-title m-0">Summary Reports</h4>
+                                <div class="right-controls d-flex">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                            id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <i class="fas fa-file-export"></i> Export
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                                            <a class="dropdown-item" id="exportExcel">EXCEL</a>
+                                            <a class="dropdown-item" id="exportPDF">PDF</a>
+                                            <a class="dropdown-item" id="exportCSV">CSV</a>
+                                            <a class="dropdown-item" id="exportJSON">JSON</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div class="left-date-selector flex-fill mr-2">
+                                        <label for="fromDate"><strong>Period</strong></label>
+                                    </div>
+                                    <div class="left-date-selector flex-fill mr-2">
+                                        <label for="fromDate"><strong>From:</strong></label>
+                                        <input type="date" id="fromDate" class="form-control">
+                                    </div>
+                                    <div class="date-selector flex-fill ml-2">
+                                        <label for="toDate"><strong>To:</strong></label>
+                                        <input type="date" id="toDate" class="form-control">
+                                    </div>
+                                </div>
+                                <br /><br /><br />
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered verticle-middle table-responsive-sm"
+                                        id="dataTable">
+                                        <thead>
+                                            <tr id="departmentHeaders">
+                                                <th>Total</th> <!-- This stays at the end -->
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th>Total Tokens</th>
+
+                                            </tr>
+                                            <tr>
+                                                <th>Skipped Tokens</th>
+
+                                            </tr>
+                                            <tr>
+                                                <th>Served Tokens</th>
+
+                                            </tr>
+                                            <tr>
+                                                <th>% Of Served Tokens</th>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                    var exportExcelBtn = document.getElementById('exportExcel');
+                    var exportPDFBtn = document.getElementById('exportPDF');
+                    var exportCSVBtn = document.getElementById('exportCSV');
+                    var exportJSONBtn = document.getElementById('exportJSON');
+
+                    const today = new Date().toISOString().split('T')[0]; // Get today's date in "YYYY-MM-DD" format
+                    const fromDateInput = document.getElementById('fromDate');
+                    const toDateInput = document.getElementById('toDate');
+
+                    // Set default values for the date inputs
+                    fromDateInput.value = today;
+                    toDateInput.value = today;
+
+                if (exportExcelBtn) exportExcelBtn.addEventListener('click', exportToExcel);
+                if (exportPDFBtn) exportPDFBtn.addEventListener('click', exportToPDF);
+                if (exportCSVBtn) exportCSVBtn.addEventListener('click', exportToCSV);
+                if (exportJSONBtn) exportJSONBtn.addEventListener('click', exportToJSON);
+                var dataObjects = [];
+                <% data.forEach((dta) => { %>
+                    dataObjects.push({
+                        department: "<%= dta.dep %>",
+                        totalTokens: <%= dta.token_total_count %>,
+                        skippedTokens: <%= dta.token_skip_count %>,
+                        servedTokens: <%= dta.token_total_count - dta.token_skip_count %>,
+                        percentageOfServedTokens: 0, // This will be calculated based on aggregation
+                        date: "<%= dta.date %>"
+                    });
+                <% }); %>
+
+                    // Function to update data based on selected date range
+                    function updateDataObjects() {
+                        // Get the selected date range
+                        var fromDate = document.getElementById('fromDate').value;
+                        var toDate = document.getElementById('toDate').value;
+
+                        // If no fromDate selected, consider the first available date
+                        if (!fromDate && dataObjects.length > 0) {
+                            fromDate = dataObjects[0].date;
+                            document.getElementById('fromDate').value = fromDate;
+                        }
+
+                        // If no toDate selected, calculate dynamically
+                        if (!toDate && dataObjects.length > 0) {
+                            toDate = dataObjects[dataObjects.length - 1].date;
+                            document.getElementById('toDate').value = toDate;
+                        }
+
+                        // Filter dataObjects based on the selected date range
+                        const filteredDataObjects = dataObjects.filter(obj => {
+                            const objDate = new Date(obj.date);
+                            return (!fromDate || objDate >= new Date(fromDate)) && (!toDate || objDate <= new Date(toDate));
+                        });
+
+                        const departmentMap = {};
+
+                        filteredDataObjects.forEach(obj => {
+                            const department = obj.department;
+                            if (!departmentMap[department]) {
+                                departmentMap[department] = {
+                                    department: department,
+                                    totalTokens: 0,
+                                    skippedTokens: 0,
+                                    servedTokens: 0,
+                                    percentageOfServedTokens: 0
+                                };
+                            }
+                            // Aggregate values for each department
+                            departmentMap[department].totalTokens += obj.totalTokens;
+                            departmentMap[department].skippedTokens += obj.skippedTokens;
+                            departmentMap[department].servedTokens += obj.servedTokens;
+                        });
+
+                        // Calculate percentageOfServedTokens for each department
+                        Object.values(departmentMap).forEach(department => {
+                            department.percentageOfServedTokens = department.servedTokens / department.totalTokens * 100;
+                        });
+
+                        // Now 'departmentMap' contains the consolidated data for each department
+                        console.log("MAP");
+                        console.log(departmentMap);
+
+                        const departmentHeadersRow = document.getElementById('departmentHeaders');
+                        // Clear existing department headers except for the 'Total' column
+                        departmentHeadersRow.innerHTML = '<th></th>'; // Assuming the first column is for some category or label
+
+                        // Add department names dynamically to the headers
+                        Object.keys(departmentMap).forEach(department => {
+                            const headerCell = document.createElement('th');
+                            headerCell.textContent = department;
+                            headerCell.setAttribute('style', 'text-align: center;');
+                            departmentHeadersRow.appendChild(headerCell);
+                        });
+
+                        // Append the 'Total' column header at the end
+                        const totalHeaderCell = document.createElement('th');
+                        totalHeaderCell.textContent = 'Total';
+                        totalHeaderCell.setAttribute('style', 'text-align: center;');
+                        departmentHeadersRow.appendChild(totalHeaderCell);
+
+                        const tbody = document.querySelector('#dataTable tbody');
+                        // Clear existing rows in the table body
+                        tbody.innerHTML = '';
+
+                        // Initialize counters for the total of all departments
+                        let grandTotalTokens = 0;
+                        let grandTotalSkippedTokens = 0;
+                        let grandTotalServedTokens = 0;
+
+                        // Data rows templates
+                        const totalTokensRow = '<tr><th>Total Tokens</th>';
+                        const skippedTokensRow = '<tr><th>Skipped Tokens</th>';
+                        const servedTokensRow = '<tr><th>Served Tokens</th>';
+                        const percentageOfServedTokensRow = '<tr><th>% Of Served Tokens</th>';
+
+                        // Temporary variables to hold row HTML
+                        let totalTokensHTML = totalTokensRow;
+                        let skippedTokensHTML = skippedTokensRow;
+                        let servedTokensHTML = servedTokensRow;
+                        let percentageOfServedTokensHTML = percentageOfServedTokensRow;
+
+                        // Iterate over each department in departmentMap to fill the rows and calculate totals
+                        Object.values(departmentMap).forEach(department => {
+                            totalTokensHTML += `<td><center>${department.totalTokens}</center></td>`;
+                            skippedTokensHTML += `<td><center>${department.skippedTokens}</center></td>`;
+                            servedTokensHTML += `<td><center>${department.servedTokens}</center></td>`;
+                            percentageOfServedTokensHTML += `<td><center>${department.percentageOfServedTokens.toFixed(2)}%</center></td>`;
+
+                            // Update grand totals
+                            grandTotalTokens += department.totalTokens;
+                            grandTotalSkippedTokens += department.skippedTokens;
+                            grandTotalServedTokens += department.servedTokens;
+                        });
+
+                        // Calculate the overall percentage of served tokens
+                        let grandPercentageOfServedTokens = (grandTotalServedTokens / grandTotalTokens * 100) || 0;
+
+                        // Append the total columns for each row
+                        totalTokensHTML += `<td><strong><center>${grandTotalTokens}</center></strong></td>`;
+                        skippedTokensHTML += `<td><strong><center>${grandTotalSkippedTokens}</center></strong></td>`;
+                        servedTokensHTML += `<td><strong><center>${grandTotalServedTokens}</center></strong></td>`;
+                        percentageOfServedTokensHTML += `<td><strong><center>${grandPercentageOfServedTokens.toFixed(2)}%</center></strong></td>`;
+
+                        // Closing tags for each row
+                        totalTokensHTML += '</tr>';
+                        skippedTokensHTML += '</tr>';
+                        servedTokensHTML += '</tr>';
+                        percentageOfServedTokensHTML += '</tr>';
+
+                        // Append the completed row HTML to the table body
+                        tbody.innerHTML += totalTokensHTML;
+                        tbody.innerHTML += skippedTokensHTML;
+                        tbody.innerHTML += servedTokensHTML;
+                        tbody.innerHTML += percentageOfServedTokensHTML;
+
+                        // Perform further calculations and updates based on filteredDataObjects...
+                    }
+
+                // Call updateDataObjects when the date range changes
+                document.getElementById('fromDate').addEventListener('change', updateDataObjects);
+                document.getElementById('toDate').addEventListener('change', updateDataObjects);
+
+                // Initial update
+                updateDataObjects();
+            });
+
+
+
+            function exportToExcel() {
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+
+                if (!fromDate || !toDate) {
+                    alert("Please select both 'From' and 'To' dates.");
+                    return;
+                }
+
+                console.log(`Exporting data for the date range: ${fromDate} - ${toDate}`);
+
+                const departmentHeadersRow = document.getElementById('departmentHeaders');
+                const departmentNames = Array.from(departmentHeadersRow.querySelectorAll('th')).slice(1) // Exclude the 'Total' column
+                    .map(th => th.textContent.trim());
+
+                // Fetch all rows from the table body
+                var rows = document.querySelectorAll('#dataTable tbody tr');
+                if (rows.length === 0) {
+                    alert("No data to export.");
+                    return;
+                }
+
+                // Initialize array for data to be exported, including headers
+                var dataToExport = [["From:" + fromDate + " To:" + toDate, ...departmentNames]];
+
+                // Add data rows to the export array
+                rows.forEach(row => {
+                    let rowData = Array.from(row.cells, cell => cell.textContent.trim());
+                    dataToExport.push(rowData);
+                });
+
+                // Use XLSX library to create and download the Excel file
+                var wb = XLSX.utils.book_new();
+                var ws = XLSX.utils.aoa_to_sheet(dataToExport);
+                XLSX.utils.book_append_sheet(wb, ws, "Exported Data");
+
+                // Generate a filename based on the date range
+                const filename = `Exported_Data_${fromDate}_to_${toDate}.xlsx`;
+                XLSX.writeFile(wb, filename);
+            }
+
+
+            // Helper function to convert date format from "yyyy-mm-dd" to "dd-mm-yyyy"
+            function formatDateToDDMMYYYY(dateString) {
+                var [year, month, day] = dateString.split('-');
+                return `${day}-${month}-${year}`;
+            }
+
+        </script>
+
+        <script>
+            function exportToPDF() {
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+
+                if (!fromDate || !toDate) {
+                    alert("Please select both 'From' and 'To' dates.");
+                    return;
+                }
+
+                const departmentHeadersRow = document.getElementById('departmentHeaders');
+                const departmentNames = [...Array.from(departmentHeadersRow.querySelectorAll('th')).map(th => th.textContent.trim())];
+
+                const rows = document.querySelectorAll('#dataTable tbody tr');
+                if (rows.length === 0) {
+                    alert("No data to export.");
+                    return;
+                }
+
+                const filteredRows = [];
+
+                rows.forEach(row => {
+                    let rowData = [row.cells[0].textContent.trim(), ...Array.from(row.cells).slice(1).map(cell => cell.textContent.trim())];
+                    filteredRows.push(rowData);
+                });
+
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+
+                    doc.text(`Filtered Data - From: ${fromDate} to ${toDate}`, 10, 10);
+
+                    // Define the table headers separately
+                    const head = [departmentNames];
+
+                    // Pass headers and body data separately to autoTable
+                    doc.autoTable({
+                        head: head,
+                        body: filteredRows,
+                        theme: 'grid',
+                        margin: { top: 20 },
+                        didDrawPage: function (data) {
+                            // This can be used to set up page numbers, document titles, etc.
+                        }
+                    });
+
+                    doc.save(`filtered_data_${fromDate}_to_${toDate}.pdf`);
+                } catch (error) {
+                    console.error('Error exporting PDF:', error);
+                    alert('Error exporting PDF. Please check the console for details.');
+                }
+            }
+
+        </script>
+
+        <script>
+            function exportToCSV() {
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+
+                if (!fromDate || !toDate) {
+                    alert("Please select both 'From' and 'To' dates.");
+                    return;
+                }
+
+                // Fetching department names dynamically from the table's header
+                const departmentHeadersRow = document.getElementById('departmentHeaders');
+                // Assuming 'departmentHeadersRow' is correctly targeting your headers, you might need to adjust this selector
+                const departmentNames = Array.from(departmentHeadersRow.querySelectorAll('th')).slice(1) // This removes the first header presumed to be not a department name
+                    .map(th => th.textContent.trim());
+
+                let csvRows = [];
+
+                // Constructing the header row, incorporating the date range into the first cell, followed directly by department names
+                let dateRangeLabel = `"From: ${fromDate} To: ${toDate}"`; // Making sure this is treated as one entry
+                let headerRow = [dateRangeLabel, ...departmentNames].join(","); // This ensures no empty column after the date range
+                csvRows.push(headerRow);
+
+                // Fetch all data rows
+                let rows = document.querySelectorAll('#dataTable tbody tr');
+
+                // Assuming the first cell of each data row should match up with the 'dateRangeLabel' (i.e., left blank or filled appropriately)
+                rows.forEach(row => {
+                    // Constructing row data, starting with an empty string or a specific value for the date range column if needed
+                    let rowData = [...Array.from(row.cells).map(cell => `"${cell.textContent.trim()}"`)].join(",");
+                    csvRows.push(rowData);
+                });
+
+                if (csvRows.length <= 1) { // Only the header row exists, no data rows found
+                    alert("No data available for export.");
+                    return;
+                }
+
+                // Downloading the CSV
+                downloadCSV(csvRows.join("\n"), `Exported_Data_${fromDate}_to_${toDate}.csv`);
+            }
+
+            function downloadCSV(csvContent, filename) {
+                var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+                var link = document.createElement("a");
+                if (link.download !== undefined) { // Feature detection
+                    // Browsers that support HTML5 download attribute
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+
+
+        </script>
+
+
+        <script>
+            function exportToJSON() {
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+
+                if (!fromDate || !toDate) {
+                    alert("Please select both 'From' and 'To' dates.");
+                    return;
+                }
+
+                console.log(`Exporting data for the date range: ${fromDate} - ${toDate}`);
+
+                const departmentHeadersRow = document.getElementById('departmentHeaders');
+                const departmentNames = Array.from(departmentHeadersRow.querySelectorAll('th')).slice(1) // Assuming the first column is not a department name
+                    .map(th => th.textContent.trim());
+
+                var rows = document.querySelectorAll('#dataTable tbody tr');
+                if (rows.length === 0) {
+                    alert("No data to export.");
+                    return;
+                }
+
+                // Initialize array for JSON data to be exported, starting with a custom header object
+                var jsonData = [{
+                    "Date Range": `From: ${formatDateToDDMMYYYY(fromDate)} To: ${formatDateToDDMMYYYY(toDate)}`,
+                    "Departments": departmentNames
+                }];
+
+                // Add row data to the JSON array
+                rows.forEach(row => {
+                    let rowDataArray = Array.from(row.cells, cell => cell.textContent.trim());
+                    let rowDataObject = {}; // Initialize an empty object to store row data
+
+                    departmentNames.forEach((name, index) => {
+                        // Match department name with cell data, note: index + 1 is used if the first cell is not department name
+                        rowDataObject[name] = rowDataArray[index + 1]; // Adjust index as necessary based on your table structure
+                    });
+
+                    jsonData.push(rowDataObject);
+                });
+
+                // Convert JSON array to string
+                var jsonString = JSON.stringify(jsonData, null, 2);
+
+                // Download JSON file
+                downloadJSON(jsonString, `Exported_Data_${fromDate}_to_${toDate}.json`);
+            }
+
+            function downloadJSON(jsonData, filename) {
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonData);
+                var downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", filename);
+                document.body.appendChild(downloadAnchorNode); // required for firefox
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            }
+
+            // Helper function to convert date format from "yyyy-mm-dd" to "dd-mm-yyyy"
+            function formatDateToDDMMYYYY(dateString) {
+                var [year, month, day] = dateString.split('-');
+                return `${day}-${month}-${year}`;
+            }
+
+        </script>
+
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+        <!--**********************************
+            Footer start
+        ***********************************-->
+
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright © Designed &amp; Developed by <a href="https://kvartech.in/" target="_blank">KVAR TECH</a>
+                    2024 <img src="/src/images/Make-In-IndiaLogo650.webp" alt="" height="40" width="70">
+                </p>
+            </div>
+        </div>
+        <!--**********************************
+            Footer end
+        ***********************************-->
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+    <script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="/src/vendor/global/global.min.js"></script>
+    <script src="/src/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/src/vendor/chart.js/Chart.bundle.min.js"></script>
+
+    <!-- Chart piety plugin files -->
+    <script src="/src/vendor/peity/jquery.peity.min.js"></script>
+
+    <!-- Apex Chart -->
+    <script src="/src/vendor/apexchart/apexchart.js"></script>
+
+    <!-- Dashboard 1 -->
+    <script src="/src/js/dashboard/dashboard-1.js"></script>
+
+    <script src="/src/vendor/owl-carousel/owl.carousel.js"></script>
+    <script src="/src/js/custom.min.js"></script>
+    <script src="/src/js/deznav-init.js"></script>
+    <script src="/src/js/demo.js"></script>
+    <script src="/src/js/styleSwitcher.js"></script>
+
+</body>
+
+</html>

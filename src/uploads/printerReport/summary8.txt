@@ -1,0 +1,18 @@
+   {{0A}}{{1B}}{{33}}{{30}}
+Krystal Integrated Service Ltd{{0A}}{{1B}}{{40}}{{1B}}{{61}}{{01}}
+15, Krystal House,{{0A}}
+Dr.Ns Mankikar Road,{{0A}}
+Sion East, Sion, Mumbai,{{0A}}{{1B}}{{33}}{{30}}
+Maharashtra 400022{{0A}}
+Date: {{DD/MM/YYYY}}  Time: {{HH:MM}}{{0A}}{{1B}}{{61}}{{01}}
+Summary Report{{0A}}{{1B}}{{40}}{{1B}}{{33}}{{30}}
+Department           Token Issued{{0A}}{{1B}}{{40}}
+1){{Doc,Name}}         {{Doc,total}}{{0A}}
+2){{Sales,Name}}       {{Sales,total}}{{0A}}
+3){{ESCI,Name}}        {{ESCI,total}}{{0A}}
+4)Credit Society        12{{0A}}{{1B}}{{33}}{{30}}
+5)ESIC/PF               25{{0A}}{{1B}}{{61}}{{01}}
+Total     {{TotalAll}}{{0A}}
+********************************{{0A}}
+     {{0A}}
+     {{0A}}{{1B}}{{69}}

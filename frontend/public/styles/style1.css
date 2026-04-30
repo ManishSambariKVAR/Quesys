@@ -1,0 +1,162 @@
+body{
+    /* background-color: #c9c9c9; */
+}
+
+body,
+html {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  text-align: center;
+  background-color: #ff0000;
+  color: white;
+}
+
+header h1 {
+  margin-left: 30%;
+  font-size: 25px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.header {
+  position: relative;
+  margin-top: 15px;
+  background-color: #8f8f8fbe;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+}
+
+label {
+  margin-right: 5px;
+}
+
+.token-input,
+.user-input {
+  padding: 5px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  width: 100%; /* Full width on small screens */
+  -moz-appearance: textfield;
+}
+
+.token-input::-webkit-inner-spin-button,
+.token-input::-webkit-outer-spin-button,
+.user-input::-webkit-inner-spin-button,
+.user-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 20px;
+}
+
+.action-button {
+  padding: 10px 20px;
+  font-size: 30px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #b1c7c4;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.action-button:hover {
+  background-color: #e0e0e0;
+}
+
+@media (min-width: 600px) {
+  .header {
+    flex-wrap: wrap;
+  }
+
+  .token-input,
+  .user-input {
+    width: auto;
+  }
+
+  .action-button {
+    width: auto;
+  }
+}
+
+.logout-container {
+  margin-left: auto;
+}
+
+.logout-button {
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 2px solid #ffffff00;
+  border-radius: 5px;
+  background-color: #333333;
+  transition: background-color 0.3s;
+  color: #ffffff;
+  margin-right: 10%;
+  margin-left: -20%;
+}
+
+.logout-button:hover {
+  background-color: #0e0e0e;
+}
+
+@media screen and (max-width: 600px) {
+  .logout-button {
+    font-size: 16px;
+  }
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.blink {
+    animation: blink 1s linear infinite;
+}
+
+.time-inputs{
+  margin-right: 5%;
+}
+/* .time-inputs {
+    margin-top: 20px;
+}
+
+.time-inputs label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.time-inputs input {
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+} */

@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<meta name="keywords" content="">
+	<meta name="author" content="">
+	<meta name="robots" content="">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="description" content="Zenix - Crypto Admin Dashboard">
+	<meta property="og:title" content="Zenix - Crypto Admin Dashboard">
+	<meta property="og:description" content="Zenix - Crypto Admin Dashboard">
+	<meta property="og:image" content="https://zenix.dexignzone.com/xhtml/social-image.png">
+	<meta name="format-detection" content="telephone=no">
+	<title>KVAR Tech Token Displays</title>
+	<!-- Favicon icon -->
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+	<link rel="stylesheet" href="/src/vendor/chartist/css/chartist.min.css">
+	<link href="/src/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+	<link href="/src/vendor/owl-carousel/owl.carousel.css" rel="stylesheet">
+	<link href="/src/styles/style.css" rel="stylesheet">
+	<link href="/src/styles/style2.css" rel="stylesheet">
+	<script src="/src/js/script.js"></script>
+
+	<script>
+		window.addEventListener('beforeunload', function (e) {
+			console.log("Called");
+		  const confirmationMessage = "Are you sure you want to leave? Unsaved changes may be lost.";
+		  e.preventDefault(); 
+		  e.returnValue = confirmationMessage; // Required for some browsers
+		  return confirmationMessage; // Required for some older browsers
+		});
+	  </script>
+
+	<style>
+		* {
+			font-family: Arial, sans-serif !important;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1000;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 16px;
+			border: 1px solid #888;
+			width: 40%;
+			border-radius: 8px;
+		}
+
+
+		@keyframes modalFadeIn {
+			to {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+
+		.close {
+			position: absolute;
+			top: 8px;
+			right: 16px;
+			font-size: 30px;
+			font-weight: bold;
+			color: #aaa;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.modal-heading {
+			font-size: 24px;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+
+		.modal button {
+			background-color: #007bff;
+			border: none;
+			padding: 10px 20px;
+			margin: 10px 5px 0 0;
+			border-radius: 5px;
+			color: white;
+			font-size: 16px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		.modal button:hover {
+			background-color: #0056b3;
+		}
+
+		.recall-btn {
+			background-image: linear-gradient(to right, #06beb6, #48b1bf);
+			color: #ffffff;
+			font-size: 16px;
+			padding: 5px 15px;
+			border: none;
+			cursor: pointer;
+			border-radius: 7px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: all 0.2s ease-in-out;
+			display: inline-block;
+			margin: 5px;
+			text-decoration: none;
+			align-items: center;
+		}
+
+		.recall-btn:hover {
+			background-image: linear-gradient(to right, #48b1bf, #06beb6);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+			transform: scale(1.05);
+		}
+
+		.recall-btn:focus {
+			outline: none;
+		}
+
+		.recall-btn:active {
+			transform: scale(0.95);
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.reAssign-btn {
+			background-image: linear-gradient(to right, red);
+			color: #ffffff;
+			font-size: 16px;
+			padding: 5px 15px;
+			border: none;
+			cursor: pointer;
+			border-radius: 7px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: all 0.2s ease-in-out;
+			display: inline-block;
+			margin: 5px;
+			text-decoration: none;
+		}
+
+		.reAssign-btn:hover {
+			background-image: linear-gradient(to right, #48b1bf, #06beb6);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+			transform: scale(1.05);
+		}
+
+		.reAssign-btn:focus {
+			outline: none;
+		}
+
+		.reAssign-btn:active {
+			transform: scale(0.95);
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		th {
+			border: 2px solid black;
+		}
+
+		.sub-header {
+			display: flex !important;
+			flex-wrap: wrap !important;
+			justify-content: space-between !important;
+			align-items: center !important;
+		}
+
+		.dashboard_bar {
+			margin: 0 !important;
+		}
+
+		.d-flex {
+			display: flex !important;
+			align-items: center !important;
+		}
+
+		.currentTime {
+			margin-left: auto !important;
+		}
+
+		@media (max-width: 768px) {
+			.sub-header {
+				flex-direction: column !important;
+				align-items: flex-start !important;
+			}
+
+			.dashboard_bar {
+				margin-bottom: 10px !important;
+			}
+
+			.currentTime {
+				margin-left: 0 !important;
+				margin-top: 10px !important;
+			}
+		}
+
+		#durationInput {
+			padding: 3px;
+			margin-left: 3px;
+			width: 40px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			outline: none;
+		}
+
+		#durationInput::-webkit-outer-spin-button,
+		#durationInput::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+
+		#durationInput[type=number] {
+			-moz-appearance: textfield;
+		}
+
+		.krystal-header {
+			font-size: 30px;
+			color: #484848;
+			font-weight: 600;
+			margin: 0;
+			padding: 0;
+			text-transform: uppercase;
+			font-family: Roboto, sans-serif;
+
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<!--*******************
+        Preloader start
+    ********************-->
+	<div id="preloader">
+		<div class="sk-three-bounce">
+			<div class="sk-child sk-bounce1"></div>
+			<div class="sk-child sk-bounce2"></div>
+			<div class="sk-child sk-bounce3"></div>
+		</div>
+	</div>
+	<!--*******************
+        Preloader end
+    ********************-->
+
+	<!--**********************************
+        Main wrapper start
+    ***********************************-->
+	<div id="main-wrapper">
+
+		<!--**********************************
+            Nav header start
+        ***********************************-->
+		<div class="nav-header">
+			<center>
+				<img src="/src/images/logo.png" height="50" width="70" id="logoImage" style="margin-top: 10px;">
+			</center>
+			<script>
+				fetch('/src/uploads/companyLogo.png')
+					.then(response => {
+						if (response.ok) {
+							document.getElementById('logoImage').src = '/src/uploads/companyLogo.png';
+						}
+					})
+					.catch(error => {
+					});
+			</script>
+
+			<div class="nav-control">
+				<div class="hamburger" style="color: black !important;">
+					<span class="line"></span><span class="line"></span><span class="line"></span>
+				</div>
+			</div>
+		</div>
+		<!--**********************************
+            Nav header end
+        ***********************************-->
+
+
+
+		<!--**********************************
+            Header start
+        ***********************************-->
+		<div class="header">
+			<div class="header-content">
+				<nav class="navbar navbar-expand" style="padding-right: 0px !important;">
+					<div class="collapse navbar-collapse justify-content-between">
+						<div class="header-left">
+							<h1 class="krystal-header">
+								<%= companyName %>
+							</h1>
+						</div>
+						<ul class="navbar-nav header-right main-notification">
+							<li class="nav-item dropdown header-profile-1">
+								<a class="nav-link" href="#" role="button" data-toggle="dropdown">
+									<div style="text-align: center !important;">
+										<img src="/src/images/1 (3).png"
+											style="width: 280px !important; height: 190px !important; margin-bottom: 10px;">
+										<!-- <div class="header-info" style="display: block !important;">
+                                            <span style="display: block !important; margin-top: 5px !important;">A product
+                                                by KVAR Tech</span>
+                                        </div> -->
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</nav>
+				<div class="sub-header">
+					<div class="d-flex align-items-center  mr-auto">
+						<h5 class="dashboard_bar" hidden>Call Time: <span id="callTimeDisplay">00:00:00</span></h5>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<h5 class="dashboard_bar" hidden>Acknowledge Time: <span
+								id="acknowledgeTimeDisplay">00:00:00</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</h5>
+						<h5 class="dashboard_bar" hidden>End Time: <span id="endTimeDisplay">00:00:00</h5>
+					</div>
+					<div class="d-flex align-items-center mr-auto"
+						style="margin-top: 0px !important; margin-left: 5%; width: 90%;">
+						<h3 class="currentTime" style="margin-left: 10%;"><span id="currentTimeDisplay">00:00:00</span>
+						</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			function updateCurrentTime() {
+				const currentTime = new Date();
+				const formattedTime = formatTime(currentTime);
+				document.getElementById("currentTimeDisplay").innerText = formattedTime;
+			}
+
+			function formatTime(date) {
+				let hours = date.getHours();
+				let minutes = date.getMinutes();
+				let seconds = date.getSeconds();
+				var format = hours >= 12 ? 'PM' : 'AM';
+				hours = hours % 12 || 12;
+				minutes = minutes < 10 ? "0" + minutes : minutes;
+				seconds = seconds < 10 ? "0" + seconds : seconds;
+				return `${hours}:${minutes}:${seconds} ${format}`;
+			}
+
+			updateCurrentTime();
+			setInterval(updateCurrentTime, 1000);
+		</script>
+
+		<!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+		<!--**********************************
+            Sidebar start
+        ***********************************-->
+
+		<style>
+			.disabled-link {
+				pointer-events: none;
+				/* color: gray; */
+				opacity: 0.7;
+				cursor: not-allowed !important;
+			}
+		</style>
+
+		<div class="deznav">
+			<div class="deznav-scroll">
+				<div class="main-profile">
+					<div class="image-bx">
+						<img src="/src/images/pngtree-business-male-icon-vector-png-image_916468-removebg-preview.png"
+							alt="">
+					</div>
+					<h5 class="name"><span class="font-w400">Hello,</span>
+						<%= user.name %>
+					</h5>
+					<h4>Department : <%= user.department %>
+					</h4>
+				</div>
+				<ul class="metismenu" id="menu">
+					<li class="nav-label first">Main Menu</li>
+					<li>
+						<a href="/dashboard?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+							aria-expanded="false">
+							<img src="/src/images/dashboard (1).png" alt="" height="30px" width="30px">
+							<span class="nav-text" style="margin-left: 20px;">Dashboard</span>
+						</a>
+					</li>
+					<li>
+						<a href="/changeDept?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+							aria-expanded="false" class="<%= changeDept ? '' : 'disabled-link' %>">
+							<img src="/src/images/department.png" alt="" height="30px" width="30px">
+							<span class="nav-text" style="margin-left: 20px;">Change Department</span>
+						</a>
+					</li>
+					<li>
+						<a href="/logout?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+							class="dropdown-item ai-icon">
+							<img src="/src/images/logout.png" alt="" height="30px" width="30px">
+							<span class="nav-text" style="margin-left: 20px;">Logout</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!--**********************************
+            Sidebar end
+        ***********************************-->
+
+		<!--**********************************
+            Content body start
+        ***********************************-->
+		<div class="content-body" style="margin-top: 20px !important;">
+			<form action="/storeToken" method="POST" id="tokenForm" class="container-wrapper">
+				<input type="hidden" name="tokenNumber" id="tokenNumber">
+				<input type="hidden" name="callTime" id="callTime">
+				<input type="hidden" name="ackTime" id="ackTime">
+				<input type="hidden" name="skipped" id="skipped" value="false">
+				<input type="hidden" name="endTime" id="endTime">
+
+				<input type="hidden" name="USERID_H" id="USER_H" value="<%= user.id %>">
+				<input type="hidden" name="USERN_H" id="USERN_H" value="<%= user.name %>">
+				<input type="hidden" name="KIOSK_H" id="KIOSK_H" value="<%= user.kioskId %>">
+				<input type="hidden" name="DEP_H" id="DEP_H" value="<%= user.department %>">
+				<input type="hidden" name="COUNT_H" id="COUNT_H" value="<%= user.counter %>">
+				<input type="hidden" name="CALL_H" id="CALL_H" value="<%= call %>">
+
+				<input type="hidden" id="activateRecall" name="activateRecall" value="<%= recallBtn %>">
+				<input type="hidden" id="activateReassign" name="activateReassign" value="<%= reassignBtn %>">
+
+				<div class="container-fluid">
+					<div class="progress-container" style="border-radius: 10px !important;">
+
+						<img src="/src/images/download.png" alt="Watch Icon"
+							style="height: 20px; width: 20px; vertical-align: middle; margin: 10px; background-color: transparent;">
+						<h5 class="dashboard_bar">Time: <span id="timer">00:00</span></h5>
+						<input type="hidden" id="durationInput" placeholder="Time in Seconds....."
+							class="moving-placeholder" value="<%= call %>">
+						<div class="progress-bar" id="myBar" style="margin-left: 10px;"></div>
+					</div>
+					<div class="row" style="font-family: Roboto, sans-serif; margin-bottom: 2% !important;">
+						<button class="container" id="call-button" onclick="handleCall()"
+							style="background-color: #4caf50; color: white; font-size: 40px; font-family: 'Roboto', sans-serif; font-weight: 700;">Call</button>
+						<button class="container" id="acknowledge-button" onclick="handleAcknowledge()" disabled
+							style="background-color: #0063af; color: white; font-size: 40px; font-family: 'Roboto', sans-serif; font-weight: 700;">Ack</button>
+						<button class="container" id="end-button" onclick="handleEnd()" disabled
+							style="background-color: #f44336; color: white; font-size: 40px; font-family: 'Roboto', sans-serif; font-weight: 700;">End</button>
+					</div>
+
+					<style>
+						button:disabled {
+							opacity: 0.5 !important;
+							cursor: not-allowed !important;
+						}
+
+						/* Default mobile styles: No max-width applied */
+						.desktop-style {
+							max-width: 100%;
+							/* Full width on mobile */
+						}
+
+						/* Apply max-width for desktop screens */
+						@media (min-width: 992px) {
+
+							/* Bootstrap's desktop breakpoint */
+							.desktop-style {
+								max-width: 16% !important;
+								/* Specific width for desktop */
+							}
+						}
+					</style>
+
+					<script>
+						let inactivityTime = 100000; 
+						// let inactivityTime = 30 * 60 * 1000; 
+						let timer;
+
+						// Function to reset the inactivity timer
+						function resetTimer() {
+							clearTimeout(timer);
+							timer = setTimeout(() => {
+								window.location.href = `/logout?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>`;
+							}, inactivityTime);
+						}
+
+						// Attach event listeners to reset the timer on user activity
+						function setupActivityListeners() {
+							document.addEventListener('mousemove', resetTimer);
+							document.addEventListener('keypress', resetTimer);
+							document.addEventListener('click', resetTimer);
+							document.addEventListener('scroll', resetTimer);
+							document.addEventListener('touchstart', resetTimer);
+						}
+
+						// Initialize the activity listeners and start the timer on page load
+						window.onload = function () {
+							setupActivityListeners();
+							resetTimer();
+						};
+
+						// Prompt the user before logging out on browser close
+						window.addEventListener("beforeunload", (event) => {
+							const message = "Are you sure you want to log out?";
+							event.preventDefault(); 
+							event.returnValue = message; 
+							return message; 
+						});
+
+						// Log out automatically when the user confirms closing the tab
+						window.addEventListener("unload", () => {
+							const logoutUrl = `/logout?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>`;
+							navigator.sendBeacon(logoutUrl);
+						});
+					</script>
+
+
+					<div class="row gx-3 gy-3 d-flex flex-wrap">
+						<div class="col-lg-2 col-md-3 col-sm-6">
+							<div class="card card-coin custom-card-height"
+								style="background-color: #d7ecfb; border: 2px;">
+								<div class="card-body text-center"
+									style="padding-left: 0px !important; padding-right: 0px !important;">
+									<input hidden id="userDep" value="<%= user.department %>">
+									<h4 class="text-black mb-2 font-w600 fs-5">Total<br>Tokens:</h4>
+									<h1 class="text-black mb-2 font-w600 fs-2"><span id="TotalTokens">000</span></h1>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-2 col-md-3 col-sm-6">
+							<div class="card card-coin custom-card-height" style="background-color: #d7ecfb;">
+								<div class="card-body text-center"
+									style="padding-left: 0px !important; padding-right: 0px !important;">
+									<h4 class="text-black mb-2 font-w600 fs-5">OPR. Current Token</h4>
+									<h1 class="text-black mb-2 font-w600 fs-2"><span id="OPTR">000</span>
+									</h1>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-2 col-md-3 col-sm-6">
+							<div class="card card-coin custom-card-height" style="background-color: #d7ecfb;">
+								<div class="card-body text-center"
+									style="padding-left: 0px !important; padding-right: 0px !important;">
+									<h4 class="text-black mb-2 font-w600 fs-5">Current<br>Token:</h4>
+									<h1 class="text-black mb-2 font-w600 fs-2"><span id="generatedToken">000</span></h1>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-2 col-md-3 col-sm-6">
+							<div class="card card-coin custom-card-height" style="background-color: #d7ecfb;">
+								<div class="card-body text-center"
+									style="padding-left: 0px !important; padding-right: 0px !important;">
+									<h4 class="text-black mb-2 font-w600 fs-5">Balance<br>Tokens:</h4>
+									<h1 class="text-black mb-2 font-w600 fs-2"><span id="BalanceTokens">000</span></h1>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-2 col-md-3 col-sm-6">
+							<div class="card card-coin custom-card-height" style="background-color: #d7ecfb;">
+								<div class="card-body text-center"
+									style="padding-left: 0px !important; padding-right: 0px !important;">
+									<h4 class="text-black mb-2 font-w600 fs-5">Skipped<br>Tokens:</h4>
+									<h1 class="text-black mb-2 font-w600 fs-2"><span id="TotalSkipTokens">000</span>
+									</h1>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-2 col-md-3 col-sm-6">
+							<div class="card card-coin custom-card-height" style="background-color: #d7ecfb;">
+								<div class="card-body text-center"
+									style="padding-left: 0px !important; padding-right: 0px !important;">
+									<h4 class="text-black mb-2 font-w600 fs-5">Assigned<br>Tokens:</h4>
+									<h1 class="text-black mb-2 font-w600 fs-2"><span id="TotalReAssignTokens">000</span>
+									</h1>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<span id="current" style="display:none;"></span>
+					<span id="previous" style="display:none;"></span>
+					<span id="reassign_bool" style="display:none;"></span>
+					<span id="prefix" style="display:none;"></span>
+					<span id="prefix_M" style="display:none;"></span>
+
+					<style>
+						.custom-card-height {
+							min-height: 200px !important;
+							display: flex !important;
+							flex-direction: column !important;
+							justify-content: center !important;
+						}
+
+						@media (min-width: 1200px) {
+							.col-xl-2 {
+								flex: 0 0 20% !important;
+								max-width: 20% !important;
+							}
+						}
+					</style>
+
+
+				</div>
+			</form>
+			<div id="myModalR" class="modal"
+				style="display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+				<div class="modal-content">
+					<h2 style="text-align: center; font-size: 24px; font-weight: bold; color: #333;">
+						Re-Assign
+					</h2>
+					<span class="close">&times;</span>
+					<p style="margin-bottom: 0px !important;">Token No.: <strong><span id="tokenId"
+								style="font-size: 20px;"> </span></strong>
+					</p><br>
+					<p style="margin-bottom: 0px !important;">ReAssign From : <strong>
+							<span style="font-size: 20px;">
+								<%= user.department %>
+							</span>
+						</strong>
+					</p><br>
+					<p style="margin-bottom: 0px !important;">ReAssign to :</p>
+					<select id="tokenDepSelect" required>
+						<option value="" disabled selected>Select Department</option>
+						<% departments.forEach(department=> { %>
+							<% if(department.department !==user.department){ %>
+								<option value="<%= department.department %>">
+									<%= department.department %>
+								</option>
+								<% } %>
+									<% }); %>
+					</select>
+					<div class="button-container">
+						<button type="button" id="confirmReAssign"
+							style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; margin-right: 10px;">Re-Assign</button>
+						<button type="button" id="cancelReAssign"
+							style="background-color: #f44336; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px;">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="confirmationModal" class="modal"
+				style="display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+				<div class="modal-content">
+					<form id="reassignForm"
+						action="/Reassign?userId=<%= user.id %>&kioskId=<%= user.kioskId %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>"
+						method="post">
+						<h2 style="text-align: center; font-size: 24px; font-weight: bold; color: #333;">Confirm
+							Re-Assignment</h2>
+						<span class="close">&times;</span>
+						<p style="text-align: center; margin-bottom: 20px;">Are you sure you want to re-assign this
+							Token
+							<span id="tokenId2Value"> </span> From Department : <%= user.department %> To Department :
+								<span id="ReassignDepValue"> </span>
+						</p>
+						<div class="button-container" style="text-align: center;">
+							<input type="hidden" id="tokenId2" name="tokenId2">
+							<input type="hidden" id="logId" name="logId">
+							<input type="hidden" id="ReassignDepF" name="ReassignDepF" value="<%= user.department %>">
+							<input type="hidden" id="ReassignDepT" name="ReassignDepT">
+							<button type="submit" id="confirmYes"
+								style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; margin-right: 10px;">Yes</button>
+					</form>
+					<button type="button" id="confirmNo"
+						style="background-color: #f44336; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; max-width: 65px; position: relative;">No</button>
+				</div>
+
+			</div>
+		</div>
+
+		<style>
+			.modal-content {
+				background-color: #fefefe;
+				margin: 15% auto;
+				padding: 20px;
+				border: 1px solid #888;
+				width: 80%;
+				max-width: 400px;
+				border-radius: 10px;
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+			}
+		</style>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', (event) => {
+				const reAssignButton = document.getElementById('confirmReAssign');
+				const cancelReAssignButton = document.getElementById('cancelReAssign');
+				const confirmationModal = document.getElementById('confirmationModal');
+				const confirmNoButton = document.getElementById('confirmNo');
+				const mainModal = document.getElementById('myModalR');
+				const closeModalElements = document.querySelectorAll('.close');
+				const tokenSelect = document.getElementById('tokenDepSelect');
+				const ReassignDep = document.getElementById('ReassignDepValue');
+				const RessDepT = document.getElementById('ReassignDepT');
+
+				const Temp_current = document.getElementById("current").innerText;
+				const Temp_prefix = document.getElementById("prefix").innerText;
+				document.getElementById("OPTR").innerText = Temp_prefix + Temp_current;
+
+				tokenSelect.addEventListener('change', (event) => {
+					const selectedValue = event.target.value;
+					console.log("Selected Value : ", selectedValue);
+					ReassignDep.innerText = selectedValue;
+					RessDepT.value = selectedValue;
+				});
+
+				reAssignButton.addEventListener('click', () => {
+					confirmationModal.style.display = 'block';
+				});
+
+				cancelReAssignButton.addEventListener('click', () => {
+					mainModal.style.display = 'none';
+				});
+
+				confirmNoButton.addEventListener('click', () => {
+					confirmationModal.style.display = 'none';
+				});
+
+				closeModalElements.forEach((element) => {
+					element.addEventListener('click', () => {
+						mainModal.style.display = 'none';
+						confirmationModal.style.display = 'none';
+					});
+				});
+
+				window.addEventListener('click', (event) => {
+					if (event.target === confirmationModal) {
+						confirmationModal.style.display = 'none';
+					}
+				});
+			});
+		</script>
+
+		<style>
+			.myModalR {
+				display: none !important;
+				position: fixed !important;
+				z-index: 1 !important;
+				left: 0 !important;
+				top: 0 !important;
+				width: 100% !important;
+				height: 100% !important;
+				overflow: auto !important;
+				background-color: rgb(0, 0, 0) !important;
+				background-color: rgba(0, 0, 0, 0.4) !important;
+			}
+
+			.myModalR-content {
+				background-color: #fefefe !important;
+				margin: 15% auto !important;
+				padding: 20px !important;
+				border: 1px solid #888 !important;
+				width: 80% !important;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5) !important;
+			}
+
+			.close {
+				color: #aaa !important;
+				float: right !important;
+				font-size: 28px !important;
+				font-weight: bold !important;
+			}
+
+			.close:hover,
+			.close:focus {
+				color: black !important;
+				text-decoration: none !important;
+				cursor: pointer !important;
+			}
+
+			.button-container {
+				display: flex !important;
+				justify-content: space-between !important;
+			}
+
+			#tokenSelect {
+				width: 100% !important;
+				padding: 12px 20px !important;
+				/* margin: 8px 0 !important; */
+				display: inline-block !important;
+				border: 1px solid #ccc !important;
+				border-radius: 4px !important;
+				box-sizing: border-box !important;
+			}
+
+			/* button {
+					background-color: #4CAF50 !important;
+					color: white !important;
+					padding: 14px 20px !important;
+					margin: 8px 0 !important;
+					border: none !important;
+					border-radius: 4px !important;
+					cursor: pointer !important;
+				}
+
+				button:hover {
+					background-color: #45a049 !important;
+				} */
+		</style>
+
+		<style>
+			.skipped-token {
+				color: red;
+				background-color: transparent;
+				font-weight: bold;
+
+			}
+		</style>
+
+		<script>
+			var previousAckTime = '';
+			var previousTotalTokens = 0;
+			var previousReassignTokens = 0;
+
+			function askPermission() {
+				Notification.requestPermission().then((permission) => {
+					if (permission === "granted") {
+						console.log("Notification permission granted.");
+					} else {
+						console.warn("Notification permission denied.");
+					}
+				});
+			}
+
+			// Function to request notification permission
+			function requestNotificationPermission() {
+				if (!("Notification" in window)) {
+					console.error("This browser does not support notifications.");
+					alert("Notifications are not supported in your browser.");
+					return;
+				}
+
+				if (Notification.permission === "granted") {
+					console.log("Notification permission already granted.");
+				} else if (Notification.permission === "default") {
+					Notification.requestPermission().then((permission) => {
+						if (permission === "granted") {
+							console.log("Notification permission granted.");
+						} else {
+							console.warn("Notification permission denied.");
+							alert("Notifications permission denied. Please enable it in browser settings.");
+						}
+					}).catch((err) => {
+						console.error("Error requesting notification permission: ", err);
+					});
+				} else {
+					console.warn("Notification permission has been denied previously.");
+				}
+			}
+
+			document.addEventListener("DOMContentLoaded", () => {
+				console.log("Permissions for notification");
+				requestNotificationPermission();
+
+			});
+
+			/**
+			 * Generalized function to handle notifications with fallback for unsupported cases.
+			 */
+			function showNotification(title, options) {
+				if (!("Notification" in window)) {
+					console.warn("Notifications are not supported in this browser.");
+					fallbackNotification(title, options.body);
+					return;
+				}
+
+				if (Notification.permission === "granted") {
+					try {
+						new Notification(title, options);
+						console.log(`Notification displayed: ${title}`);
+					} catch (error) {
+						console.error("Error displaying notification:", error);
+						fallbackNotification(title, options.body);
+					}
+				} else if (Notification.permission === "default") {
+					console.warn("Notification permission not yet granted. Requesting permission...");
+					Notification.requestPermission().then((permission) => {
+						if (permission === "granted") {
+							new Notification(title, options);
+							console.log(`Notification displayed: ${title}`);
+						} else {
+							console.warn("Notification permission denied.");
+							fallbackNotification(title, options.body);
+						}
+					}).catch((error) => {
+						console.error("Error requesting notification permission:", error);
+						fallbackNotification(title, options.body);
+					});
+				} else {
+					console.warn("Notification permission denied.");
+					fallbackNotification(title, options.body);
+				}
+			}
+
+			/**
+			 * Fallback notification mechanism (e.g., alert or console message).
+			 */
+			function fallbackNotification(title, message) {
+				console.log(`Fallback Notification - ${title}: ${message}`);
+
+				// Create a custom notification element
+				const notificationElement = document.createElement("div");
+				notificationElement.style.position = "fixed";
+				notificationElement.style.bottom = "20px";
+				notificationElement.style.right = "20px";
+				notificationElement.style.padding = "15px";
+				notificationElement.style.backgroundColor = "#333";
+				notificationElement.style.color = "#fff";
+				notificationElement.style.borderRadius = "8px";
+				notificationElement.style.boxShadow = "0px 4px 6px rgba(0,0,0,0.1)";
+				notificationElement.style.zIndex = "9999";
+				notificationElement.style.fontFamily = "Arial, sans-serif";
+				notificationElement.style.fontSize = "14px";
+				notificationElement.innerHTML = `<strong>${title}</strong><br>${message}`;
+
+				// Append the element to the body
+				document.body.appendChild(notificationElement);
+
+				// Remove the notification after 5 seconds
+				setTimeout(() => {
+					document.body.removeChild(notificationElement);
+				}, 5000);
+			}
+
+
+			function updateTokenData() {
+				var tokenDataRequest = new XMLHttpRequest();
+				tokenDataRequest.onreadystatechange = function () {
+					if (this.readyState == 4 && this.status == 200) {
+						var response = JSON.parse(this.responseText);
+						var data = response.data[0];
+						var prefix = response.prefix;
+						var token_logs = response.token_log;
+						console.log("Token Logs:", response.token_log);
+						var user = response.user;
+						var temp = document.getElementById("generatedToken").innerText;
+						console.log("Temp :", temp);
+
+						var reassign = 0;
+						if (data.reassign_token === null || isNaN(data.reassign_token)) {
+							reassign = 0;
+						} else {
+							reassign = data.reassign_token;
+						}
+						let balanceTokens = 0;
+
+						// Check for null time_interval and increment balance tokens
+						response.token_log.forEach(log => {
+							if (log.time_interval === null) {
+								balanceTokens++;
+							}
+						});
+						document.getElementById("BalanceTokens").innerText = balanceTokens;
+						document.getElementById("TotalTokens").innerText = prefix + data.token_total_count;
+						// document.getElementById("BalanceTokens").innerText = data.token_total_count - data.token_current_count;
+						document.getElementById("TotalSkipTokens").innerText = data.token_skip_count;
+						document.getElementById("TotalReAssignTokens").innerText = data.reassign_token || 0;
+						document.getElementById("prefix_M").innerText = prefix;
+						if (current_bypass == false) {
+							document.getElementById("current").innerText = data.token_current_count;
+							document.getElementById("generatedToken").innerText = prefix + data.token_current_count;
+						}
+
+						const totalTokens = parseInt(data.token_total_count);
+						const currentTokens = parseInt(data.token_current_count);
+
+						if ((totalTokens === 0) || (totalTokens === currentTokens) && call_en_recall === false) {
+							document.getElementById("call-button").disabled = true;
+						} else if (!current_bypass && totalTokens > currentTokens) {
+							document.getElementById("call-button").disabled = false;
+						} else if ((totalTokens === 0) || (totalTokens === currentTokens) && call_en_recall === true) {
+							document.getElementById("call-button").disabled = false;
+						}
+
+						console.log("3");
+						// Extract alphabetic and numeric parts of the token
+						let alphabetPart = null;
+						let numberPart = null;
+
+						if (temp) {
+							let alphabetMatch = temp.match(/[A-Za-z]+/);
+							let numberMatch = temp.match(/\d+/);
+
+							// Handle cases where matches are not found
+							alphabetPart = alphabetMatch ? alphabetMatch[0] : null;
+							numberPart = numberMatch ? numberMatch[0] : null;
+						}
+						// console.log("4");
+						console.log("Alphabet Part: ", alphabetPart);
+						console.log("Number Part: ", numberPart);
+
+						if (alphabetPart !== prefix && reassign >= 0 && call_en_recall === true) {
+							document.getElementById("call-button").disabled = false;
+						}
+						// console.log("5");
+						if (totalTokens > previousTotalTokens) {
+							showNotification('Token Count Updated', {
+								body: `New token count: ${totalTokens}`,
+							});
+							console.log("Token Count: Incremented");
+						}
+						// console.log("5");
+						if (reassign > previousReassignTokens) {
+							showNotification('Reassign Token', {
+								body: `Reassign Token: Found`,
+							});
+							console.log("Reassign Activated");
+						}
+						previousReassignTokens = reassign;
+						previousTotalTokens = totalTokens;
+
+						populateTokenLogsTable(response.token_log, prefix);
+					}
+				};
+
+				tokenDataRequest.open(
+					"GET",
+					"/updateData?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>",
+					true
+				);
+				tokenDataRequest.send();
+			}
+
+			updateTokenData();
+			setInterval(function () {
+				updateTokenData();
+			}, 3000);
+
+			const rowsPerPage = 10;
+			let currentPage = 1;
+			let currentTokenLogs = [];
+
+			function populateTokenLogsTable(token_logs, prefix) {
+				currentTokenLogs = token_logs.sort((a, b) => b.token_id - a.token_id); // Sort in descending order
+				console.log("TABLE RENDER: ", currentTokenLogs);
+				// Initialize balance token counter
+				renderTable();
+			}
+
+			function renderTable() {
+				const tableBody = document.getElementById("customers");
+				tableBody.innerHTML = ""; // Clear existing rows
+
+				const userDep = document.getElementById('userDep');
+				const og = document.getElementById("prefix_M").innerText;
+
+				let item_legth = 0;
+				let paginatedLogs = [];
+				let Temp_curr = document.getElementById("current").innerText;
+				console.log("Current Token:", Temp_curr)
+
+				let Temp_activateRecall = document.getElementById("activateRecall").value;
+				// console.log("Current Token:", Temp_curr)
+
+				let Temp_ActivateReassign = document.getElementById("activateReassign").value;
+				// console.log("Current Token:", Temp_curr)
+
+				currentTokenLogs.forEach(function (log) {
+					console.log("LOG_ID : " + log.user_id);
+
+					if (log.user_id !== '0') {
+						if (log.prefix !== og || (log.reassign_dep === log.dep && log.reassign_active === true)) {
+							paginatedLogs.push(log);
+						} else {
+							paginatedLogs.push(log);
+						}
+					} else if ((log.user_id === '0' && log.priority === false) || log.priority === true) {
+						paginatedLogs.push(log);
+					}
+				});
+
+				const start = (currentPage - 1) * rowsPerPage;
+				const end = Math.min(start + rowsPerPage, paginatedLogs.length);
+
+				for (let i = start; i < end; i++) {
+					const log = paginatedLogs[i];
+					var row = document.createElement("tr");
+					item_legth++;
+
+					// Change row color based on priority
+					if (log.priority === true) {
+						// row.style.backgroundColor = '#FFAAAA';
+						row.style.color = '#FF0000';
+						row.style.fontWeight = 'bold';
+					} else if (log.priority === null || log.priority === false) {
+						row.style.backgroundColor = '';
+						row.style.color = '';
+					}
+
+					var tokenIDCell = document.createElement("td");
+					if (log.prefix !== og || (log.reassign_dep === log.dep && log.reassign_active === true)) {
+						tokenIDCell.classList.add("skipped-token");
+					}
+					tokenIDCell.innerHTML = "<center>" + log.prefix + log.token_id + "</center>";
+					row.appendChild(tokenIDCell);
+
+					if (log.ack_status === false && log.time_interval === null) {
+						var skippedTokenCell = document.createElement("td");
+						skippedTokenCell.classList.add("skipped-token");
+						skippedTokenCell.innerHTML = "<center>SKIPPED</center>";
+						row.appendChild(skippedTokenCell);
+
+						var callTimeCell = document.createElement("td");
+						callTimeCell.innerHTML = "<center>" + previousAckTime + "</center>";
+						row.appendChild(callTimeCell);
+					} else {
+						const ackTimeDate = new Date(log.ack_time);
+						const formattedAckTime = ackTimeDate.toLocaleString('en-GB', {
+							day: '2-digit',
+							month: '2-digit',
+							year: 'numeric',
+							hour: '2-digit',
+							minute: '2-digit',
+							second: '2-digit',
+							fractionalSecondDigits: 3
+						});
+
+						var skippedTokenCell = document.createElement("td");
+						skippedTokenCell.innerHTML = "<center>" + (formattedAckTime ? formattedAckTime : "N/A") + "</center>";
+						row.appendChild(skippedTokenCell);
+
+						var timeIntervalStr = log.time_interval ? formatTimeInterval(log.time_interval) : "N/A";
+						var callTimeCell = document.createElement("td");
+						callTimeCell.innerHTML = "<center>" + timeIntervalStr + "</center>";
+						row.appendChild(callTimeCell);
+					}
+
+					if (Temp_activateRecall === "true") {
+						var recallButtonCell = document.createElement("td");
+						recallButtonCell.className = "center-buttons";
+						var recallButton = document.createElement("button");
+						recallButton.className = "recall-btn";
+						recallButton.innerHTML = "ReCall";
+						recallButtonCell.appendChild(recallButton);
+						recallButton.addEventListener("click", function () {
+							handelRecall(log.token_id, log.prefix);
+						});
+					}
+
+					if (Temp_ActivateReassign === "true") {
+						var recallButtonCell2 = document.createElement("td");
+						recallButtonCell2.className = "center-buttons";
+						var recallButton2 = document.createElement("button");
+						recallButton2.className = "recall-btn";
+						recallButton2.innerHTML = "ReAssign";
+						recallButtonCell2.appendChild(recallButton2);
+					}
+
+					if (log.reassign_active === null) {
+						if (Temp_activateRecall === "true") {
+							row.appendChild(recallButtonCell);
+						}
+						if (Temp_ActivateReassign === "true") {
+							row.appendChild(recallButtonCell2);
+						}
+					} else {
+						if (Temp_ActivateReassign === "true") {
+							if (log.reassign_active === true && log.reassign_dep !== log.dep && userDep.value !== log.dep) {
+								recallButton2.disabled = true; // Disable the button
+							} else if (log.reassign_active === false && log.reassign_dep !== log.dep && userDep.value !== log.dep) {
+								// Enable the button
+							} else if (log.reassign_active === true && log.reassign_dep === log.dep && userDep.value === log.dep) {
+								// Enable the button
+							} else {
+								if (Temp_activateRecall === "true") {
+									recallButton.disabled = true; // Disable the button
+								}
+								recallButton.disabled = true; // Disable the button
+								recallButton2.disabled = true; // Disable the button
+							}
+
+							if (Temp_activateRecall === "true") {
+								row.appendChild(recallButtonCell);
+							}
+							row.appendChild(recallButtonCell2);
+						}
+					}
+
+					recallButtonCell2.addEventListener("click", function () {
+						showModal2(log, log.prefix);
+					});
+
+					tableBody.appendChild(row);
+				}
+
+				document.getElementById('page-info').textContent = `Page ${currentPage} of ${Math.ceil(currentTokenLogs.length / rowsPerPage)}`;
+				document.getElementById('prev-btn').disabled = currentPage === 1;
+				document.getElementById('next-btn').disabled = end >= currentTokenLogs.length;
+			}
+
+			function prevPage() {
+				if (currentPage > 1) {
+					currentPage--;
+					renderTable();
+				}
+			}
+
+			function nextPage() {
+				if ((currentPage * rowsPerPage) < currentTokenLogs.length) {
+					currentPage++;
+					renderTable();
+				}
+			}
+
+			function showModal2(log, prefix) {
+				var modal = document.getElementById("myModalR");
+				modal.style.display = "block";
+				let tokenIdElement = document.getElementById("tokenId");
+				let tokenId2Element = document.getElementById("tokenId2Value");
+				const TokNo = document.getElementById('tokenId2');
+				TokNo.value = log.token_id;
+
+				const log_id = document.getElementById('logId');
+				log_id.value = log.log_id;
+
+				// Set the value of the element
+				tokenIdElement.innerText = prefix + log.token_id;
+				tokenId2Element.innerText = prefix + log.token_id;
+				console.log(JSON.stringify(log));
+				// Get the confirm and cancel buttons
+				var confirmButton = document.getElementById("confirmReAssign");
+				var cancelButton = document.getElementById("cancelReAssign");
+
+				// When the user clicks on the confirm button, handle the recall
+				confirmButton.onclick = function () {
+					handelRecall(log.token_id, log.prefix);
+					modal.style.display = "none";
+				};
+
+				// When the user clicks on the cancel button, close the modal
+				cancelButton.onclick = function () {
+					modal.style.display = "none";
+				};
+
+				// When the user clicks anywhere outside of the modal, close it
+				window.onclick = function (event) {
+					if (event.target == modal) {
+						modal.style.display = "none";
+					}
+				};
+
+				// When the user clicks on <span> (x), close the modal
+				var span = document.getElementsByClassName("close")[0];
+				span.onclick = function () {
+					modal.style.display = "none";
+				};
+			}
+
+			function formatTimeInterval(timeInterval) {
+				var formattedTime = '';
+				if (timeInterval.hours) {
+					formattedTime += timeInterval.hours + " : ";
+				} else {
+					formattedTime += "00 : ";
+				}
+				if (timeInterval.minutes) {
+					formattedTime += timeInterval.minutes + " : ";
+				} else {
+					formattedTime += "00 : ";
+				}
+				if (timeInterval.seconds) {
+					formattedTime += timeInterval.seconds + " : ";
+				} else {
+					formattedTime += "00 : ";
+				}
+				if (timeInterval.milliseconds) {
+					formattedTime += timeInterval.milliseconds;
+				} else {
+					formattedTime += "00";
+				}
+				return formattedTime;
+			}
+		</script>
+
+		<style>
+			.modal {
+				display: none;
+				position: fixed;
+				z-index: 1000;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				overflow: auto;
+				background-color: rgba(0, 0, 0, 0.6);
+				backdrop-filter: blur(5px);
+			}
+
+			.modal-content {
+				background-color: #fefefe;
+				margin: 10% auto;
+				padding: 20px;
+				border: 1px solid #888;
+				width: 60%;
+				max-width: 500px;
+				border-radius: 8px;
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+				animation: slide-down 0.4s ease-out;
+			}
+
+			@keyframes slide-down {
+				from {
+					transform: translateY(-50px);
+					opacity: 0;
+				}
+
+				to {
+					transform: translateY(0);
+					opacity: 1;
+				}
+			}
+
+			.close {
+				color: #aaa;
+				float: right;
+				font-size: 28px;
+				font-weight: bold;
+				cursor: pointer;
+			}
+
+			.close:hover,
+			.close:focus {
+				color: #000;
+				text-decoration: none;
+			}
+
+			select {
+				width: 100%;
+				padding: 10px;
+				/* margin-top: 10px; */
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+				font-size: 16px;
+			}
+
+			button {
+				background-color: #4CAF50;
+				/* Green */
+				color: white;
+				padding: 10px 20px;
+				margin: 10px 0;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 16px;
+			}
+
+			button:hover {
+				background-color: #45a049;
+			}
+
+			.button-container {
+				display: flex;
+				justify-content: space-between;
+			}
+		</style>
+
+		<style>
+			.center-buttons {
+				text-align: center;
+				vertical-align: middle;
+			}
+
+			.center-buttons button {
+				margin: 5px;
+			}
+		</style>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-sm mb-0 table-striped">
+								<thead>
+									<tr>
+										<th>
+											<center>Token Id</center>
+										</th>
+										<th>
+											<center>Acknowledge Time</center>
+										</th>
+										<th>
+											<center>Time Taken</center>
+										</th>
+										<% if (recallBtn) { %>
+											<th>
+												<center>ReCall</center>
+											</th>
+											<% } %>
+												<% if (reassignBtn) { %>
+													<th>
+														<center>ReAssign</center>
+													</th>
+													<% } %>
+									</tr>
+								</thead>
+								<tbody id="customers"></tbody>
+							</table>
+
+
+							<div id="pagination-controls">
+								<button onclick="prevPage()" id="prev-btn" disabled>
+									< </button>
+										<span id="page-info"></span>
+										<button onclick="nextPage()" id="next-btn">></button>
+							</div>
+							<style>
+								#pagination-controls {
+									margin-top: 10px;
+									text-align: center;
+								}
+
+								#pagination-controls button {
+									padding: 8px 12px;
+									background-color: #18bab8;
+									color: #fff;
+									border: 1px solid #18bab8;
+									border-radius: 4px;
+									cursor: pointer;
+									transition: background-color 0.3s ease;
+									margin: 0 5px;
+								}
+
+								#pagination-controls #prev-btn[disabled] {
+									opacity: 0.5;
+									cursor: not-allowed;
+								}
+
+								#pagination-controls button:hover {
+									background-color: #18bab8;
+								}
+							</style>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div id="timeoutModal" class="modal">
+		<div class="modal-content">
+			<span class="close"></span>
+			<h2 class="modal-heading">Time Expired!</h2>
+			<p>Time has expired! Please select an option below to extend the time:</p>
+			<button id="add30Secs">Add 30 seconds</button>
+			<button id="add60Secs">Add 60 seconds</button>
+			<button id="end-button" value="1" onclick="handleEnd()">END</button>
+		</div>
+	</div>
+
+	<script>
+		document.getElementById("add30Secs").addEventListener("click", function () {
+			addTime(30000);
+			document.getElementById("timeoutModal").style.display = "none";
+		});
+
+		document.getElementById("add60Secs").addEventListener("click", function () {
+			addTime(60000);
+			document.getElementById("timeoutModal").style.display = "none";
+		});
+
+		function addTime(additionalTime) {
+			clearTimeout(window.timeoutHandle);
+			resetProgressBar();
+			setTimeout(() => {
+				startProgressBar(additionalTime);
+			}
+				, 1000);
+
+			window.timeoutHandle = setTimeout(function () {
+				if (!acknowledgmentStatus) {
+					showModal();
+				}
+			}, additionalTime);
+		}
+	</script>
+
+	<!--**********************************
+            Content body end
+        ***********************************-->
+
+	<!--**********************************
+            Footer start
+        ***********************************-->
+
+	<div class="footer">
+		<div class="copyright">
+			<p>Copyright © Designed &amp; Developed by <a href="https://kvartech.in/" target="_blank">KVAR TECH</a>
+				2024 <img src="/src/images/Make-In-IndiaLogo650.webp" alt="" height="40" width="70">
+			</p>
+		</div>
+	</div>
+	<!--**********************************
+            Footer end
+        ***********************************-->
+	</div>
+	<!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+	<!--**********************************
+        Scripts
+    ***********************************-->
+	<!-- Required vendors -->
+	<script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+	<script src="/src/vendor/global/global.min.js"></script>
+	<script src="/src/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+	<script src="/src/vendor/chart.js/Chart.bundle.min.js"></script>
+
+	<!-- Chart piety plugin files -->
+	<script src="/src/vendor/peity/jquery.peity.min.js"></script>
+
+	<!-- Apex Chart -->
+	<script src="/src/vendor/apexchart/apexchart.js"></script>
+
+	<!-- Dashboard 1 -->
+	<script src="/src/js/dashboard/dashboard-1.js"></script>
+
+	<script src="/src/vendor/owl-carousel/owl.carousel.js"></script>
+	<script src="/src/js/custom.min.js"></script>
+	<script src="/src/js/deznav-init.js"></script>
+	<script src="/src/js/demo.js"></script>
+	<script src="/src/js/styleSwitcher.js"></script>
+
+</body>
+
+</html>

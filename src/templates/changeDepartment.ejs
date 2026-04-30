@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="robots" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:title" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:description" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:image" content="https://zenix.dexignzone.com/xhtml/social-image.png">
+    <meta name="format-detection" content="telephone=no">
+    <title>KVAR Tech Token Displays</title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <link rel="stylesheet" href="/src/vendor/chartist/css/chartist.min.css">
+    <link href="/src/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="/src/vendor/owl-carousel/owl.carousel.css" rel="stylesheet">
+    <link href="/src/styles/style.css" rel="stylesheet">
+    <link href="/src/styles/style2.css" rel="stylesheet">
+    <script src="/src/js/script.js"></script>
+    <style>
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 35%;
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: 32%;
+            margin-top: 10%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .custom-input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .custom-input::placeholder {
+            color: #aaa;
+        }
+
+        .custom-input+.custom-input {
+            margin-top: 10px;
+        }
+        
+        .krystal-header {
+			font-size: 30px;
+			color: #484848;
+			font-weight: 600;
+			margin: 0;
+			padding: 0;
+			text-transform: uppercase;
+			font-family: Roboto, sans-serif;
+
+		}
+    </style>
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <center>
+                <img src="/src/images/logo.png" height="50" width="70" id="logoImage" style="margin-top: 10px;">
+            </center>
+            <script>
+                fetch('/src/uploads/companyLogo.png')
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('logoImage').src = '/src/uploads/companyLogo.png';
+                        }
+                    })
+                    .catch(error => {
+                    });
+            </script>
+
+            <div class="nav-control">
+                <div class="hamburger" style="color: black !important;">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand" style="padding-right: 0px !important;">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <h1 class="krystal-header"><%= companyName %></h1>
+                        </div>
+                        <ul class="navbar-nav header-right main-notification">
+                            <li class="nav-item dropdown header-profile-1">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <div style="text-align: center !important;">
+                                        <img src="/src/images/1 (3).png"
+                                            style="width: 280px !important; height: 190px !important; margin-bottom: 10px;">
+                                        <!-- <div class="header-info" style="display: block !important;">
+                                            <span style="display: block !important; margin-top: 5px !important;">A product
+                                                by KVAR Tech</span>
+                                        </div> -->
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="sub-header">
+                    <div class="d-flex align-items-center  mr-auto">
+                        <h5 class="dashboard_bar" hidden>Call Time: <span id="callTimeDisplay">00:00:00</span></h5>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <h5 class="dashboard_bar" hidden>Acknowledge Time: <span
+                                id="acknowledgeTimeDisplay">00:00:00</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </h5>
+                        <h5 class="dashboard_bar" hidden>End Time: <span id="endTimeDisplay">00:00:00</h5>
+                    </div>
+                    <div class="d-flex align-items-center mr-auto"
+                        style="margin-top: 0px !important; margin-left: 5%; width: 90%;">
+                        <h3 class="currentTime" style="margin-left: 85%;"><span id="currentTimeDisplay">00:00:00</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function updateCurrentTime() {
+                const currentTime = new Date();
+                const formattedTime = formatTime(currentTime);
+                document.getElementById("currentTimeDisplay").innerText = formattedTime;
+            }
+
+            function formatTime(date) {
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let seconds = date.getSeconds();
+                var format = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12; // Fix for displaying 0 after 12:00 PM
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                return `${hours}:${minutes}:${seconds} ${format}`;
+            }
+
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+        </script>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="deznav">
+            <div class="deznav-scroll">
+                <div class="main-profile">
+                    <div class="image-bx">
+                        <img src="/src/images/pngtree-business-male-icon-vector-png-image_916468-removebg-preview.png" alt="">
+                    </div>
+                    <h5 class="name"><span class="font-w400">Hello,</span>
+                        <%= user.name %>
+                    </h5>
+                    <h4>Department : <%= user.department %>
+                    </h4>
+                </div>
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label first">Main Menu</li>
+                    <li><a href="/dashboard?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+                            aria-expanded="false">
+                            <img src="/src/images/dashboard (1).png" alt="" height="30px" width="30px">
+                            <span class="nav-text" style="margin-left: 20px; ">Dashboard</span>
+                        </a>
+                    </li>
+                    <li><a href="/changeDept?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+                            aria-expanded="false">
+                            <img src="/src/images/department.png" alt="" height="30px" width="30px">
+                            <span class="nav-text" style="margin-left: 20px;">Change Department</span>
+                        </a>
+                    </li>
+                    <li><a href="/logout?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+                            class="dropdown-item ai-icon">
+                            <img src="/src/images/logout.png" alt="" height="30px" width="30px">
+                            <span class="nav-text" style="margin-left: 20px;">Logout</span>
+                        </a>
+                    </li>
+                    <!-- <li class="nav-item dropdown header-profile-1">
+						<div class="dropdown-menu dropdown-menu-right">
+							<a href="/logout?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+								class="dropdown-item ai-icon">
+								<svg id="icon-logout" xmlns="http://www.w3.org/2000/svg" class="text-danger"
+									width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor"
+									stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+									<polyline points="16 17 21 12 16 7"></polyline>
+									<line x1="21" y1="12" x2="9" y2="12"></line>
+								</svg>
+								<span class="ml-2">Logout </span>
+							</a>
+						</div>
+					</li> -->
+                </ul>
+            </div>
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+
+        <div class="content-body">
+            <div class="form-container">
+                <form
+                    action="/changeDept?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+                    method="post">
+                    <div class="form-group">
+                        <input type="text" name="userId" class="custom-input" placeholder="User ID"
+                            value="<%= user.id %>" readonly>
+                    </div>
+                    <div class="form-group">
+
+                        <select name="userDept" id="modalUserDept" class="custom-input">
+
+                            <option value="" disabled selected>Select Your Department</option>
+                            <% departments.forEach(department=> { %>
+                                <option value="<%= department.department %>">
+                                    <%= department.department %>
+                                </option>
+                                <% }); %>
+                        </select>
+                    </div>
+                    <center><button type="submit" class="btn btn-primary btn-block">Submit</button></center>
+                </form>
+            </div>
+        </div>
+
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+        <!--**********************************
+            Footer start
+        ***********************************-->
+
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright © Designed &amp; Developed by <a href="https://kvartech.in/" target="_blank">KVAR TECH</a>
+                    2024 <img src="/src/images/Make-In-IndiaLogo650.webp" alt="" height="40" width="70">
+                </p>
+            </div>
+        </div>
+        <!--**********************************
+            Footer end
+        ***********************************-->
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+    <script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="/src/vendor/global/global.min.js"></script>
+    <script src="/src/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/src/vendor/chart.js/Chart.bundle.min.js"></script>
+
+    <!-- Chart piety plugin files -->
+    <script src="/src/vendor/peity/jquery.peity.min.js"></script>
+
+    <!-- Apex Chart -->
+    <script src="/src/vendor/apexchart/apexchart.js"></script>
+
+    <!-- Dashboard 1 -->
+    <script src="/src/js/dashboard/dashboard-1.js"></script>
+
+    <script src="/src/vendor/owl-carousel/owl.carousel.js"></script>
+    <script src="/src/js/custom.min.js"></script>
+    <script src="/src/js/deznav-init.js"></script>
+    <script src="/src/js/demo.js"></script>
+    <script src="/src/js/styleSwitcher.js"></script>
+
+</body>
+
+</html>

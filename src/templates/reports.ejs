@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="robots" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:title" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:description" content="Zenix - Crypto Admin Dashboard">
+    <meta property="og:image" content="https://zenix.dexignzone.com/xhtml/social-image.png">
+    <meta name="format-detection" content="telephone=no">
+    <title>KVAR Tech Token Displays</title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <link rel="stylesheet" href="/src/vendor/chartist/css/chartist.min.css">
+    <link href="/src/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha384-k6vP0kho8N9+IR8H0sY5JcQzjFiTUDDhCyUrqjbbVCLTzY3eC0qx/lZAs6oA7EaE" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
+    <link href="/src/vendor/owl-carousel/owl.carousel.css" rel="stylesheet">
+    <link href="/src/styles/style.css" rel="stylesheet">
+    <link href="/src/styles/style2.css" rel="stylesheet">
+    <script src="/src/js/script.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+
+
+
+    <style>
+        .export-btn-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-export {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-export:hover {
+            background-color: #0056b3;
+        }
+
+        .dropdown-menu {
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item {
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <center>
+                <img src="/src/images/logo.png" height="50" width="70" id="logoImage" style="margin-top: 10px;">
+            </center>
+            <script>
+                fetch('/src/uploads/companyLogo.png')
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('logoImage').src = '/src/uploads/companyLogo.png';
+                        }
+                    })
+                    .catch(error => {
+                    });
+            </script>
+
+            <div class="nav-control">
+                <div class="hamburger" style="color: black !important;">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand" style="padding-right: 0px !important;">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <h1 class="krystal-header"><%= companyName %></h1>
+                        </div>
+                        <style>
+                            .krystal-header {
+                                font-size: 30px;
+                                color: #484848;
+                                font-weight: 600;
+                                margin: 0;
+                                padding: 0;
+                                text-transform: uppercase;
+                                font-family: Roboto, sans-serif;
+                            }
+                        </style>
+                        <ul class="navbar-nav header-right main-notification">
+                            <li class="nav-item dropdown header-profile-1">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <div style="text-align: center !important;">
+                                        <img src="/src/images/1 (3).png"
+                                            style="width: 280px !important; height: 190px !important; margin-bottom: 10px;">
+                                        <!-- <div class="header-info" style="display: block !important;">
+                                            <span style="display: block !important; margin-top: 5px !important;">A product
+                                                by KVAR Tech</span>
+                                        </div> -->
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="sub-header">
+                    <div class="d-flex align-items-center flex-wrap mr-auto">
+                        <h5 class="dashboard_bar">Welcome Admin</h5>
+
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <h5>
+                        </h5>
+                        &nbsp; &nbsp;<h5>
+
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function updateCurrentTime() {
+                const currentTime = new Date();
+                const formattedTime = formatTime(currentTime);
+                document.getElementById("currentTimeDisplay").innerText = formattedTime;
+            }
+
+            function formatTime(date) {
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let seconds = date.getSeconds();
+                const AM_PM = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                return `${hours}:${minutes}:${seconds} ${AM_PM}`;
+            }
+
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+        </script>
+
+
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="deznav">
+            <div class="deznav-scroll">
+                <div class="main-profile">
+                    <div class="image-bx">
+                        <img src="/src/images/settings.png" alt="">
+                    </div>
+                    <h5 class="name"><span class="font-w400">Hello,</span>
+                        <%= user.name %>
+                    </h5>
+                </div>
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label first">Main Menu</li>
+                    <li><a href="/admin?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>"
+                            aria-expanded="false">
+                            <img src="/src/images/Dashboard-1.png" alt="" height="25px" width="25px">
+                            <span class="nav-text" style="margin-left: 8%;">Dashboard</span>
+                        </a>
+                    </li>
+                    <li><a href="/logout?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>&counter=<%= user.counter %>&kioskId=<%= user.kioskId %>"
+                            class="dropdown-item ai-icon">
+                            <img src="/src/images/logout.png" alt="" height="25px" width="25px">
+                            <span class="nav-text" style="margin-left: 20px;">Logout</span>
+                        </a>
+                    </li>
+                    <% if (user.name==="kvar" ) { %>
+                        <li><a href="/CompanyReg?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>"
+                                aria-expanded="false">
+                                <img src="/src/images/Company Settings.png" alt="" height="25px" width="25px">
+                                <span class="nav-text" style="margin-left: 8%;">Company Settings</span>
+                            </a>
+                        </li>
+                        <% } %>
+
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/Department Settings.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">Department Settings</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                            href="/viewDepartments?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                            Departments</a></li>
+                                    <li><a
+                                            href="/DepartmentReg?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Add
+                                            Departments</a></li>
+                                    <li><a
+                                            href="/deleteDept?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Delete
+                                            Departments</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/User Settings.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">User Settings</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                            href="/viewUser?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                            users</a></li>
+                                    <li><a
+                                            href="/register?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Add
+                                            Users</a></li>
+                                    <li><a
+                                            href="/deleteUser?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Delete
+                                            Users</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/Counter Settings.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">Counter Settings</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                            href="/viewCounter?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                            Counter</a></li>
+                                    <li><a
+                                            href="/addCOunter?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Add
+                                            Counter</a></li>
+                                    <li><a
+                                            href="/deleteCounter?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Delete
+                                            Counter</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/hall.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">Waiting Room Display</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                            href="/viewWaitingRoomDisplay?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                            Waiting Room Display</a></li>
+                                    <li><a
+                                            href="/addWaitingRoomDisplay?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Add
+                                            Waiting Room Display</a></li>
+                                    <li><a
+                                            href="/deleteWaitingRoomDisplay?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Delete
+                                            Waiting Room Display</a></li>
+                                </ul>
+                            </li>
+                            <% if (user.name==="kvar" ) { %>
+                            <li>
+                                <a href="javascript:void()" aria-expanded="false">
+                                    <img src="/src/images/TVsettings.png" alt="" height="25px" width="25px">
+                                    <span class="nav-text" style="margin-left: 8%;">TV Setting</span>
+                                </a>
+                                <ul aria-expanded="false">
+                                    <li><a
+                                        href="/otaForTV?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">OTA Editor</a></li>
+                                    <li><a
+                                            href="/viewOTA?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View OTA List</a></li>
+                                    <li><a
+                                            href="/chooseOTATV?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Choose OTA</a></li>
+                                </ul>
+                            </li>
+                            <% }%>
+                            <% if (user.name==="kvar" ) { %>
+                                <li><a href="/KioskReg?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>"
+                                        aria-expanded="false">
+                                        <img src="/src/images/KIOSK Registration.png" alt="" height="25px" width="25px">
+                                        <span class="nav-text" style="margin-left: 8%;">Kiosk Registration</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void()" aria-expanded="false">
+                                        <img src="/src/images/Factory Settings.png" alt="" height="25px" width="25px">
+                                        <span class="nav-text" style="margin-left: 8%;">Factory Settings</span>
+                                    </a>
+                                    <ul aria-expanded="false">
+                                        <li><a
+                                            href="/factorySettings?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Factory Settings</a></li>
+                                        <li><a
+                                                href="/softwareSettings?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Software Settings</a></li>
+                                    </ul>
+                                </li>
+
+                                <li><a href="javascript:void()" aria-expanded="false">
+                                        <img src="/src/images/Printer Settings.png" alt="" height="25px" width="25px">
+                                        <span class="nav-text" style="margin-left: 8%;">Printer Settings</span>
+                                    </a>
+                                    <ul aria-expanded="false">
+                                        <li><a
+                                                href="/printerEditor?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Printer
+                                                Editor
+                                            </a></li>
+                                        <li><a
+                                                href="/printerSummary?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Choose
+                                                summary report</a>
+                                            </a></li>
+                                        <li><a
+                                                href="/printerToken?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Choose
+                                                token report
+                                            </a></li>
+                                        <li><a
+                                                href="/printerView?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">View
+                                                Report Linking
+                                            </a></li>
+                                    </ul>
+                                    </a>
+                                </li>
+                                <% }%>
+                                <li>
+                                    <a href="javascript:void()" aria-expanded="false">
+                                        <img src="/src/images/Reports.png" alt="" height="25px" width="25px">
+                                        <span class="nav-text" style="margin-left: 8%;">Reports</span>
+                                    </a>
+                                    <ul aria-expanded="false">
+                                        <li><a
+                                                href="/userReports?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">User
+                                                Reports</a></li>
+                                        <li><a
+                                                href="/summaryReports?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Summary
+                                                Reports</a></li>
+                                        <li><a
+                                                href="/reports1?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Grievance Report</a></li>
+                                        <li><a
+                                                href="/reports2?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Operator Report</a></li>
+                                        <li><a
+                                                href="/reports3?userId=<%= user.id %>&userName=<%= user.name %>&userDepartment=<%= user.department %>">Grievance Report</a></li>
+                                    </ul>
+                                </li>
+                </ul>
+            </div>
+        </div>
+
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <div class="container-fluid"
+                style="padding-top: 20px !important; padding-left: 20px !important; padding-right: 20px !important;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="card-title m-0">User Reports</h4>
+                                <div class="right-controls d-flex">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                            id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <i class="fas fa-file-export"></i> Export
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                                            <a class="dropdown-item" href="#" id="exportExcel">EXCEL</a>
+                                            <!-- <a class="dropdown-item" href="#" id="exportPDF">PDF</a> -->
+                                            <a class="dropdown-item" href="#" id="exportCSV">CSV</a>
+                                            <!-- <a class="dropdown-item" href="#" id="exportJSON">JSON</a> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body" style="padding-bottom: 0px !important;">
+                                <div class="d-flex justify-content-between">
+                                    <!-- <div class="left-date-selector flex-fill mr-2">
+                                        <label for="fromDate"><strong>Period</strong></label>
+                                    </div> -->
+                                    <div class="left-date-selector flex-fill mr-2">
+                                        <label for="fromDate"><strong>From:</strong></label>
+                                        <input type="date" id="fromDate" class="form-control"
+                                            style="padding: 0px 10px 0px 10px !important;">
+                                    </div>
+                                    <div class="date-selector flex-fill ml-2">
+                                        <label for="toDate"><strong>To:</strong></label>
+                                        <input type="date" id="toDate" class="form-control"
+                                            style="padding: 0px 10px 0px 10px !important;">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="d-flex justify-content-between">
+                                    <div class="left-date-selector flex-fill mr-2 position-relative">
+                                        <label for="userId"><strong>User Id</strong></label>
+                                        <input type="text" id="userId" class="form-control common-width"
+                                            placeholder="Search User Id" style="padding: 0px 10px 0px 10px !important;">
+                                        <i class="fa fa-search search-icon"></i>
+                                    </div>
+                                    <div class="date-selector flex-fill ml-2 position-relative">
+                                        <label for="tokenId"><strong>Token No</strong></label>
+                                        <input type="text" id="tokenId" class="form-control common-width"
+                                            placeholder="Search tokenNo" style="padding: 0px 10px 0px 10px !important;">
+                                        <i class="fa fa-search search-icon"></i>
+                                    </div>
+                                    <div class="date-selector flex-fill ml-2 position-relative">
+                                        <label for="department"><strong>Department</strong></label>
+                                        <select id="department" class="form-control common-width"
+                                            placeholder="Search Department"
+                                            style="padding: 0px 10px 0px 10px !important;">
+                                            <option value="" disabled selected>Select Department</option>
+                                            <% departments.forEach(department=> { %>
+                                                <% if(department.department){ %>
+                                                    <option value="<%= department.department %>">
+                                                        <%= department.department %>
+                                                    </option>
+                                                    <% } %>
+                                                        <% }); %>
+                                        </select>
+                                    </div>
+                                    <div class="date-selector flex-fill ml-2 position-relative">
+                                        <label for="toDepartment"><strong>To Department</strong></label>
+                                        <select id="toDepartment" class="form-control common-width"
+                                            placeholder="Search To Department"
+                                            style="padding: 0px 10px 0px 10px !important;">
+                                            <option value="" disabled selected>Select Department</option>
+                                            <% departments.forEach(department=> { %>
+                                                <% if(department.department){ %>
+                                                    <option value="<%= department.department %>">
+                                                        <%= department.department %>
+                                                    </option>
+                                                    <% } %>
+                                                        <% }); %>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <style>
+                                    .common-width {
+                                        width: 100%;
+                                    }
+                                </style>
+
+                            </div>
+
+                            <style>
+                                .search-icon {
+                                    position: absolute;
+                                    top: 70%;
+                                    right: 10px;
+                                    transform: translateY(-50%);
+                                    pointer-events: none;
+                                    color: #aaa;
+                                }
+
+                                .form-control {
+                                    padding-right: 40px;
+                                    box-sizing: border-box;
+                                }
+                            </style>
+
+                            <script>
+                                function getFilteredRows() {
+                                    console.log('Filtering rows...');
+                                    var inputUserId = document.getElementById('userId').value.trim().toUpperCase();
+                                    var inputDepartment = document.getElementById('department').value.trim().toUpperCase();
+                                    var inputTokenId = document.getElementById('tokenId').value.trim().toUpperCase();
+                                    var inputToDepartment = document.getElementById('toDepartment').value.trim().toUpperCase();
+                                    var fromDate = document.getElementById('fromDate').value.trim();
+                                    var toDate = document.getElementById('toDate').value.trim();
+                                    // var newDropdownValue = document.getElementById('newDropdown').value.trim();
+                                    // console.log('Input Values:', inputUserId, inputDepartment, inputTokenId, fromDate, toDate, inputToDepartment, newDropdownValue);
+
+                                    // Adjust date range based on the dropdown value
+                                    // if (newDropdownValue) {
+                                    //     var today = new Date();
+                                    //     today.setHours(0, 0, 0, 0);
+                                    //     switch (newDropdownValue) {
+                                    //         case 'today':
+                                    //             fromDate = today.toISOString().split('T')[0];
+                                    //             toDate = fromDate;
+                                    //             break;
+                                    //         case 'last1month':
+                                    //             var last1Month = new Date(today);
+                                    //             last1Month.setMonth(last1Month.getMonth() - 1);
+                                    //             fromDate = last1Month.toISOString().split('T')[0];
+                                    //             toDate = today.toISOString().split('T')[0];
+                                    //             break;
+                                    //         case 'last6months':
+                                    //             var last6Months = new Date(today);
+                                    //             last6Months.setMonth(last6Months.getMonth() - 6);
+                                    //             fromDate = last6Months.toISOString().split('T')[0];
+                                    //             toDate = today.toISOString().split('T')[0];
+                                    //             break;
+                                    //     }
+                                    // }
+
+                                    var table = document.querySelector('table');
+                                    var rows = table.querySelectorAll('tbody tr');
+                                    var filteredRows = [];
+
+                                    rows.forEach(function (row) {
+                                        var userId = row.querySelector('td:nth-child(2)').textContent.trim().toUpperCase();
+                                        var department = row.querySelector('td:nth-child(1)').textContent.trim().toUpperCase();
+                                        var tokenId = row.querySelector('td:nth-child(3)').textContent.trim().toUpperCase();
+                                        var toDepartment = row.querySelector('td:nth-child(5)').textContent.trim().toUpperCase();
+                                        var date = row.querySelector('td:nth-child(8)').textContent.trim();
+                                        console.log('Row Values:', userId, department, date, tokenId, toDepartment);
+
+                                        // Convert the date to a comparable format
+                                        var formattedDate = new Date(date.split('/').reverse().join('-'));
+                                        console.log('Formatted Date:', formattedDate);
+
+                                        var dateMatch = true;
+
+                                        // Filter logic based on fromDate and toDate
+                                        if (fromDate || toDate) {
+                                            var startDate = fromDate ? new Date(fromDate) : null;
+                                            var endDate = toDate ? new Date(toDate) : null;
+                                            console.log('Date Range:', startDate, endDate);
+
+                                            if (startDate) {
+                                                startDate.setHours(0, 0, 0, 0);
+                                            }
+                                            if (endDate) {
+                                                endDate.setHours(23, 59, 59, 999);
+                                            }
+
+                                            if (startDate && endDate) {
+                                                dateMatch = formattedDate >= startDate && formattedDate <= endDate;
+                                            } else if (startDate) {
+                                                dateMatch = formattedDate >= startDate;
+                                            } else if (endDate) {
+                                                dateMatch = formattedDate <= endDate;
+                                            }
+                                            console.log('Date Match:', dateMatch);
+                                        }
+
+                                        // Debug logging for comparison
+                                        console.log(`Comparing userId: "${userId}" with inputUserId: "${inputUserId}"`);
+                                        console.log(`Comparing department: "${department}" with inputDepartment: "${inputDepartment}"`);
+                                        console.log(`Comparing tokenId: "${tokenId}" with inputTokenId: "${inputTokenId}"`);
+                                        console.log(`Comparing toDepartment: "${toDepartment}" with inputToDepartment: "${inputToDepartment}"`);
+
+                                        if (userId.includes(inputUserId) && department.includes(inputDepartment) && tokenId.includes(inputTokenId) && toDepartment.includes(inputToDepartment) && dateMatch) {
+                                            row.style.display = '';
+                                            filteredRows.push(row);
+                                        } else {
+                                            row.style.display = 'none';
+                                        }
+                                    });
+
+                                    return filteredRows;
+                                }
+
+                                function filterTable() {
+                                    getFilteredRows();
+                                }
+
+                                document.getElementById('userId').addEventListener('keyup', filterTable);
+                                document.getElementById('tokenId').addEventListener('keyup', filterTable);
+                                document.getElementById('department').addEventListener('change', filterTable);
+                                document.getElementById('toDepartment').addEventListener('change', filterTable);
+                                document.getElementById('fromDate').addEventListener('change', filterTable);
+                                document.getElementById('toDate').addEventListener('change', filterTable);
+                                // document.getElementById('newDropdown').addEventListener('change', function () {
+                                //     document.getElementById('fromDate').value = '';
+                                //     document.getElementById('toDate').value = '';
+                                //     filterTable();
+                                // });
+                            </script>
+
+
+
+                            <br><br><br>
+                            <div class="table-responsive"
+                                style="padding-left: 10px !important; padding-right: 10px !important;">
+                                <style>
+                                    .header-cell {
+                                        background-color: #d7ecfb !important;
+                                        color: black;
+                                        text-align: center;
+                                        vertical-align: middle;
+                                        padding: 10px;
+                                    }
+
+                                    .table-responsive th {
+                                        padding: 10px;
+                                    }
+
+                                    .table-responsive tbody tr:nth-child(odd) {
+                                        background-color: #f2f4fa;
+                                    }
+
+                                    .table-responsive tbody tr:nth-child(even) {
+                                        background-color: #ffffff;
+                                    }
+                                </style>
+                                <table class="table table-sm mb-0 table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; align-items: center !important; vertical-align: middle;">
+                                                <center>Department</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>User_ID</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Token_No</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>From_Dep</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>To_Dep</center>
+                                            </th>
+                                            <th scope="col" hidden>
+                                                <center>Occurrence</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Day</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Date</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Month</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Status</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Details</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Generated_Time</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Call_time</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Ack_Time</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>End_Time</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>OPERATOR_Time (hh:mm:ss)</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Waiting_Time (hh:mm:ss)</center>
+                                            </th>
+                                            <th scope="col"
+                                                style="background-color: #d7ecfb !important; color: black; vertical-align: middle;">
+                                                <center>Total_Time (hh:mm:ss)</center>
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <% // Function to sort data by date and then by generated time const
+                                            sortDataByDateAndTime=(data)=> {
+                                            // Group data by date
+                                            const groupedByDate = data.reduce((acc, entry) => {
+                                            const date = new Date(entry.date).toLocaleDateString();
+                                            if (!acc[date]) {
+                                            acc[date] = [];
+                                            }
+                                            acc[date].push(entry);
+                                            return acc;
+                                            }, {});
+
+                                            // Sort each group by generated time
+                                            for (const date in groupedByDate) {
+                                            groupedByDate[date].sort((a, b) => {
+                                            const timeA = new Date(a.generated_time).getTime();
+                                            const timeB = new Date(b.generated_time).getTime();
+                                            return timeA - timeB;
+                                            });
+                                            }
+
+                                            // Merge sorted groups into a single array
+                                            const sortedData = Object.keys(groupedByDate).sort().reduce((acc, date) => {
+                                            return acc.concat(groupedByDate[date]);
+                                            }, []);
+
+                                            return sortedData;
+                                            };
+
+
+                                            const assignedData2 = sortDataByDateAndTime(assignedData);
+
+
+                                            assignedData2.forEach((dta) => { %>
+                                            <tr>
+                                                <td>
+                                                    <center>
+                                                        <%= dta.dep_origin %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <%= dta.user_id.includes("0") ? "Token not served" : dta.user_id %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <%= dta.token_no %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <%= dta.dep_from %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <%= dta.dep_to %>
+                                                    </center>
+                                                </td>
+                                                <td hidden>
+                                                    <center>
+                                                        <%= dta.occurance_index %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <%= new Date(dta.date).toLocaleDateString('en-GB', {
+                                                            weekday: 'long' }) %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <%= new Date(dta.date).toLocaleDateString('en-GB') %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <%= new Date(dta.date).getMonth() + 1 %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <% let ackTime=new Date(dta.ack_time); let endTime=new
+                                                            Date(dta.end_time); let timeDifference=(endTime - ackTime) /
+                                                            1000; let hours=Math.floor(timeDifference / 3600);
+                                                            timeDifference %=3600; let minutes=Math.floor(timeDifference
+                                                            / 60); let seconds=Math.floor(timeDifference % 60); let
+                                                            formattedTime=`${hours.toString().padStart(2, '0'
+                                                            )}:${minutes.toString().padStart(2, '0'
+                                                            )}:${seconds.toString().padStart(2, '0' )}`; if
+                                                            (hours.toString().length> 2) {
+                                                            formattedTime = "00:00:00";
+                                                            }
+                                                            %>
+                                                            <% let from=dta.dep_from ;%>
+                                                                <% let to=dta.dep_to ;%>
+                                                                    <% let dep=dta.dep_origin ;%>
+                                                                        <% if (dep===to && dep===from &&
+                                                                            formattedTime.toString() !=="00:00:00" ) {
+                                                                            %>
+                                                                            Served
+                                                                            <% }else
+                                                                                if(formattedTime.toString()==="00:00:00"
+                                                                                ){%>
+                                                                                Skipped
+                                                                                <% } else { %>
+                                                                                    Reassigned
+                                                                                    <% } %>
+
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <%= dta.occurance_index === 1 
+                                                            ? "Completed" 
+                                                            : dta.occurance_index === 0 
+                                                            ? "Skipped" 
+                                                            : dta.occurance_index > 2 
+                                                            ? "Recall" 
+                                                            : "" %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <% if (dta.generated_time) { %>
+                                                            <% let options={ hour: '2-digit' , minute: '2-digit' ,
+                                                                second: '2-digit' , hour12: false }; %>
+                                                                <% let formattedTime=new
+                                                                    Date(dta.generated_time).toLocaleTimeString('en-IN',
+                                                                    options); %>
+                                                                    <%= formattedTime %>
+                                                                        <% } else { %>
+                                                                            N/A
+                                                                            <% } %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <% if (dta.call_time) { %>
+                                                            <% let options={ hour: '2-digit' , minute: '2-digit' ,
+                                                                second: '2-digit' , hour12: false }; %>
+                                                                <% let formattedTime=new
+                                                                    Date(dta.call_time).toLocaleTimeString('en-IN',
+                                                                    options); %>
+                                                                    <%= formattedTime %>
+                                                                        <% } else { %>
+                                                                            N/A
+                                                                            <% } %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <% if (dta.ack_time) { %>
+                                                            <% let options={ hour: '2-digit' , minute: '2-digit' ,
+                                                                second: '2-digit' , hour12: false }; %>
+                                                                <% let formattedAckTime=new
+                                                                    Date(dta.ack_time).toLocaleTimeString('en-IN',
+                                                                    options); %>
+                                                                    <%= formattedAckTime %>
+                                                                        <% } else { %>
+                                                                            N/A
+                                                                            <% } %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <% if (dta.end_time) { %>
+                                                            <% let options={ hour: '2-digit' , minute: '2-digit' ,
+                                                                second: '2-digit' , hour12: false }; %>
+                                                                <% let formattedEndTime=new
+                                                                    Date(dta.end_time).toLocaleTimeString('en-IN',
+                                                                    options); %>
+                                                                    <%= formattedEndTime %>
+                                                                        <% } else { %>
+                                                                            N/A
+                                                                            <% } %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <% if (dta.ack_time && dta.end_time) { %>
+                                                            <% let ackTime=new Date(dta.ack_time); let endTime=new
+                                                                Date(dta.end_time); let timeDifference=(endTime -
+                                                                ackTime) / 1000; let hours=Math.floor(timeDifference /
+                                                                3600); timeDifference %=3600; let
+                                                                minutes=Math.floor(timeDifference / 60); let
+                                                                seconds=Math.floor(timeDifference % 60); let
+                                                                formattedTime=`${hours.toString().padStart(2, '0'
+                                                                )}:${minutes.toString().padStart(2, '0'
+                                                                )}:${seconds.toString().padStart(2, '0' )}`; if
+                                                                (hours.toString().length> 2) {
+                                                                formattedTime = "00:00:00";
+                                                                }
+                                                                %>
+                                                                <%= formattedTime %>
+                                                                    <% } else { %>
+                                                                        00:00:00
+                                                                        <% } %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <% if (dta.waitingTime) { %>
+                                                            <% let
+                                                                waitingTime=JSON.parse(JSON.stringify(dta.waitingTime));
+                                                                let totalSeconds=(waitingTime.hours * 3600) +
+                                                                (waitingTime.minutes * 60) + waitingTime.seconds; let
+                                                                hours=Math.floor(totalSeconds / 3600); totalSeconds
+                                                                %=3600; let minutes=Math.floor(totalSeconds / 60); let
+                                                                seconds=totalSeconds % 60; let
+                                                                formattedTime=`${hours.toString().padStart(2, '0'
+                                                                )}:${minutes.toString().padStart(2, '0'
+                                                                )}:${seconds.toString().padStart(2, '0' )}`; if
+                                                                (hours.toString().length> 2) {
+                                                                formattedTime = "00:00:00";
+                                                                }
+                                                                %>
+                                                                <%= formattedTime %>
+                                                                    <% } else { %>
+                                                                        00:01:00
+                                                                        <% } %>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <% if (dta.totalTime) { %>
+                                                            <% let totalTime=dta.totalTime; let
+                                                                totalSeconds=(totalTime.hours * 3600) +
+                                                                (totalTime.minutes * 60) + totalTime.seconds; let
+                                                                hours=Math.floor(totalSeconds / 3600); totalSeconds
+                                                                %=3600; let minutes=Math.floor(totalSeconds / 60); let
+                                                                seconds=totalSeconds % 60; let
+                                                                formattedTime=`${hours.toString().padStart(2, '0'
+                                                                )}:${minutes.toString().padStart(2, '0'
+                                                                )}:${seconds.toString().padStart(2, '0' )}`; if
+                                                                (hours.toString().length> 2) {
+                                                                formattedTime = "00:00:00";
+                                                                }
+                                                                %>
+                                                                <%= formattedTime %>
+                                                                    <% } else { %>
+                                                                        00:00:00
+                                                                        <% } %>
+                                                    </center>
+                                                </td>
+                                            </tr>
+
+                                            <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <style>
+                                .table-responsive {
+                                    max-height: 400px !important;
+                                    overflow-y: auto !important;
+                                }
+
+                                .table-responsive::-webkit-scrollbar {
+                                    width: 0px;
+                                }
+
+                                .table-responsive {
+                                    scrollbar-width: 3px;
+                                }
+
+                                .table-responsive thead th {
+                                    position: sticky !important;
+                                    top: 0 !important;
+                                    background: #fff !important;
+                                    z-index: 100 !important;
+                                }
+                            </style>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var exportExcelBtn = document.getElementById('exportExcel');
+            var exportPDFBtn = document.getElementById('exportPDF');
+            var exportCSVBtn = document.getElementById('exportCSV');
+            var exportJSONBtn = document.getElementById('exportJSON');
+
+            if (exportExcelBtn) exportExcelBtn.addEventListener('click', exportToExcel);
+            if (exportPDFBtn) exportPDFBtn.addEventListener('click', exportToPDF);
+            if (exportCSVBtn) exportCSVBtn.addEventListener('click', exportToCSV);
+            if (exportJSONBtn) exportJSONBtn.addEventListener('click', exportToJSON);
+        });
+
+        function exportToExcel() {
+            console.log('Exporting to Excel...');
+            const filteredRows = getFilteredRows();
+            const userId = document.getElementById('userId').value.toUpperCase();
+            const department = document.getElementById('department').value.toUpperCase();
+            const table = document.querySelector('.table-responsive').querySelector('table');
+
+            // Get header cells excluding the "Occurrence" column
+            const headerCells = Array.from(table.querySelectorAll('thead th'))
+                .map(cell => cell.textContent.trim())
+                .filter(text => text !== "Occurrence");
+
+            // Find the index of the "Occurrence" column
+            const occurrenceIndex = Array.from(table.querySelectorAll('thead th'))
+                .findIndex(cell => cell.textContent.trim() === "Occurrence");
+
+            const dataToExport = [];
+
+            // Add header cells as the first row
+            const headerRow = headerCells.map(cell => ({ v: cell, t: 's' }));
+            dataToExport.push(headerRow);
+
+            filteredRows.forEach(row => {
+                // Get row data excluding the "Occurrence" column
+                let rowData = Array.from(row.cells)
+                    .filter((_, index) => index !== occurrenceIndex)
+                    .map(cell => {
+                        let cellValue = cell.textContent.trim();
+                        if (!isNaN(cellValue) && cellValue !== '') {
+                            return { v: parseFloat(cellValue), t: 'n' }; // Format as number
+                        } else if (cellValue.match(/^\d{2}:\d{2}:\d{2}$/)) {
+                            // Format as time
+                            let timeParts = cellValue.split(':');
+                            let excelTime = (parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60 + parseInt(timeParts[2])) / 86400;
+                            return { v: excelTime, t: 'n', z: 'hh:mm:ss' }; // Format as time with proper Excel format
+                        } else {
+                            return { v: cellValue, t: 's' }; // Format as text
+                        }
+                    });
+
+                dataToExport.push(rowData);
+            });
+
+            if (dataToExport.length === 1) {
+                alert("No rows matched the criteria.");
+                return;
+            }
+
+            console.log('Filtered Data:', dataToExport);
+
+            // Prepare workbook and worksheet
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet([]);
+
+            // Append each row to the worksheet
+            dataToExport.forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    let cellRef = XLSX.utils.encode_cell({ c: colIndex, r: rowIndex });
+                    ws[cellRef] = { v: cell.v, t: cell.t };
+                    if (cell.z) {
+                        ws[cellRef].z = cell.z; // Set number format if it exists
+                    }
+                });
+            });
+
+            ws['!ref'] = XLSX.utils.encode_range({ s: { c: 0, r: 0 }, e: { c: headerCells.length - 1, r: dataToExport.length - 1 } });
+            XLSX.utils.book_append_sheet(wb, ws, "Filtered Data");
+            XLSX.writeFile(wb, 'filtered_data.xlsx');
+        }
+
+    </script>
+
+    <script>
+        document.getElementById('exportPDF').addEventListener('click', exportTableToPDF);
+
+        function formatDateTime(dateTimeString) {
+            if (!dateTimeString) return ''; // If dateTimeString is empty or undefined, return an empty string.
+            const date = new Date(dateTimeString);
+            if (isNaN(date.getTime())) return ''; // If date is invalid, return an empty string.
+
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        }
+
+        function exportTableToPDF() {
+            const headers = [["Department", "User ID", "Token No", "From Dep", "To Dep", "Occurrence", "Date", "Generated Time", "Call Time", "Ack Time", "End Time", "Operator Time", "Waiting Time", "Total Time"]];
+
+            const filteredRows = getFilteredRows();
+
+            let body = filteredRows.map(row => {
+                return Array.from(row.cells).map((cell, index) => {
+                    const text = cell.textContent.trim();
+                    if (index === 7 || index === 8 || index === 9) { // Format Generated Time, Call Time, Ack Time, End Time
+                        const formattedDateTime = formatDateTime(text);
+                        if (!formattedDateTime) {
+                            console.error(`Invalid date-time string: "${text}" at row ${row.rowIndex}, column ${index}`);
+                        }
+                        return formattedDateTime;
+                    }
+                    return text;
+                });
+            });
+
+            if (body.length === 0) {
+                alert("No data to export based on the selected criteria.");
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+            doc.autoTable({
+                head: headers,
+                body: body,
+                styles: { fontSize: 10 },
+                margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            });
+
+            doc.save('filtered_table_data.pdf');
+        }
+
+        function parseDate(dateString) {
+            const [day, month, year] = dateString.split('-').map(Number);
+            return new Date(year, month - 1, day, 0, 0, 0);
+        }
+
+        // Debugging statements for initial load
+        console.log('Document loaded.');
+
+        document.getElementById('exportPDF').addEventListener('click', exportTableToPDF);
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        function exportToJSON() {
+            const filteredRows = getFilteredRows();
+            const headerCells = Array.from(document.querySelector('.table-responsive').querySelector('table').querySelectorAll('thead th'))
+                .map(cell => cell.textContent.trim())
+                .filter(text => text !== "Occurrence");
+
+            if (filteredRows.length === 0) {
+                alert("No rows matched the criteria.");
+                return;
+            }
+
+            let data = filteredRows.map(row => {
+                let rowData = {};
+                Array.from(row.cells).forEach((cell, index) => {
+                    if (headerCells[index] !== "Occurrence") {
+                        rowData[headerCells[index]] = cell.textContent.trim();
+                    }
+                });
+                return rowData;
+            });
+
+            var jsonData = JSON.stringify(data, null, 2);
+            var blob = new Blob([jsonData], { type: "application/json" });
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "filtered_data.json";
+            link.click();
+        }
+
+        // Function to parse date string in "dd-mm-yyyy" format and return a Date object
+        function parseDate(dateString) {
+            const [day, month, year] = dateString.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        document.getElementById('exportJSON').addEventListener('click', exportToJSON);
+    </script>
+
+
+
+
+    <script>
+        function exportToCSV() {
+            const filteredRows = getFilteredRows();
+            const table = document.querySelector('.table-responsive').querySelector('table');
+            const headerCells = Array.from(table.querySelectorAll('thead th'))
+                .map(cell => cell.textContent.trim());
+
+            // Get indices of columns to include (excluding "Occurrence")
+            const includedIndices = headerCells
+                .map((text, index) => text !== "Occurrence" ? index : -1)
+                .filter(index => index !== -1);
+
+            // Filtered header cells
+            const filteredHeaderCells = headerCells.filter((text, index) => includedIndices.includes(index));
+
+            if (filteredRows.length === 0) {
+                alert("No rows matched the criteria.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8," + filteredHeaderCells.join(",") + "\n";
+            filteredRows.forEach(row => {
+                let rowData = Array.from(row.cells)
+                    .map((cell, index) => includedIndices.includes(index) ? cell.textContent.trim() : null)
+                    .filter(cell => cell !== null)
+                    .join(",");
+                csvContent += rowData + "\n";
+            });
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "filtered_data.csv");
+            document.body.appendChild(link);
+            link.click();
+        }
+
+        function parseDate(dateString) {
+            const [day, month, year] = dateString.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        document.getElementById('exportCSV').addEventListener('click', exportToCSV);
+    </script>
+
+    <!--**********************************
+            Content body end
+        ***********************************-->
+
+    <!--**********************************
+            Footer start
+        ***********************************-->
+
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright © Designed &amp; Developed by <a href="https://kvartech.in/" target="_blank">KVAR TECH</a>
+                    2024 <img src="/src/images/Make-In-IndiaLogo650.webp" alt="" height="40" width="70">
+                </p>
+            </div>
+        </div>
+    <!--**********************************
+            Footer end
+        ***********************************-->
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+    <script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="/src/vendor/global/global.min.js"></script>
+    <script src="/src/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="/src/vendor/chart.js/Chart.bundle.min.js"></script>
+
+    <!-- Chart piety plugin files -->
+    <script src="/src/vendor/peity/jquery.peity.min.js"></script>
+
+    <!-- Apex Chart -->
+    <script src="/src/vendor/apexchart/apexchart.js"></script>
+
+    <!-- Dashboard 1 -->
+    <script src="/src/js/dashboard/dashboard-1.js"></script>
+
+    <script src="/src/vendor/owl-carousel/owl.carousel.js"></script>
+    <script src="/src/js/custom.min.js"></script>
+    <script src="/src/js/deznav-init.js"></script>
+    <script src="/src/js/demo.js"></script>
+    <script src="/src/js/styleSwitcher.js"></script>
+
+</body>
+
+</html>
