@@ -27,7 +27,7 @@ export default function CounterManagement() {
     const fetchCounters = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get<{ counters: Counter[] }>('/admin/counters');
+            const res = await api.get<{ counters: Counter[] }>('/counters');
             setCounters(res.data.counters || []);
         } catch {
             setMessage({ text: 'Failed to load counters', type: 'error' });
@@ -51,7 +51,7 @@ export default function CounterManagement() {
     const handleAdd = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post('/admin/counters/register', addForm);
+            await api.post('/counters/register', addForm);
             showMsg('Counter registered', 'success');
             setAddForm({ counter: '', active: '', displayid: '', buzzer_time: '', buzzer_active: '', blink: '', ipaddress: '' });
             fetchCounters();
@@ -68,7 +68,7 @@ export default function CounterManagement() {
         e.preventDefault();
         if (!editItem) return;
         try {
-            await api.put('/admin/counters/update', editItem);
+            await api.put('/counters/update', editItem);
             showMsg('Counter updated', 'success');
             setEditItem(null);
             fetchCounters();

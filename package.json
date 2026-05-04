@@ -2,12 +2,12 @@
   "name": "token-display",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
-  "bin": "main.js",
+  "main": "src/server.js",
+  "bin": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon main.js -e js,ejs",
-    "start": "nodemon main.js -e js,ejs"
+    "dev": "nodemon src/server.js -e js,ejs",
+    "start": "nodemon src/server.js -e js,ejs"
   },
   "keywords": [],
   "author": "",

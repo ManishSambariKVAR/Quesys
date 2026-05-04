@@ -1,13 +1,9 @@
-/* ============================================
-   Login Page Styles
-   ============================================ */
-
 .login-page {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f7f9fb; /* Light grayish off-white background from image */
+  background-color: #f7f9fb;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -27,7 +23,7 @@
 .preloader.hidden {
   opacity: 0;
   pointer-events: none;
-  display: none; /* Add this so it doesn't block clicks later */
+  visibility: hidden;
 }
 
 .preloader-image {
@@ -69,9 +65,10 @@
 }
 
 .login-logo {
-  height: 55px; /* Taller logo from image */
-  object-fit: contain;
-  margin-bottom: 15px;
+    background: white;
+    display: block;
+    margin: 0 auto 10px auto;  /* center + spacing below */
+    max-width: 80px;           /* adjust size if needed */
 }
 
 .login-header h4 {

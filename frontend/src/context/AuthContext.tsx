@@ -7,6 +7,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [authLoading, setAuthLoading] = useState(true);
 
     // Hydrate from localStorage on mount
     useEffect(() => {
@@ -16,6 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setToken(savedToken);
             setUser(JSON.parse(savedUser));
         }
+        setAuthLoading(false);
     }, []);
 
     const login = async (userId: string, password: string, counter: string) => {
@@ -44,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const isAdmin = user?.adminLevel === 'Admin';
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated, isAdmin }}>
+        <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated, isAdmin, authLoading }}>
             {children}
         </AuthContext.Provider>
     );

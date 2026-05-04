@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
-const { client, connectDatabase } = require("./src/config/database");
+const { client, connectDatabase } = require("./config/database");
 const bodyParser = require("body-parser");
 const { log, Console } = require("console");
 const multer = require("multer");
@@ -12,7 +12,7 @@ const notifier = require("node-notifier");
 const https = require("https");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const app = express();
+const app = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || "quesys_jwt_secret_key_2024";
 
@@ -25,16 +25,14 @@ const stacks = new Map();
 const CounterCurrentstacks = new Map();
 
 const VoiceStacks = [];
-// Declare balanceTokens as a global variable
+
 let balanceTokens = 0;
 
 function pushToVoiceStack(token) {
-  // Add the token directly to the VoiceStacks array
   VoiceStacks.push(token);
 }
 
 function pushToStackCounter(grievance, token) {
-  // Check if the stack for the grievance already exists
   if (!CounterCurrentstacks.has(grievance)) {
     CounterCurrentstacks.set(grievance, []); // Create a new stack if it doesn't exist
   } else {
@@ -61,12 +59,11 @@ function pushToStack(grievance, token) {
 }
 
 function popFromAnyStack(value) {
-  // Normalize the input value by removing the asterisk (*) if present
   const normalizedValue = value.replace("*", "");
 
   // Iterate through each grievance and its stack in the Map
   for (const [grievance, stack] of stacks.entries()) {
-    // Find the index of the token that matches the given value
+ 
     const index = stack.findIndex((token) => {
       // Ensure the token has a hyphen and a suffix
       if (typeof token === "string" && token.includes("-")) {
@@ -124,18 +121,6 @@ function checkAndPop() {
 // Start the checking and popping process
 checkAndPop();
 
-// Example usage
-// Initialize the stacks
-// pushToStack("1", "1-c001*");
-// pushToStack("1", "1-c002");
-// pushToStack("2", "1-c003");
-// pushToStack("2", "1-c004*");
-
-// // Test cases
-// console.log(popFromAnyStack("c001")); // Should output: "1-c001*"
-// console.log(popFromAnyStack("c004")); // Should output: "1-c004*"
-
-// Enable CORS for any origin: For Software KIOSK
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -168,23 +153,11 @@ const options = {
   cert: fs.readFileSync("localhost.pem"),
 };
 
-const server = https.createServer(options, app);
-
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "src", "templates"));
-app.use("/src", express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: "KVAR", resave: false, saveUninitialized: false }));
 
 app.use(express.json());
 app.use(bodyParser.json());
-
-app.set("view engine", "ejs");
-
-connectDatabase().catch((err) => {
-  console.error("Exiting application due to database connection error");
-  process.exit(1);
-});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -394,11 +367,9 @@ function replaceSpecialForSummary(inputString, data) {
     }
     // Split the value by comma to get department and field
     const [findDep, replaceValue] = value.split(",").map((v) => v.trim());
-    // Find the department in the data array
+
     const foundData = data.find((item) => item.dep === findDep);
-    // If department not found, return the original match
     if (!foundData) return match;
-    // If replaceValue is 'Name', replace with department name
     if (replaceValue === "Name") {
       return foundData.dep;
     }
@@ -446,10 +417,6 @@ function padNumberWithZeros(num, size) {
   return numStr;
 }
 
-// ============================================
-// JWT API ENDPOINTS (for React frontend)
-// ============================================
-
 // JWT auth middleware for API routes
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -488,113 +455,7 @@ app.get('/api/admin/dashboard', async (req, res) => {
   }
 });
 
-
-// GET /api/counters — returns available counters for login dropdown
-app.get("/api/counters", async (req, res) => {
-  try {
-    const currDt = getCurrentDate();
-    const updateQuery = `SELECT * FROM userlogs WHERE datetime = $1 AND log = 1;`;
-    const data_user_counter = await client.query(updateQuery, [currDt]);
-
-    const update = `SELECT * FROM counterdisplay;`;
-    const data_all_counter = await client.query(update);
-
-    const { availableCounters, error } = findAvailableCounters(
-      data_all_counter.rows,
-      data_user_counter.rows
-    );
-
-    res.json({ counters: availableCounters, error });
-  } catch (error) {
-    console.error("Error fetching counters:", error);
-    res.status(500).json({ error: "Failed to fetch counters" });
-  }
-});
-
-// POST /api/login — authenticates user and returns JWT
-app.post("/api/login", async (req, res) => {
-  try {
-    const { userId, password, counter } = req.body;
-
-    // Root admin check
-    if (userId === DEFAULT_USER_ID && password === DEFAULT_PASSWORD) {
-      const token = jwt.sign(
-        { id: "000", name: "kvar", userId: "000", adminLevel: "Admin", department: "", counter: "" },
-        JWT_SECRET,
-        { expiresIn: "8h" }
-      );
-      return res.json({
-        success: true,
-        token,
-        user: { id: "000", name: "kvar", userId: "000", adminLevel: "Admin", department: "", counter: "" },
-        redirect: "/admin",
-      });
-    }
-
-    // Fetch user from DB
-    const userRes = await client.query("SELECT * FROM users WHERE userId = $1", [userId]);
-    if (userRes.rows.length !== 1) {
-      return res.status(401).json({ error: "User not found" });
-    }
-
-    const user = userRes.rows[0];
-
-    // Compare password
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if (!isPasswordMatch) {
-      return res.status(401).json({ error: "Invalid credentials. Please try again." });
-    }
-
-    // Admin user
-    if (user.adminlevel === "Admin") {
-      const token = jwt.sign(
-        { id: userId, name: user.name, userId, adminLevel: user.adminlevel, department: user.userdept, counter: "" },
-        JWT_SECRET,
-        { expiresIn: "8h" }
-      );
-      return res.json({
-        success: true,
-        token,
-        user: { id: userId, name: user.name, userId, adminLevel: user.adminlevel, department: user.userdept, counter: "" },
-        redirect: "/admin",
-      });
-    }
-
-    // Normal user — need counter and department kiosk
-    const depRes = await client.query("SELECT * FROM departments WHERE department = $1", [user.userdept]);
-    const kioskData = depRes.rows[0];
-
-    if (!kioskData) {
-      return res.status(400).json({ error: "Wrong Counter — no kiosk mapped to department" });
-    }
-
-    if (!counter) {
-      return res.status(400).json({ error: "Counter is undefined. Please select a valid counter." });
-    }
-
-    const payload = {
-      id: userId,
-      name: user.name,
-      userId,
-      adminLevel: user.adminlevel,
-      department: user.userdept,
-      counter,
-      kioskId: kioskData.kiosk_id,
-    };
-
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "8h" });
-
-    return res.json({
-      success: true,
-      token,
-      user: payload,
-      redirect: "/dashboard",
-    });
-  } catch (err) {
-    console.error("API LOGIN ERROR:", err.message);
-    return res.status(500).json({ error: "Invalid credentials. Please try again." });
-  }
-});
+app.use("/api", require("./routes/auth.routes"));
 
 // GET /api/dashboard — returns all data needed by the dashboard page
 app.get("/api/dashboard", authenticateToken, async (req, res) => {
@@ -668,651 +529,32 @@ app.get("/api/admin",authenticateToken, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════════
-// USER MANAGEMENT APIs
-// ══════════════════════════════════════════════
-
-// GET /api/users — list all users + departments
-app.get("/api/users", authenticateToken, async (req, res) => {
-  try {
-    const usersResult = await client.query("SELECT * FROM users");
-    const deptResult = await client.query("SELECT * FROM departments");
-    res.json({ users: usersResult.rows, departments: deptResult.rows });
-  } catch (error) {
-    console.error("API users error:", error);
-    res.status(500).json({ error: "Failed to load users" });
-  }
-});
-
-// POST /api/users/register — create a new user
-app.post("/api/users/register", authenticateToken, async (req, res) => {
-  const { name, userId, password, confirmPassword, userDept, adminlevel } = req.body;
-
-  if (!name || !userId || !password || !confirmPassword || password !== confirmPassword) {
-    return res.status(400).json({ error: "All fields are required, and passwords must match." });
-  }
-
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const insertQuery = `INSERT INTO users (name, userId, password, userDept, adminLevel) VALUES ($1, $2, $3, $4, $5)`;
-    await client.query(insertQuery, [name, userId, hashedPassword, userDept, adminlevel]);
-    res.json({ message: "User registered successfully" });
-  } catch (err) {
-    if (err.code === "23505") {
-      return res.status(400).json({ error: "User ID already exists." });
-    }
-    console.error("API register error:", err);
-    res.status(500).json({ error: "Server error during registration." });
-  }
-});
-
-// PUT /api/users/update — edit a user
-app.put("/api/users/update", authenticateToken, async (req, res) => {
-  const { userId, name, userid, userDept, adminLevel } = req.body;
-
-  if (!userId || !name || !userid || !userDept || !adminLevel) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
-
-  try {
-    const updateQuery = `UPDATE users SET name = $1, userId = $2, userDept = $3, adminLevel = $4 WHERE id = $5`;
-    await client.query(updateQuery, [name, userid, userDept, adminLevel, userId]);
-    res.json({ message: "User updated successfully" });
-  } catch (err) {
-    console.error("API update user error:", err);
-    res.status(500).json({ error: "Server error during user update." });
-  }
-});
-
-// DELETE /api/users/:id — delete a user
-app.delete("/api/users/:id", authenticateToken, async (req, res) => {
-  const id = req.params.id;
-  try {
-    const result = await client.query("DELETE FROM users WHERE id = $1", [id]);
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: "User not found." });
-    }
-    res.json({ message: "User deleted successfully" });
-  } catch (err) {
-    console.error("API delete user error:", err);
-    res.status(500).json({ error: "Failed to delete user." });
-  }
-});
-
-// ══════════════════════════════════════════════
-// DEPARTMENT MANAGEMENT APIs
-// ══════════════════════════════════════════════
-
-// GET /api/departments — list all departments + kiosks
-app.get("/api/departments", authenticateToken, async (req, res) => {
-  try {
-    const deptResult = await client.query("SELECT * FROM departments");
-    const kioskResult = await client.query("SELECT * FROM kioskRegistration");
-    res.json({ departments: deptResult.rows, kiosks: kioskResult.rows });
-  } catch (error) {
-    console.error("API departments error:", error);
-    res.status(500).json({ error: "Failed to load departments" });
-  }
-});
-
-// POST /api/departments/register — create a new department
-app.post("/api/departments/register", authenticateToken, async (req, res) => {
-  const { department, kioskKey, depPrefix, kioskId } = req.body;
-  if (!department || !kioskKey || !depPrefix || !kioskId) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
-  try {
-    await client.query(
-      "INSERT INTO departments (department, kiosk_key, dep, kiosk_id) VALUES ($1, $2, $3, $4)",
-      [department, kioskKey, depPrefix, kioskId]
-    );
-    res.json({ message: "Department registered successfully" });
-  } catch (err) {
-    console.error("API dept register error:", err);
-    res.status(500).json({ error: "Failed to register department." });
-  }
-});
-
-// PUT /api/departments/update — edit a department
-app.put("/api/departments/update", authenticateToken, async (req, res) => {
-  const { id, department, kioskKey, depPrefix, kioskId } = req.body;
-  if (!id || !department || !kioskKey || !depPrefix || !kioskId) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
-  try {
-    await client.query(
-      "UPDATE departments SET department = $1, kiosk_key = $2, dep = $3, kiosk_id = $4 WHERE id = $5",
-      [department, kioskKey, depPrefix, kioskId, id]
-    );
-    res.json({ message: "Department updated successfully" });
-  } catch (err) {
-    console.error("API dept update error:", err);
-    res.status(500).json({ error: "Failed to update department." });
-  }
-});
-
-// DELETE /api/departments/:id — delete a department
-app.delete("/api/departments/:id", authenticateToken, async (req, res) => {
-  const id = req.params.id;
-  try {
-    const result = await client.query("DELETE FROM departments WHERE id = $1", [id]);
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: "Department not found." });
-    }
-    res.json({ message: "Department deleted successfully" });
-  } catch (err) {
-    console.error("API dept delete error:", err);
-    res.status(500).json({ error: "Failed to delete department." });
-  }
-});
-
-// ══════════════════════════════════════════════
-// COUNTER MANAGEMENT APIs
-// ══════════════════════════════════════════════
-
-app.get("/api/admin/counters", authenticateToken, async (req, res) => {
-  try {
-    const counterResult = await client.query("SELECT * FROM counterdisplay");
-    const kioskResult = await client.query("SELECT * FROM kioskRegistration");
-    res.json({ counters: counterResult.rows, kiosks: kioskResult.rows });
-  } catch (error) {
-    console.error("API counters error:", error);
-    res.status(500).json({ error: "Failed to load counters" });
-  }
-});
-
-app.post("/api/admin/counters/register", authenticateToken, async (req, res) => {
-  const { counter, active, displayid, buzzer_time, buzzer_active, blink, ipaddress } = req.body;
-
-  try {
-    await client.query(
-      `INSERT INTO counterdisplay 
-      (counter, active, displayid, buzzer_time, buzzer_active, blink, ipaddress) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [counter, active, displayid, buzzer_time, buzzer_active, blink, ipaddress]
-    );
-    res.json({ message: "Counter registered successfully" });
-  } catch (err) {
-    console.error("API counter register error:", err);
-    res.status(500).json({ error: "Failed to register counter." });
-  }
-});
-
-app.put("/api/admin/counters/update", authenticateToken, async (req, res) => {
-  const { id, counter, active, displayid, buzzer_time, buzzer_active, blink, ipaddress } = req.body;
-
-  if (!id) return res.status(400).json({ error: "Counter ID is required." });
-
-  try {
-    const updateQuery = `
-      UPDATE counterdisplay 
-      SET counter = $1, active = $2, displayid = $3, 
-          buzzer_time = $4, buzzer_active = $5, blink = $6, ipaddress = $7
-      WHERE id = $8
-    `;
-    await client.query(updateQuery, [
-      counter, active, displayid, buzzer_time, buzzer_active, blink, ipaddress, id
-    ]);
-    res.json({ message: "Counter updated successfully" });
-  } catch (err) {
-    console.error("API counter update error:", err);
-    res.status(500).json({ error: "Failed to update counter." });
-  }
-});
-
-app.delete("/api/admin/counters/:id", authenticateToken, async (req, res) => {
-  const id = req.params.id;
-  try {
-    const result = await client.query("DELETE FROM counterdisplay WHERE id = $1", [id]);
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: "Counter not found." });
-    }
-    res.json({ message: "Counter deleted successfully" });
-  } catch (err) {
-    console.error("API counter delete error:", err);
-    res.status(500).json({ error: "Failed to delete counter." });
-  }
-});
-
-// ══════════════════════════════════════════════
-// COMPANY SETTINGS APIs (Admin Only)
-// ══════════════════════════════════════════════
-
-app.get("/api/admin/company", authenticateToken, async (req, res) => {
-  try {
-    const result = await client.query("SELECT * FROM companies ORDER BY id ASC LIMIT 1");
-    if (result.rows.length > 0) {
-      res.json({
-        companyName: result.rows[0].company_name,
-        logoPath: "/src/uploads/companyLogo.png"
-      });
-    } else {
-      res.json({ companyName: "KVAR TECH", logoPath: null });
-    }
-  } catch (error) {
-    console.error("API company error:", error);
-    res.status(500).json({ error: "Failed to load company details" });
-  }
-});
-
-app.post("/api/admin/company", authenticateToken, upload.single("logo"), async (req, res) => {
-  const companyName = req.body.companyName;
-  let companyLogoPath = "";
-
-  try {
-    const result = await client.query("SELECT * FROM companies ORDER BY id ASC LIMIT 1");
-
-    if (req.file) {
-      companyLogoPath = req.file.path;
-      const targetPath = path.join(__dirname, "src/uploads/companyLogo.png");
-      ensureDirectoryExistence(targetPath);
-      // fs.renameSync(companyLogoPath, targetPath);
-      // Copy instead of rename to avoid cross-device link errors, then delete temp
-      fs.copyFileSync(companyLogoPath, targetPath);
-      fs.unlinkSync(companyLogoPath);
-    }
-
-    if (result.rows.length > 0) {
-      const updateQuery = "UPDATE companies SET company_name = $1 WHERE id = $2";
-      await client.query(updateQuery, [companyName, result.rows[0].id]);
-    } else {
-      const insertQuery = "INSERT INTO companies (company_name, logo_path) VALUES ($1, $2)";
-      // since we always save as src/uploads/companyLogo.png we just store the generic path
-      await client.query(insertQuery, [companyName, "src/uploads/companyLogo.png"]);
-    }
-
-    res.json({ message: "Company settings updated successfully" });
-  } catch (error) {
-    console.error("API company update error:", error);
-    res.status(500).json({ error: "Failed to update company settings" });
-  }
-});
-
-// ══════════════════════════════════════════════
-// TV OTA SETTINGS APIs (KVAR Admin Only)
-// ══════════════════════════════════════════════
-
-app.get("/api/admin/ota/files", authenticateToken, async (req, res) => {
-  try {
-    const dirPath = path.join(__dirname, "src/uploads/OTAForTV/");
-    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
-
-    const files = fs.readdirSync(dirPath).filter(file => fs.statSync(path.join(dirPath, file)).isFile());
-    res.json({ files });
-  } catch (error) {
-    console.error("API OTA files error:", error);
-    res.status(500).json({ error: "Failed to list OTA files" });
-  }
-});
-
-app.post("/api/admin/ota/files", authenticateToken, upload.none(), async (req, res) => {
-  const { content, filename } = req.body;
-  if (!content || !filename) return res.status(400).json({ error: "Content and filename are required." });
-
-  try {
-    const dirPath = path.join(__dirname, "src/uploads/OTAForTV/");
-    ensureDirectoryExistence(dirPath);
-    fs.writeFileSync(path.join(dirPath, filename), content);
-    res.json({ message: "OTA template saved successfully." });
-  } catch (error) {
-    console.error("API OTA save error:", error);
-    res.status(500).json({ error: "Failed to save OTA template." });
-  }
-});
-
-app.delete("/api/admin/ota/files/:filename", authenticateToken, async (req, res) => {
-  try {
-    const filePath = path.join(__dirname, "src/uploads/OTAForTV/", req.params.filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-      res.json({ message: "OTA file deleted." });
-    } else {
-      res.status(404).json({ error: "File not found." });
-    }
-  } catch (error) {
-    console.error("API OTA delete error:", error);
-    res.status(500).json({ error: "Failed to delete OTA file." });
-  }
-});
-
-app.get("/api/admin/ota/displays", authenticateToken, async (req, res) => {
-  try {
-    const waiting = await client.query("SELECT display_id FROM waiting_room_displays");
-    const counters = await client.query("SELECT displayid as display_id FROM counterdisplay");
-    const assigned = await client.query("SELECT display_id, filename, status FROM otadisplay");
-
-    const allDisplays = [
-      ...waiting.rows.map(r => ({ ...r, type: 'Waiting Room' })),
-      ...counters.rows.map(r => ({ ...r, type: 'Counter' }))
-    ];
-
-    res.json({ displays: allDisplays, linked: assigned.rows });
-  } catch (error) {
-    console.error("API OTA displays error:", error);
-    res.status(500).json({ error: "Failed to fetch displays for OTA." });
-  }
-});
-
-app.post("/api/admin/ota/links", authenticateToken, async (req, res) => {
-  const { displayid, filename, status } = req.body;
-  if (!displayid || !filename || !status) return res.status(400).json({ error: "Missing required fields." });
-
-  try {
-    const check = await client.query("SELECT display_id FROM otadisplay WHERE display_id = $1", [displayid]);
-    if (check.rows.length > 0) {
-      await client.query("UPDATE otadisplay SET filename = $1, status = $2 WHERE display_id = $3", [filename, status, displayid]);
-    } else {
-      await client.query("INSERT INTO otadisplay (display_id, filename, status) VALUES ($1, $2, $3)", [displayid, filename, status]);
-    }
-    res.json({ message: "OTA display link saved successfully." });
-  } catch (error) {
-    console.error("API OTA link error:", error);
-    res.status(500).json({ error: "Failed to link OTA to display." });
-  }
-});
-
-// ══════════════════════════════════════════════
-// KIOSK SETTINGS APIs
-// ══════════════════════════════════════════════
-
-app.get("/api/admin/kiosks", authenticateToken, async (req, res) => {
-  try {
-    const result = await client.query("SELECT * FROM kioskRegistration");
-    res.json({ kiosks: result.rows });
-  } catch (error) {
-    console.error("API kiosk fetch error:", error);
-    res.status(500).json({ error: "Failed to load kiosks" });
-  }
-});
-
-app.delete("/api/admin/kiosks/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  try {
-    const result = await client.query("DELETE FROM kioskRegistration WHERE id = $1", [id]);
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: "Kiosk not found." });
-    }
-    res.json({ message: "Kiosk deleted successfully" });
-  } catch (error) {
-    console.error("API kiosk delete error:", error);
-    res.status(500).json({ error: "Failed to delete kiosk." });
-  }
-});
-
-// ══════════════════════════════════════════════
-// SYSTEM SETTINGS APIs (Factory, Software, AutoLogout)
-// ══════════════════════════════════════════════
-
-app.get("/api/admin/settings/factory", authenticateToken, async (req, res) => {
-  try {
-    const r = await client.query("SELECT * FROM factory_settings");
-    res.json({ settings: r.rows[0] || { calltoack: 90, acktoend: 90, endtocall: 90 } });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch factory settings." });
-  }
-});
-
-app.post("/api/admin/settings/factory", authenticateToken, async (req, res) => {
-  const { calltoack, acktoend, endtocall } = req.body;
-  try {
-    const r = await client.query("SELECT id FROM factory_settings");
-    if (r.rows.length === 0) {
-      await client.query("INSERT INTO factory_settings(calltoack, acktoend, endtocall) VALUES($1, $2, $3)", [calltoack, acktoend, endtocall]);
-    } else {
-      await client.query("UPDATE factory_settings SET calltoack = $1, acktoend = $2, endtocall = $3 WHERE id = $4", [calltoack, acktoend, endtocall, r.rows[0].id]);
-    }
-    res.json({ message: "Factory settings updated." });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update factory settings." });
-  }
-});
-
-app.get("/api/admin/settings/software", authenticateToken, async (req, res) => {
-  try {
-    const r = await client.query("SELECT * FROM software_settings");
-    res.json({ settings: r.rows[0] || { activate_recall: 'true', activate_reassign: 'true', activate_changedept: 'true' } });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch software settings." });
-  }
-});
-
-app.post("/api/admin/settings/software", authenticateToken, async (req, res) => {
-  const { recall, reassign, changeDept } = req.body;
-  try {
-    const r = await client.query("SELECT id FROM software_settings");
-    if (r.rows.length === 0) {
-      await client.query("INSERT INTO software_settings(activate_recall, activate_reassign, activate_changedept) VALUES($1, $2, $3)", [recall, reassign, changeDept]);
-    } else {
-      await client.query("UPDATE software_settings SET activate_recall = $1, activate_reassign = $2, activate_changedept = $3 WHERE id = $4", [recall, reassign, changeDept, r.rows[0].id]);
-    }
-    res.json({ message: "Software settings updated." });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update software settings." });
-  }
-});
-
-// ══════════════════════════════════════════════
-// WAITING ROOM DISPLAY APIs
-// ══════════════════════════════════════════════
-
-app.get("/api/admin/displays/waiting-room", authenticateToken, async (req, res) => {
-  try {
-    const result = await client.query("SELECT * FROM waiting_room_displays ORDER BY id ASC");
-    res.json({ displays: result.rows });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to load waiting room displays." });
-  }
-});
-
-app.post("/api/admin/displays/waiting-room", authenticateToken, async (req, res) => {
-  const { displayId, displayStatus, IP } = req.body;
-  if (!displayId || !displayStatus || !IP) return res.status(400).json({ error: "Missing required fields" });
-  try {
-    await client.query(
-      "INSERT INTO waiting_room_displays (display_id, display_status, ip_address) VALUES ($1, $2, $3)",
-      [displayId, displayStatus, IP]
-    );
-    res.json({ message: "Display added successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to add display" });
-  }
-});
-
-app.put("/api/admin/displays/waiting-room/:id", authenticateToken, async (req, res) => {
-  const id = req.params.id;
-  const { displayId, displayStatus, IP } = req.body;
-  try {
-    await client.query(
-      "UPDATE waiting_room_displays SET display_id = $1, display_status = $2, ip_address = $3 WHERE id = $4",
-      [displayId, displayStatus, IP, id]
-    );
-    res.json({ message: "Display updated successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update display" });
-  }
-});
-
-app.delete("/api/admin/displays/waiting-room/:id", authenticateToken, async (req, res) => {
-  const id = req.params.id;
-  try {
-    await client.query("DELETE FROM waiting_room_displays WHERE id = $1", [id]);
-    res.json({ message: "Display deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete display" });
-  }
-});
-
-// ══════════════════════════════════════════════
-// REPORTS APIs
-// ══════════════════════════════════════════════
-
-app.get("/api/admin/reports/logs", authenticateToken, async (req, res) => {
-  const { fromDate, toDate } = req.query;
-  try {
-    let query = "SELECT *, info::json AS info_json FROM token_logs WHERE user_id != '0'";
-    const queryParams = [];
-
-    if (fromDate) {
-      queryParams.push(fromDate);
-      query += ` AND DATE(call_time) >= $${queryParams.length}`;
-    }
-    if (toDate) {
-      queryParams.push(toDate);
-      query += ` AND DATE(call_time) <= $${queryParams.length}`;
-    }
-    query += " ORDER BY call_time DESC";
-
-    const result = await client.query(query, queryParams);
-
-    // Also fetch reassigned data mapping
-    const reassignRes = await client.query("SELECT * FROM reassignedTokenData");
-
-    res.json({ logs: result.rows, reassigned: reassignRes.rows });
-  } catch (error) {
-    console.error("Error fetching report logs:", error);
-    res.status(500).json({ error: "Failed to load log data." });
-  }
-});
-
-app.get("/api/admin/reports/summary", authenticateToken, async (req, res) => {
-  const { fromDate, toDate } = req.query;
-  try {
-    let query = "SELECT * FROM dailytokencount WHERE 1=1";
-    const queryParams = [];
-
-    if (fromDate) {
-      queryParams.push(fromDate);
-      query += ` AND date >= $${queryParams.length}`;
-    }
-    if (toDate) {
-      queryParams.push(toDate);
-      query += ` AND date <= $${queryParams.length}`;
-    }
-
-    const result = await client.query(query, queryParams);
-
-    // get users & departments for UI 
-    const usersRes = await client.query("SELECT name FROM users WHERE adminlevel != 'Admin'");
-    const deptsRes = await client.query("SELECT department FROM departments");
-
-    res.json({
-      summary: result.rows,
-      usernames: usersRes.rows.map(u => u.name),
-      departments: deptsRes.rows.map(d => d.department)
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to load summary data." });
-  }
-});
-
-// ══════════════════════════════════════════════
-// PRINTER SETTINGS APIs
-// ══════════════════════════════════════════════
-
-
-// GET list of printer report template files
-app.get("/api/admin/printer/report-files", authenticateToken, async (req, res) => {
-  try {
-    const dir = path.join(__dirname, "src", "uploads", "printerReport");
-    if (!fs.existsSync(dir)) {
-      return res.json({ files: [] });
-    }
-    const files = fs.readdirSync(dir).filter(f => !f.startsWith("."));
-    res.json({ files });
-  } catch (error) {
-    console.error("Error listing printer report files:", error);
-    res.status(500).json({ error: "Failed to list report files." });
-  }
-});
-
-// POST save a printer template to disk
-app.post("/api/admin/printer/save-template", authenticateToken, async (req, res) => {
-  const { content, filename } = req.body;
-  if (!content || !filename) return res.status(400).json({ error: "Content and filename required." });
-  try {
-    const dir = path.join(__dirname, "src", "uploads", "printerReport");
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, filename), content, "utf-8");
-    res.json({ message: "Template saved successfully." });
-  } catch (error) {
-    console.error("Error saving printer template:", error);
-    res.status(500).json({ error: "Failed to save template." });
-  }
-});
-
-// GET read a specific printer template file content
-app.get("/api/admin/printer/template/:filename", authenticateToken, async (req, res) => {
-  try {
-    const filePath = path.join(__dirname, "src", "uploads", "printerReport", req.params.filename);
-    if (!fs.existsSync(filePath)) return res.status(404).json({ error: "File not found." });
-    const content = fs.readFileSync(filePath, "utf-8");
-    res.json({ content, filename: req.params.filename });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to read template." });
-  }
-});
-
-// POST submit/link a summary report template
-app.post("/api/admin/printer/submit-summary", authenticateToken, async (req, res) => {
-  const { filename } = req.body;
-  if (!filename) return res.status(400).json({ error: "Filename required." });
-  try {
-    const r = await client.query("SELECT id FROM printer_settings WHERE report_type = 'summary'");
-    if (r.rows.length === 0) {
-      await client.query("INSERT INTO printer_settings (report_type, uploadlink) VALUES ('summary', $1)", [filename]);
-    } else {
-      await client.query("UPDATE printer_settings SET uploadlink = $1 WHERE report_type = 'summary'", [filename]);
-    }
-    res.json({ message: "Summary report linked successfully." });
-  } catch (error) {
-    console.error("Error submitting summary report:", error);
-    res.status(500).json({ error: "Failed to link summary report." });
-  }
-});
-
-// POST submit/link a token report template
-app.post("/api/admin/printer/submit-token", authenticateToken, async (req, res) => {
-  const { filename } = req.body;
-  if (!filename) return res.status(400).json({ error: "Filename required." });
-  try {
-    const r = await client.query("SELECT id FROM printer_settings WHERE report_type = 'token'");
-    if (r.rows.length === 0) {
-      await client.query("INSERT INTO printer_settings (report_type, uploadlink) VALUES ('token', $1)", [filename]);
-    } else {
-      await client.query("UPDATE printer_settings SET uploadlink = $1 WHERE report_type = 'token'", [filename]);
-    }
-    res.json({ message: "Token report linked successfully." });
-  } catch (error) {
-    console.error("Error submitting token report:", error);
-    res.status(500).json({ error: "Failed to link token report." });
-  }
-});
-
-// GET current report linking (which templates are linked)
-app.get("/api/admin/printer/view-linking", authenticateToken, async (req, res) => {
-  try {
-    const summaryRes = await client.query("SELECT uploadlink FROM printer_settings WHERE report_type = 'summary'");
-    const tokenRes = await client.query("SELECT uploadlink FROM printer_settings WHERE report_type = 'token'");
-    res.json({
-      summary: summaryRes.rows[0]?.uploadlink || "Not configured",
-      token: tokenRes.rows[0]?.uploadlink || "Not configured"
-    });
-  } catch (error) {
-    console.error("Error fetching report linking:", error);
-    res.status(500).json({ error: "Failed to load report linking." });
-  }
-});
-
-// ══════════════════════════════════════════════
-// CHANGE DEPARTMENT API (Operator)
-// ══════════════════════════════════════════════
+app.use("/api/users", require("./routes/users.routes"));
+app.use("/api/departments", require("./routes/departments.routes"));
+app.use("/api/admin/counters", require("./routes/counters.routes"));
+app.use("/api/admin/company", require("./routes/company.routes"));
+app.use("/api/admin/ota", require("./routes/ota.routes"));
+app.use("/api/admin/kiosks", require("./routes/kiosks.routes"));
+app.use("/api/admin/settings", require("./routes/settings.routes"));
+app.use("/api/admin/displays", require("./routes/displays.routes"));
+app.use("/api/admin/reports", require("./routes/reports.routes"));
+app.use("/api/admin/printer", require("./routes/printer.routes"));
 
 app.post("/api/user/change-department", authenticateToken, async (req, res) => {
   const { userId, newDepartment } = req.body;
-  if (!userId || !newDepartment) return res.status(400).json({ error: "User ID and department required." });
+
+  if (!userId || !newDepartment) {
+    return res.status(400).json({ error: "User ID and department required." });
+  }
+
   try {
-    await client.query("UPDATE users SET department = $1 WHERE id = $2", [newDepartment, userId]);
-    res.json({ message: "Department changed successfully.", department: newDepartment });
+    // Changed 'department' to 'userdept' to match your pgAdmin table schema
+    await client.query("UPDATE users SET userdept = $1 WHERE id = $2", [newDepartment, userId]);
+    
+    res.json({ 
+      message: "Department changed successfully.", 
+      department: newDepartment 
+    });
   } catch (error) {
     console.error("Error changing department:", error);
     res.status(500).json({ error: "Failed to change department." });
@@ -1531,8 +773,6 @@ app.get("/kioskSummary", async (req, res) => {
 });
 
 var TokenType = 0;
-
-//   console.log("Keypad Request Received");
 //   const key = req.query.key;
 //   console.log("Received key:", key);
 
@@ -5523,14 +4763,10 @@ app.post("/printerEditor", async (req, res) => {
   }
 });
 
-const port = 5001;
-server.listen(port, () => {
-  console.log(`Server running at https://localhost:${port}`);
-});
 
-const HTTPSport = 4001;
-app.listen(HTTPSport, () => {
-  console.log(`Server running at http://localhost:${HTTPSport}`);
-});
+
+
 
 // Developed by GIRISH PAWAR & VISHAL PADYAL
+
+module.exports = app;

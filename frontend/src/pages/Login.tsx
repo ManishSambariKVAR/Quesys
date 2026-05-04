@@ -13,23 +13,23 @@ export default function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
-    const [logoUrl, setLogoUrl] = useState('/images/png-transparent-aadhaar-hd-logo-thumbnail.png');
+    const [logoUrl, setLogoUrl] = useState('/images/Adhar Logo.png');
 
-    const { login, isAuthenticated, isAdmin } = useAuth();
+    const { login, isAuthenticated, isAdmin, authLoading } = useAuth();
     const navigate = useNavigate();
 
-    // Redirect if already logged in
+    // Redirect if already logged in — wait for auth hydration first
     useEffect(() => {
-        if (isAuthenticated) {
-            navigate(isAdmin ? '/admin' : '/dashboard');
+        if (!authLoading && isAuthenticated) {
+            navigate(isAdmin ? '/admin' : '/dashboard', { replace: true });
         }
-    }, [isAuthenticated, isAdmin, navigate]);
+    }, [authLoading, isAuthenticated, isAdmin, navigate]);
 
     // Fetch available counters
     useEffect(() => {
         const fetchCounters = async () => {
             try {
-                const response = await api.get<CountersResponse>('/counters');
+                const response = await api.get<CountersResponse>('/auth/counters');
                 setCounters(response.data.counters);
             } catch (err) {
                 console.error('Failed to fetch counters:', err);
@@ -40,26 +40,26 @@ export default function Login() {
 
     // Try to load the company logo from backend
     useEffect(() => {
-        const companyLogoPath = api.defaults.baseURL 
+        const companyLogoPath = api.defaults.baseURL
             ? `${api.defaults.baseURL}/src/uploads/companyLogo.png`
             : '/src/uploads/companyLogo.png';
-            
+
         fetch(companyLogoPath, { method: 'HEAD' })
             .then(res => {
-                if (res.ok) {
-                    setLogoUrl(companyLogoPath);
-                }
+                if (res.ok) setLogoUrl(companyLogoPath);
             })
-            .catch(() => {
-                // Ignore and use default
-            });
+            .catch(() => {});
     }, []);
 
-    // Preloader animation
+    // Preloader animation — only start after auth check is done
     useEffect(() => {
+        if (authLoading) return;
         const timer = setTimeout(() => setShowForm(true), 2000);
         return () => clearTimeout(timer);
-    }, []);
+    }, [authLoading]);
+
+    // Don't render anything while checking auth (prevents flash/redirect loop)
+    if (authLoading) return null;
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -68,7 +68,6 @@ export default function Login() {
 
         try {
             await login(userId, password, counter);
-            // Navigation happens via the useEffect above once isAuthenticated changes
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { error?: string } } };
@@ -97,8 +96,7 @@ export default function Login() {
                             alt="Logo"
                             className="login-logo"
                             onError={(e) => {
-                                // Fallback to default aadhaar if both fail
-                                (e.target as HTMLImageElement).src = '/images/png-transparent-aadhaar-hd-logo-thumbnail.png';
+                                (e.target as HTMLImageElement).src = '/images/Adhar Logo.png';
                             }}
                         />
                         <h4>Sign in to your account</h4>

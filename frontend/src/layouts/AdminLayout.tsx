@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
-import api from '../api';
+// 1. Import the new global hook (adjust the path if your hook is stored elsewhere)
+import { useCompanySettings } from '../hooks/useCompanySettings';
 import './AdminLayout.css';
 
 export default function AdminLayout() {
-    const [companyName, setCompanyName] = useState('UNIQUE IDENTIFICATION AUTHORITY OF INDIA');
+    // 2. Replace the local useState with the global hook
+    const { companyName } = useCompanySettings(); 
+    
+    // 3. Keep the sidebar state exactly as it is
     const [isSidebarOpen, setSidebarOpen] = useState(true);
 
     return (
@@ -21,10 +25,11 @@ export default function AdminLayout() {
                         </button>
                     </div>
                     <div className="topbar-center">
+                        {/* This will now instantly update when the global state changes! */}
                         <h1 className="company-title">{companyName}</h1>
                     </div>
                     <div className="topbar-right">
-                        <img src="/assets/images/Quesys.png" alt="Quesys" className="quesys-logo" />
+                        <img src="/images/Quesys.png" alt="Quesys" className="quesys-logo" />
                     </div>
                 </header>
                 <div className="admin-content-inner">

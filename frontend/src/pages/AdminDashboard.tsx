@@ -13,7 +13,7 @@ import api from '../api';
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Types 
 interface TokenData {
   dep: string;
   token_current_count: number;
@@ -30,13 +30,13 @@ interface UserLog {
 }
 
 interface AdminDashboardData {
-  data: TokenData[];
-  userLog: UserLog[];
+  tokenData: TokenData[];
+  userLogs: UserLog[];
   currDt: string;
   currTm: string;
 }
 
-// ── Constants ─────────────────────────────────────────
+// ── Constants
 const BACKGROUND_COLORS = [
   'rgb(255, 99, 132)',
   'rgb(54, 162, 235)',
@@ -48,7 +48,7 @@ const BACKGROUND_COLORS = [
   'rgb(214, 223, 34)',
 ];
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers 
 function formatDateTime(dateString: string) {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -74,7 +74,7 @@ function useLiveClock() {
   return time;
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// ── Main Component 
 export default function AdminDashboard() {
   const [dashData, setDashData] = useState<AdminDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -85,6 +85,7 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         const res = await api.get<AdminDashboardData>('/admin/dashboard');
+        console.log("🔍 DATA FROM BACKEND:", res.data);
         setDashData(res.data);
       } catch (err) {
         setError('Failed to load dashboard data.');
@@ -111,11 +112,11 @@ export default function AdminDashboard() {
     </div>
   );
 
-  const data = dashData?.data ?? [];
-  const userLog = dashData?.userLog ?? [];
+  const data = dashData?.tokenData ?? [];
+  const userLogs = dashData?.userLogs ?? [];
   const currDt = dashData?.currDt ?? new Date().toISOString().split('T')[0];
 
-  // ── Aggregate ────────────────────────────────
+  // ── Aggregate 
   const departmentNames: string[] = [];
   const totalTokens: number[] = [];
   let grandTotalTokens = 0;
@@ -274,9 +275,9 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {userLog.length === 0
+                {userLogs.length === 0
                   ? <tr><td colSpan={6} style={s.empty}>No login activity today</td></tr>
-                  : userLog.map((log, i) => {
+                  : userLogs.map((log: UserLog, i: number) => {
                     const isLoggedIn = String(log.log) === '1';
                     const dt = formatDateTime(log.updatedat);
                     return (

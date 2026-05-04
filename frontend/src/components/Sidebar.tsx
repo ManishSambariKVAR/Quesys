@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './Sidebar.css';
 
@@ -16,6 +16,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const isSuperAdmin = user?.name === 'kvar' || user?.userId === '000';
+
     // Determine which menu should be expanded based on the current URL
     const getInitialExpandedState = () => ({
         departments: location.pathname.startsWith('/admin/departments'),
@@ -29,7 +31,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
 
     const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(getInitialExpandedState());
 
-    // Keep accordion open when navigating directly to a route
+    // Update expanded menus when the route changes
     useEffect(() => {
         setExpandedMenus(getInitialExpandedState());
     }, [location.pathname]);
@@ -83,11 +85,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     <li className="sidebar-section-label">MAIN MENU</li>
                     {user?.adminLevel === 'Admin' ? (
                         <>
+                            {/* --- VISIBLE TO ALL ADMINS --- */}
                             <li>
-                                <a className={isActive('/admin') ? 'active' : ''} onClick={() => navigate('/admin')}>
+                                <Link to="/admin" className={isActive('/admin') ? 'active' : ''}>
                                     <Icon src="/images/dashboard (1).png" alt="Dashboard" />
                                     Dashboard
-                                </a>
+                                </Link>
                             </li>
                             <li>
                                 <a onClick={handleLogout}>
@@ -95,13 +98,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                                     Logout
                                 </a>
                             </li>
-                            <li>
-                                <a className={isActive('/admin/company') ? 'active' : ''} onClick={() => navigate('/admin/company')}>
-                                    <Icon src="/images/Company Settings.png" alt="Company" />
-                                    Company Settings
-                                </a>
-                            </li>
-                            
+
                             <li className={`has-submenu ${expandedMenus.departments ? 'expanded' : ''}`}>
                                 <a className={isActive('/admin/departments') ? 'active' : ''} onClick={() => toggleMenu('departments')}>
                                     <Icon src="/images/Department Settings.png" alt="Departments" />
@@ -109,22 +106,22 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                                 </a>
                                 <ul className="submenu">
                                     <li>
-                                        <a className={isSubActive('/admin/departments', 'tab=view') || (isActive('/admin/departments') && !location.search) ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/departments?tab=view')}>
+                                        <Link to="/admin/departments?tab=view"
+                                           className={isSubActive('/admin/departments', 'tab=view') || (isActive('/admin/departments') && !location.search) ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> View Departments
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className={isSubActive('/admin/departments', 'tab=add') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/departments?tab=add')}>
+                                        <Link to="/admin/departments?tab=add"
+                                           className={isSubActive('/admin/departments', 'tab=add') ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> Add Departments
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className={isSubActive('/admin/departments', 'tab=delete') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/departments?tab=delete')}>
+                                        <Link to="/admin/departments?tab=delete"
+                                           className={isSubActive('/admin/departments', 'tab=delete') ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> Delete Departments
-                                        </a>
+                                        </Link>
                                     </li>
                                 </ul>
                             </li>
@@ -136,22 +133,22 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                                 </a>
                                 <ul className="submenu">
                                     <li>
-                                        <a className={isSubActive('/admin/users', 'tab=view') || (isActive('/admin/users') && !location.search) ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/users?tab=view')}>
+                                        <Link to="/admin/users?tab=view"
+                                           className={isSubActive('/admin/users', 'tab=view') || (isActive('/admin/users') && !location.search) ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> View users
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className={isSubActive('/admin/users', 'tab=add') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/users?tab=add')}>
+                                        <Link to="/admin/users?tab=add"
+                                           className={isSubActive('/admin/users', 'tab=add') ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> Add Users
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className={isSubActive('/admin/users', 'tab=delete') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/users?tab=delete')}>
+                                        <Link to="/admin/users?tab=delete"
+                                           className={isSubActive('/admin/users', 'tab=delete') ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> Delete Users
-                                        </a>
+                                        </Link>
                                     </li>
                                 </ul>
                             </li>
@@ -163,22 +160,22 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                                 </a>
                                 <ul className="submenu">
                                     <li>
-                                        <a className={isSubActive('/admin/counters', 'tab=view') || (isActive('/admin/counters') && !location.search) ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/counters?tab=view')}>
+                                        <Link to="/admin/counters?tab=view"
+                                           className={isSubActive('/admin/counters', 'tab=view') || (isActive('/admin/counters') && !location.search) ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> View Counter
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className={isSubActive('/admin/counters', 'tab=add') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/counters?tab=add')}>
+                                        <Link to="/admin/counters?tab=add"
+                                           className={isSubActive('/admin/counters', 'tab=add') ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> Add Counter
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className={isSubActive('/admin/counters', 'tab=delete') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/counters?tab=delete')}>
+                                        <Link to="/admin/counters?tab=delete"
+                                           className={isSubActive('/admin/counters', 'tab=delete') ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> Delete Counter
-                                        </a>
+                                        </Link>
                                     </li>
                                 </ul>
                             </li>
@@ -190,133 +187,147 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                                 </a>
                                 <ul className="submenu">
                                     <li>
-                                        <a className={isSubActive('/admin/waiting-room', 'tab=view') || (isActive('/admin/waiting-room') && !location.search) ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/waiting-room?tab=view')}>
+                                        <Link to="/admin/waiting-room?tab=view"
+                                           className={isSubActive('/admin/waiting-room', 'tab=view') || (isActive('/admin/waiting-room') && !location.search) ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> View Waiting Room Display
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className={isSubActive('/admin/waiting-room', 'tab=add') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/waiting-room?tab=add')}>
+                                        <Link to="/admin/waiting-room?tab=add"
+                                           className={isSubActive('/admin/waiting-room', 'tab=add') ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> Add Waiting Room Display
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a className={isSubActive('/admin/waiting-room', 'tab=delete') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/waiting-room?tab=delete')}>
+                                        <Link to="/admin/waiting-room?tab=delete"
+                                           className={isSubActive('/admin/waiting-room', 'tab=delete') ? 'active' : ''}>
                                             <span className="submenu-dot">◦</span> Delete Waiting Room Display
-                                        </a>
+                                        </Link>
                                     </li>
                                 </ul>
                             </li>
 
-                            <li className={`has-submenu ${expandedMenus.tv ? 'expanded' : ''}`}>
-                                <a className={isActive('/admin/ota') ? 'active' : ''} onClick={() => toggleMenu('tv')}>
-                                    <Icon src="/images/TVsettings.png" alt="TV" />
-                                    TV Setting
-                                </a>
-                                <ul className="submenu">
+                            {/* --- VISIBLE TO SUPER-ADMIN (kvar) ONLY --- */}
+                            {isSuperAdmin && (
+                                <>
                                     <li>
-                                        <a className={isSubActive('/admin/ota', 'tab=editor') || (isActive('/admin/ota') && !location.search) ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/ota?tab=editor')}>
-                                            <span className="submenu-dot">◦</span> OTA Editor
-                                        </a>
+                                        <Link to="/admin/company" className={isActive('/admin/company') ? 'active' : ''}>
+                                            <Icon src="/images/Company Settings.png" alt="Company" />
+                                            Company Settings
+                                        </Link>
                                     </li>
-                                    <li>
-                                        <a className={isSubActive('/admin/ota', 'tab=list') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/ota?tab=list')}>
-                                            <span className="submenu-dot">◦</span> View OTA List
+                                    
+                                    <li className={`has-submenu ${expandedMenus.tv ? 'expanded' : ''}`}>
+                                        <a className={isActive('/admin/ota') ? 'active' : ''} onClick={() => toggleMenu('tv')}>
+                                            <Icon src="/images/TVsettings.png" alt="TV" />
+                                            TV Setting
                                         </a>
+                                        <ul className="submenu">
+                                            <li>
+                                                <Link to="/admin/ota?tab=editor"
+                                                   className={isSubActive('/admin/ota', 'tab=editor') || (isActive('/admin/ota') && !location.search) ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> OTA Editor
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/admin/ota?tab=list"
+                                                   className={isSubActive('/admin/ota', 'tab=list') ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> View OTA List
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/admin/ota?tab=link"
+                                                   className={isSubActive('/admin/ota', 'tab=link') ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> Choose OTA
+                                                </Link>
+                                            </li>
+                                        </ul>
                                     </li>
-                                    <li>
-                                        <a className={isSubActive('/admin/ota', 'tab=link') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/ota?tab=link')}>
-                                            <span className="submenu-dot">◦</span> Choose OTA
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
 
-                            <li>
-                                <a className={isActive('/admin/auto-logout') ? 'active' : ''} onClick={() => navigate('/admin/auto-logout')}>
-                                    <Icon src="/images/logout.png" alt="Auto Logout" />
-                                    Auto Logout Settings
-                                </a>
-                            </li>
-                            <li>
-                                <a className={isActive('/admin/kiosk') ? 'active' : ''} onClick={() => navigate('/admin/kiosk')}>
-                                    <Icon src="/images/KIOSK Registration.png" alt="Kiosk" />
-                                    KIOSK Registration
-                                </a>
-                            </li>
+                                    <li>
+                                        <Link to="/admin/auto-logout" className={isActive('/admin/auto-logout') ? 'active' : ''}>
+                                            <Icon src="/images/logout.png" alt="Auto Logout" />
+                                            Auto Logout Settings
+                                        </Link>
+                                    </li>
+                                    
+                                    <li>
+                                        <Link to="/admin/kiosk" className={isActive('/admin/kiosk') ? 'active' : ''}>
+                                            <Icon src="/images/KIOSK Registration.png" alt="Kiosk" />
+                                            KIOSK Registration
+                                        </Link>
+                                    </li>
 
-                            <li className={`has-submenu ${expandedMenus.factory ? 'expanded' : ''}`}>
-                                <a className={isActive('/admin/system-settings') ? 'active' : ''} onClick={() => toggleMenu('factory')}>
-                                    <Icon src="/images/Factory Settings.png" alt="Factory Settings" />
-                                    Factory Settings
-                                </a>
-                                <ul className="submenu">
-                                    <li>
-                                        <a className={isSubActive('/admin/system-settings', 'tab=factory') || (isActive('/admin/system-settings') && !location.search) ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/system-settings?tab=factory')}>
-                                            <span className="submenu-dot">◦</span> Factory Settings
+                                    <li className={`has-submenu ${expandedMenus.factory ? 'expanded' : ''}`}>
+                                        <a className={isActive('/admin/system-settings') ? 'active' : ''} onClick={() => toggleMenu('factory')}>
+                                            <Icon src="/images/Factory Settings.png" alt="Factory Settings" />
+                                            Factory Settings
                                         </a>
+                                        <ul className="submenu">
+                                            <li>
+                                                <Link to="/admin/system-settings?tab=factory"
+                                                   className={isSubActive('/admin/system-settings', 'tab=factory') || (isActive('/admin/system-settings') && !location.search) ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> Factory Settings
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/admin/system-settings?tab=software"
+                                                   className={isSubActive('/admin/system-settings', 'tab=software') ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> Software Settings
+                                                </Link>
+                                            </li>
+                                        </ul>
                                     </li>
-                                    <li>
-                                        <a className={isSubActive('/admin/system-settings', 'tab=software') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/system-settings?tab=software')}>
-                                            <span className="submenu-dot">◦</span> Software Settings
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
 
-                            <li className={`has-submenu ${expandedMenus.printer ? 'expanded' : ''}`}>
-                                <a className={isActive('/admin/printer-settings') ? 'active' : ''} onClick={() => toggleMenu('printer')}>
-                                    <Icon src="/images/Printer Settings.png" alt="Printer" />
-                                    Printer Setting
-                                </a>
-                                <ul className="submenu">
-                                    <li>
-                                        <a className={isSubActive('/admin/printer-settings', 'tab=editor') || (isActive('/admin/printer-settings') && !location.search) ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/printer-settings?tab=editor')}>
-                                            <span className="submenu-dot">◦</span> Printer Editor
+                                    <li className={`has-submenu ${expandedMenus.printer ? 'expanded' : ''}`}>
+                                        <a className={isActive('/admin/printer-settings') ? 'active' : ''} onClick={() => toggleMenu('printer')}>
+                                            <Icon src="/images/Printer Settings.png" alt="Printer" />
+                                            Printer Setting
                                         </a>
+                                        <ul className="submenu">
+                                            <li>
+                                                <Link to="/admin/printer-settings?tab=editor"
+                                                   className={isSubActive('/admin/printer-settings', 'tab=editor') || (isActive('/admin/printer-settings') && !location.search) ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> Printer Editor
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/admin/printer-settings?tab=summary"
+                                                   className={isSubActive('/admin/printer-settings', 'tab=summary') ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> Choose summary report
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/admin/printer-settings?tab=token"
+                                                   className={isSubActive('/admin/printer-settings', 'tab=token') ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> Choose token report
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/admin/printer-settings?tab=view"
+                                                   className={isSubActive('/admin/printer-settings', 'tab=view') ? 'active' : ''}>
+                                                    <span className="submenu-dot">◦</span> View Report Linking
+                                                </Link>
+                                            </li>
+                                        </ul>
                                     </li>
-                                    <li>
-                                        <a className={isSubActive('/admin/printer-settings', 'tab=summary') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/printer-settings?tab=summary')}>
-                                            <span className="submenu-dot">◦</span> Choose summary report
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className={isSubActive('/admin/printer-settings', 'tab=token') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/printer-settings?tab=token')}>
-                                            <span className="submenu-dot">◦</span> Choose token report
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className={isSubActive('/admin/printer-settings', 'tab=view') ? 'active' : ''} 
-                                           onClick={() => navigate('/admin/printer-settings?tab=view')}>
-                                            <span className="submenu-dot">◦</span> View Report Linking
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                                </>
+                            )}
                         </>
                     ) : (
                         <>
+                            {/* --- VISIBLE TO REGULAR NON-ADMIN USERS --- */}
                             <li>
-                                <a className={isActive('/dashboard') ? 'active' : ''} onClick={() => navigate('/dashboard')}>
+                                <Link to="/dashboard" className={isActive('/dashboard') ? 'active' : ''}>
                                     <Icon src="/images/dashboard (1).png" alt="Dashboard" />
                                     Dashboard
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a className={isActive('/dashboard/change-dept') ? 'active' : ''} onClick={() => navigate('/dashboard/change-dept')}>
+                                <Link to="/dashboard/change-dept" className={isActive('/dashboard/change-dept') ? 'active' : ''}>
                                     <Icon src="/images/Department.png" alt="Department" />
                                     Change Department
-                                </a>
+                                </Link>
                             </li>
                             <li>
                                 <a onClick={handleLogout}>

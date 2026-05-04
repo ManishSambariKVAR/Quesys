@@ -16,7 +16,7 @@ export default function ChangeDepartment() {
 
     const fetchDepartments = useCallback(async () => {
         try {
-            const res = await api.get('/departments');
+            const res = await api.get('/admin/departments');
             console.log(res.data);
             setDepartments(res.data.departments || []);
         } catch (err) {
@@ -28,17 +28,18 @@ export default function ChangeDepartment() {
         fetchDepartments();
     }, [fetchDepartments]);
 
-    const handleDepartmentChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newDept = e.target.value;
-        setSelectedDept(newDept);
+    const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedDept(e.target.value);
+    };
 
-        if (!newDept || !user?.userId) return;
+    const handleSubmit = async () => {
+        if (!selectedDept || !user?.userId) return;
 
         try {
             setLoading(true);
-            await api.post('/user/change-department', {
+            await api.post('/users/change-department', {
                 userId: user.userId,
-                newDepartment: newDept,
+                newDepartment: selectedDept,
             });
             setMessage('Department changed successfully! Please re-login for changes to take effect.');
             setTimeout(() => {
@@ -84,7 +85,7 @@ export default function ChangeDepartment() {
                         ))}
                     </select>
                 </div>
-                <button className="submit-btn" disabled={loading}>
+                <button className="submit-btn" disabled={loading || !selectedDept} onClick={handleSubmit}>
                     Submit
                 </button>
             </div>
