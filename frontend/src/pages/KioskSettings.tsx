@@ -16,7 +16,7 @@ export default function KioskSettings() {
     const fetchKiosks = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get<{ kiosks: Kiosk[] }>('/kiosks');
+            const res = await api.get<{ kiosks: Kiosk[] }>('/admin/kiosks');
             setKiosks(res.data.kiosks || []);
         } catch {
             setMessage({ text: 'Failed to load kiosks', type: 'error' });
@@ -35,7 +35,7 @@ export default function KioskSettings() {
     const handleDelete = async (id: number) => {
         if (!window.confirm('Are you sure you want to delete this Kiosk?')) return;
         try {
-            await api.delete(`/kiosks/${id}`);
+            await api.delete(`/admin/kiosks/${id}`);
             showMsg('Kiosk deleted', 'success');
             fetchKiosks();
         } catch {

@@ -46,7 +46,7 @@ export default function UserManagement() {
     const fetchUsers = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get<{ users: User[]; departments: Department[] }>('/users');
+            const res = await api.get<{ users: User[]; departments: Department[] }>('/admin/users');
             setUsers(res.data.users);
             setDepartments(res.data.departments);
         } catch {
@@ -73,7 +73,7 @@ export default function UserManagement() {
             return;
         }
         try {
-            await api.post('/users/register', {
+            await api.post('/admin/users/register', {
                 name: addName, userId: addUserId, password: addPassword,
                 confirmPassword: addConfirm, userDept: addDept, adminlevel: addAdmin,
             });
@@ -100,7 +100,7 @@ export default function UserManagement() {
         e.preventDefault();
         if (!editUser) return;
         try {
-            await api.put('/users/update', {
+            await api.put('/admin/users/update', {
                 userId: editUser.id, name: editName, userid: editUserId,
                 userDept: editDept, adminLevel: editAdmin,
             });
@@ -116,7 +116,7 @@ export default function UserManagement() {
     const handleDeleteUser = async (id: number) => {
         if (!window.confirm('Are you sure you want to delete this user?')) return;
         try {
-            await api.delete(`/users/${id}`);
+            await api.delete(`/admin/users/${id}`);
             showMsg('User deleted', 'success');
             fetchUsers();
         } catch {

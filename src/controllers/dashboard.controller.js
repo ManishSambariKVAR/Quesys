@@ -47,8 +47,8 @@ async function getAdminData(req, res) {
     res.json({
       currDt,
       currTm,
-      tokenData,
-      userLogs,
+      departments: tokenData,   // ✅ was 'tokenData'
+      userLog: userLogs,        // ✅ was 'userLogs'
       companyName: companies[0]?.company_name || "KVAR Tech",
     });
   } catch (error) {
