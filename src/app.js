@@ -77,7 +77,6 @@ app.use("/api/admin/settings", settingsRoutes);
 app.use("/api/admin/tokens", tokensRoutes);
 app.use("/api/admin/users", usersRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
-app.use("/api/admin", dashboardRoutes); 
 
 // Legacy hardware endpoints (for kiosk devices)
 app.get("/keypad", tokensController.generateToken);
