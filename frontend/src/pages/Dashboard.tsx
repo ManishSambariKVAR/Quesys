@@ -48,7 +48,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchDashboard = async () => {
             try {
-                const res = await api.get<DashboardData>('/dashboard');
+                const res = await api.get<DashboardData>('/admin/dashboard');
                 setDashData(res.data);
             } catch (err) {
                 console.error('Failed to load dashboard:', err);
@@ -78,10 +78,8 @@ export default function Dashboard() {
         if (!user) return;
         try {
             const res = await api.get<TokenUpdateResponse>(
-                `/tokenData?userId=${user.userId}&userDepartment=${user.department}&counter=${user.counter}&kioskId=${user.kioskId}`
+                `/admin/dashboard/update?userId=${user.userId}&userDepartment=${user.department}&counter=${user.counter}&kioskId=${user.kioskId}`
             );
-            // Note: This endpoint currently does not exist as an API endpoint.
-            // It will be added when the /tokenData route is migrated to /api/tokenData.
             const data = res.data.data?.[0];
             const prefix = res.data.prefix || '';
             if (data) {
@@ -97,7 +95,7 @@ export default function Dashboard() {
                 setBalanceTokens(balance);
             }
         } catch {
-            // Token data polling will work once /api/tokenData is created
+
         }
     }, [user]);
 

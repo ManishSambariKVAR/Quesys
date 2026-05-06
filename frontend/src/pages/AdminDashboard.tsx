@@ -30,8 +30,8 @@ interface UserLog {
 }
 
 interface AdminDashboardData {
-  departments: TokenData[];
-  userLog: UserLog[];
+  tokenData: TokenData[];
+  userLogs: UserLog[];
   currDt: string;
   currTm: string;
 }
@@ -112,8 +112,8 @@ export default function AdminDashboard() {
     </div>
   );
 
-  const data = dashData?.departments ?? [];
-  const userLogs = dashData?.userLog ?? [];
+  const data = dashData?.tokenData ?? [];
+  const userLogs = dashData?.userLogs ?? [];
   const currDt = dashData?.currDt ?? new Date().toISOString().split('T')[0];
 
   // ── Aggregate 

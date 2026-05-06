@@ -35,6 +35,8 @@ app.use(
       if (
         !origin ||
         origin.endsWith(":7000") ||
+        origin.endsWith(":5001") ||  
+        origin.endsWith(":4001") ||
         origin.endsWith(":5173")
       ) {
         return callback(null, true);
@@ -61,7 +63,6 @@ app.post("/api/login", authController.login);
 app.use("/api/auth", authRoutes); // Keep auth standard 
 
 // Add /admin to all your dashboard-related routes
-app.use("/api/admin/users", usersRoutes);
 app.use("/api/admin/company", companyRoutes);
 app.use("/api/admin/counters", countersRoutes);
 app.use("/api/admin/departments", departmentsRoutes);
@@ -73,6 +74,7 @@ app.use("/api/admin/reports", reportsRoutes);
 app.use("/api/admin/settings", settingsRoutes);
 app.use("/api/admin/tokens", tokensRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
+app.use("/api/admin", dashboardRoutes); 
 
 // Legacy hardware endpoints (for kiosk devices)
 app.get("/keypad", tokensController.generateToken);
@@ -83,3 +85,10 @@ app.get("/KioskRegConfirm", kiosksController.confirmRegistration);
 app.get("/AllData", kiosksController.getAllData);
 
 module.exports = app;
+
+// router.get("/", authenticateToken, dashboardController.getAdminData);
+
+// // GET /api/admin/dashboard/user → getDashboardData (for user dashboard)
+// router.get("/user", authenticateToken, dashboardController.getDashboardData);
+
+// router.get("/update", authenticateToken, dashboardController.updateData);

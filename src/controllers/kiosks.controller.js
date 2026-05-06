@@ -26,23 +26,50 @@ async function deleteKiosk(req, res) {
 }
 
 async function generateSerialNumber(req, res) {
+  console.log("➡️ generateSerialNumber called");
+
   try {
     const randomNumber = Math.floor(1000 + Math.random() * 9000);
+    console.log("🎲 Generated random number:", randomNumber);
+
     const serialNumber = `KVAR${randomNumber}`;
-    res.status(200).send(`Regi=${serialNumber}`);
+    console.log("🏷️ Generated serial number:", serialNumber);
+
+    const responseText = `Regi=${serialNumber}`;
+    console.log("📤 Sending response:", responseText);
+
+    res.status(200).send(responseText);
+
   } catch (error) {
-    console.error("Error during Kiosk registration:", error);
+    console.error("💥 Error during serial number generation:", error);
     res.status(500).send("Internal server error");
   }
 }
 
+
 async function confirmRegistration(req, res) {
+  console.log("➡️ confirmRegistration called with query:", req.query);
+
   try {
     const { KioskId } = req.query;
-    await kiosksService.registerKiosk(KioskId);
+
+    console.log("🧩 Extracted KioskId:", KioskId);
+
+    if (!KioskId) {
+      console.warn("⚠️ Missing KioskId in request");
+      return res.status(400).send("KioskId is required");
+    }
+
+    console.log("📡 Calling registerKiosk service...");
+    const result = await kiosksService.registerKiosk(KioskId);
+
+    console.log("✅ Kiosk registration result:", result);
+
+    console.log("📤 Sending response: OK");
     res.status(200).send("OK");
+
   } catch (error) {
-    console.error("Error during Kiosk registration:", error);
+    console.error("💥 Error during Kiosk registration:", error);
     res.status(500).send("Internal server error");
   }
 }

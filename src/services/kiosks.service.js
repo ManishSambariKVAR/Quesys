@@ -11,7 +11,21 @@ async function deleteKiosk(id) {
 }
 
 async function registerKiosk(kioskId) {
-  await client.query("INSERT INTO kioskRegistration (kiosk_id) VALUES ($1)", [kioskId]);
+  console.log("➡️ registerKiosk called with kioskId:", kioskId);
+
+  try {
+    const query = "INSERT INTO kioskRegistration (kiosk_id) VALUES ($1)";
+
+    const result = await client.query(query, [kioskId]);
+
+    return result;
+
+  } catch (error) {
+    console.error("💥 Error inserting kiosk:", error);
+    console.error("❗ Failed kioskId:", kioskId);
+
+    throw error; 
+  }
 }
 
 async function getDailyTokenCount(kioskId, date) {

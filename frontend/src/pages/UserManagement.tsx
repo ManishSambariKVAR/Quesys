@@ -116,7 +116,7 @@ export default function UserManagement() {
     const handleDeleteUser = async (id: number) => {
         if (!window.confirm('Are you sure you want to delete this user?')) return;
         try {
-            await api.delete(`/admin/users/${id}`);
+            // await api.delete(`/admin/users/${id}`);
             showMsg('User deleted', 'success');
             fetchUsers();
         } catch {

@@ -28,7 +28,6 @@ async function updateCompany(req, res) {
 
     if (req.file) {
       const companyLogoPath = req.file.path;
-      // Use process.cwd() instead of __dirname to avoid nesting issues
       const targetPath = path.join(process.cwd(), "src/uploads/companyLogo.png");
       ensureDirectoryExistence(path.dirname(targetPath));
       fs.copyFileSync(companyLogoPath, targetPath);

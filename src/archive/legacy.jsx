@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
-const { client, connectDatabase } = require("./src/config/database");
+const { client, connectDatabase } = require("./config/database");
 const bodyParser = require("body-parser");
 const { log, Console } = require("console");
 const multer = require("multer");
@@ -12,7 +12,7 @@ const notifier = require("node-notifier");
 const https = require("https");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const app = express();
+const app = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || "quesys_jwt_secret_key_2024";
 
@@ -25,16 +25,14 @@ const stacks = new Map();
 const CounterCurrentstacks = new Map();
 
 const VoiceStacks = [];
-// Declare balanceTokens as a global variable
+
 let balanceTokens = 0;
 
 function pushToVoiceStack(token) {
-  // Add the token directly to the VoiceStacks array
   VoiceStacks.push(token);
 }
 
 function pushToStackCounter(grievance, token) {
-  // Check if the stack for the grievance already exists
   if (!CounterCurrentstacks.has(grievance)) {
     CounterCurrentstacks.set(grievance, []); // Create a new stack if it doesn't exist
   } else {
@@ -61,12 +59,11 @@ function pushToStack(grievance, token) {
 }
 
 function popFromAnyStack(value) {
-  // Normalize the input value by removing the asterisk (*) if present
   const normalizedValue = value.replace("*", "");
 
   // Iterate through each grievance and its stack in the Map
   for (const [grievance, stack] of stacks.entries()) {
-    // Find the index of the token that matches the given value
+ 
     const index = stack.findIndex((token) => {
       // Ensure the token has a hyphen and a suffix
       if (typeof token === "string" && token.includes("-")) {
@@ -124,18 +121,6 @@ function checkAndPop() {
 // Start the checking and popping process
 checkAndPop();
 
-// Example usage
-// Initialize the stacks
-// pushToStack("1", "1-c001*");
-// pushToStack("1", "1-c002");
-// pushToStack("2", "1-c003");
-// pushToStack("2", "1-c004*");
-
-// // Test cases
-// console.log(popFromAnyStack("c001")); // Should output: "1-c001*"
-// console.log(popFromAnyStack("c004")); // Should output: "1-c004*"
-
-// Enable CORS for any origin: For Software KIOSK
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -168,23 +153,11 @@ const options = {
   cert: fs.readFileSync("localhost.pem"),
 };
 
-const server = https.createServer(options, app);
-
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "src", "templates"));
-app.use("/src", express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: "KVAR", resave: false, saveUninitialized: false }));
 
 app.use(express.json());
 app.use(bodyParser.json());
-
-app.set("view engine", "ejs");
-
-connectDatabase().catch((err) => {
-  console.error("Exiting application due to database connection error");
-  process.exit(1);
-});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -394,11 +367,9 @@ function replaceSpecialForSummary(inputString, data) {
     }
     // Split the value by comma to get department and field
     const [findDep, replaceValue] = value.split(",").map((v) => v.trim());
-    // Find the department in the data array
+
     const foundData = data.find((item) => item.dep === findDep);
-    // If department not found, return the original match
     if (!foundData) return match;
-    // If replaceValue is 'Name', replace with department name
     if (replaceValue === "Name") {
       return foundData.dep;
     }
@@ -446,10 +417,6 @@ function padNumberWithZeros(num, size) {
   return numStr;
 }
 
-// ============================================
-// JWT API ENDPOINTS (for React frontend)
-// ============================================
-
 // JWT auth middleware for API routes
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -488,8 +455,7 @@ app.get('/api/admin/dashboard', async (req, res) => {
   }
 });
 
-
-app.use("/api", require("./src/routes/auth.routes"));
+app.use("/api", require("./routes/auth.routes"));
 
 // GET /api/dashboard — returns all data needed by the dashboard page
 app.get("/api/dashboard", authenticateToken, async (req, res) => {
@@ -563,77 +529,32 @@ app.get("/api/admin",authenticateToken, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════════
-// USER MANAGEMENT APIs
-// ══════════════════════════════════════════════
-
-app.use("/api/users", require("./src/routes/users.routes"));
-
-// ══════════════════════════════════════════════
-// DEPARTMENT MANAGEMENT APIs
-// ══════════════════════════════════════════════
-
-app.use("/api/departments", require("./src/routes/departments.routes"));
-
-// ══════════════════════════════════════════════
-// COUNTER MANAGEMENT APIs
-// ══════════════════════════════════════════════
-
-app.use("/api/admin/counters", require("./src/routes/counters.routes"));
-
-// ══════════════════════════════════════════════
-// COMPANY SETTINGS APIs (Admin Only)
-// ══════════════════════════════════════════════
-
-app.use("/api/admin/company", require("./src/routes/company.routes"));
-
-// ══════════════════════════════════════════════
-// TV OTA SETTINGS APIs (KVAR Admin Only)
-// ══════════════════════════════════════════════
-
-app.use("/api/admin/ota", require("./src/routes/ota.routes"));
-
-// ══════════════════════════════════════════════
-// KIOSK SETTINGS APIs
-// ══════════════════════════════════════════════
-
-app.use("/api/admin/kiosks", require("./src/routes/kiosks.routes"));
-
-// ══════════════════════════════════════════════
-// SYSTEM SETTINGS APIs (Factory, Software, AutoLogout)
-// ══════════════════════════════════════════════
-
-app.use("/api/admin/settings", require("./src/routes/settings.routes"));
-
-// ══════════════════════════════════════════════
-// WAITING ROOM DISPLAY APIs
-// ══════════════════════════════════════════════
-
-app.use("/api/admin/displays", require("./src/routes/displays.routes"));
-
-// ══════════════════════════════════════════════
-// REPORTS APIs
-// ══════════════════════════════════════════════
-
-app.use("/api/admin/reports", require("./src/routes/reports.routes"));
-
-// ══════════════════════════════════════════════
-// PRINTER SETTINGS APIs
-// ══════════════════════════════════════════════
-
-app.use("/api/admin/printer", require("./src/routes/printer.routes"));
-
-// ══════════════════════════════════════════════
-// CHANGE DEPARTMENT API (Operator)
-// ══════════════════════════════════════════════
+app.use("/api/users", require("./routes/users.routes"));
+app.use("/api/departments", require("./routes/departments.routes"));
+app.use("/api/admin/counters", require("./routes/counters.routes"));
+app.use("/api/admin/company", require("./routes/company.routes"));
+app.use("/api/admin/ota", require("./routes/ota.routes"));
+app.use("/api/admin/kiosks", require("./routes/kiosks.routes"));
+app.use("/api/admin/settings", require("./routes/settings.routes"));
+app.use("/api/admin/displays", require("./routes/displays.routes"));
+app.use("/api/admin/reports", require("./routes/reports.routes"));
+app.use("/api/admin/printer", require("./routes/printer.routes"));
 
 app.post("/api/user/change-department", authenticateToken, async (req, res) => {
   const { userId, newDepartment } = req.body;
-  if (!userId || !newDepartment) return res.status(400).json({ error: "User ID and department required." });
+
+  if (!userId || !newDepartment) {
+    return res.status(400).json({ error: "User ID and department required." });
+  }
+
   try {
-    // Change 'department' to 'userdept' to match your 'users' table
-await client.query("UPDATE users SET userdept = $1 WHERE id = $2", [newDepartment, userId]);
-    res.json({ message: "Department changed successfully.", department: newDepartment });
+    // Changed 'department' to 'userdept' to match your pgAdmin table schema
+    await client.query("UPDATE users SET userdept = $1 WHERE id = $2", [newDepartment, userId]);
+    
+    res.json({ 
+      message: "Department changed successfully.", 
+      department: newDepartment 
+    });
   } catch (error) {
     console.error("Error changing department:", error);
     res.status(500).json({ error: "Failed to change department." });
@@ -853,237 +774,6 @@ app.get("/kioskSummary", async (req, res) => {
 
 var TokenType = 0;
 
-//   console.log("Keypad Request Received");
-//   const key = req.query.key;
-//   console.log("Received key:", key);
-
-//   const recdCounter = req.query.counter;
-//   console.log("Recieved Counter :" , recdCounter);
-
-//   const KioskId = req.query.kioskId;
-//   console.log("Received KioskId:", KioskId);
-
-//   const Priority = req.query.priority;
-//   console.log("Received Priority:", Priority);
-
-//   const Grevience = req.query.grevience;
-//   console.log("Received Grevience:", Grevience);
-
-//   const Temp_tokentype = req.query.tokenType;
-//   console.log("Received Temp_tokentype:", Temp_tokentype);
-
-//   var receivedString = req.query.info ?? null;
-//   console.log("Initial receivedString:", receivedString);
-
-//   if (receivedString !== null) {
-//     receivedString = receivedString.replace(/'/g, '"');
-//     console.log(
-//       "Transformed receivedString (single quotes replaced):",
-//       receivedString
-//     );
-//   }
-
-//   const Info = JSON.parse(receivedString);
-//   TokenType = Temp_tokentype;
-//   console.log("Type of Token:", TokenType);
-
-//   console.log("KIOSK Data IN:", key, KioskId, Priority, Grevience, Info);
-
-//   const queryText =
-//     "SELECT * FROM departments WHERE kiosk_id = $1 AND kiosk_key = $2";
-//   const result = await client.query(queryText, [KioskId, key]);
-
-//   const extracted = result.rows[0];
-//   if (result.rows && result.rows.length > 0) {
-//     console.log("Key Department relation found");
-//     const currDt = getCurrentDate();
-//     const queryText2 =
-//       "SELECT * FROM dailytokencount WHERE kiosk_id = $1 AND dep = $2 AND date = $3";
-
-//     const result2 = await client.query(queryText2, [
-//       KioskId,
-//       extracted.department,
-//       currDt,
-//     ]);
-
-//     console.log("Daily Token Count:");
-//     console.log(result2.rows);
-//     const extracted2 = result2.rows[0];
-
-//     const check1 = "SELECT * FROM tokenreport";
-//     const checkR1 = await client.query(check1);
-
-//     const data_got = checkR1.rows[0];
-//     const main = "/src/uploads/printerReport/";
-
-//     var file_got = getFileContentsSync(data_got.uploadlink, main);
-
-//     //Add token
-
-//     if (result2.rows && result2.rows.length > 0) {
-//       console.log("Update Query");
-//       const newCount = extracted2.token_total_count + 1;
-//       console.log("Value:", newCount);
-
-//       console.log("Add to token logs");
-//       const result = await client.query(
-//         `INSERT INTO token_logs (user_id, token_id, call_time, end_time, ack_time, ack_status, time_interval, dep, kiosk_id, occurance,generated_time,priority,info) 
-//         VALUES ($1, $2, COALESCE($3, CURRENT_TIMESTAMP), COALESCE($4, CURRENT_TIMESTAMP), COALESCE($5, CURRENT_TIMESTAMP), $6, $7, $8, $9, $10, COALESCE($11, CURRENT_TIMESTAMP), $12, $13) RETURNING *`,
-//         [
-//           0,
-//           newCount,
-//           null,
-//           null,
-//           null,
-//           true,
-//           null,
-//           extracted.department,
-//           KioskId,
-//           0,
-//           null,
-//           Priority,
-//           Info,
-//         ]
-//       );
-
-//       const updateQuery = `
-//           UPDATE dailytokencount 
-//           SET 
-//               date = $1,
-//               token_total_count = $2,
-//               updated_at = CURRENT_TIMESTAMP
-//           WHERE 
-//               kiosk_id = $3 AND dep = $4 AND date = $5;`;
-
-//       try {
-//         await client.query(updateQuery, [
-//           currDt,
-//           newCount,
-//           KioskId,
-//           extracted.department,
-//           currDt,
-//         ]);
-//         console.log("Values updated successfully in dailytokencount table.");
-
-//         // Send a Windows notification
-//         // notifier.notify({
-//         //   title: 'Token Count Updated',
-//         //   message: `New token count for ${extracted.department}: ${newCount}`
-//         // });
-
-//         const file_got1 = replaceSpecialForDate(file_got);
-//         const final_new_count = padNumberWithZeros(newCount, 3); // initial number of 0
-//         const replacedString = replaceSpecialForToken(
-//           file_got1,
-//           extracted.dep + final_new_count
-//         );
-
-//         console.log("Priority:", Priority);
-
-//         if (Priority === "True") {
-//           pushToStack(
-//             extracted.department + "-"+ recdCounter,
-//             TokenType + "-" + extracted.dep + final_new_count +"*"  // +recdCounter
-//           );
-//           // pushToVoiceStack(extracted.department,
-//           //   TokenType + "-" + extracted.dep + final_new_count + "*");
-//         } else {
-//           pushToStack(
-//             extracted.department +"-"+ recdCounter,
-//             TokenType + "-" + extracted.dep + final_new_count // +recdCounter
-//           );
-//           // pushToVoiceStack(extracted.department,
-//           //   TokenType + "-" + extracted.dep + final_new_count);
-//         }
-
-//         res
-//           .set("Content-Type", "text/plain")
-//           .send(
-//             `DEP: ${extracted.department} , CurrToken:${extracted.dep}${final_new_count} , Print:${replacedString}`
-//           );
-//       } catch (error) {
-//         console.error("Error updating values in dailytokencount table:", error);
-//       }
-//     } else {
-//       console.log("Add Query");
-//       // Empty both maps
-//       stacks.clear();
-//       CounterCurrentstacks.clear();
-//       console.log("Add to token logs");
-
-//       const result = await client.query(
-//         `INSERT INTO token_logs (user_id, token_id, call_time, end_time, ack_time, ack_status, time_interval, dep, kiosk_id, occurance,generated_time,priority,info) 
-//       VALUES ($1, $2, COALESCE($3, CURRENT_TIMESTAMP), COALESCE($4, CURRENT_TIMESTAMP), COALESCE($5, CURRENT_TIMESTAMP), $6, $7, $8, $9, $10, COALESCE($11, CURRENT_TIMESTAMP), $12, $13) RETURNING *`,
-//         [
-//           0,
-//           1,
-//           null, // call_time
-//           null, // end_time
-//           null, // ack_time
-//           true,
-//           null, // time_interval
-//           extracted.department,
-//           KioskId,
-//           0, // occurance
-//           null,
-//           Priority,
-//           Info,
-//         ]
-//       );
-//       //For Priority
-//       const newCount = 1;
-//       const file_got1 = replaceSpecialForDate(file_got);
-//       const final_new_count = padNumberWithZeros(newCount, 3); // initial number of 0
-//       if (Priority === "True") {
-//         pushToStack(
-//           extracted.department,
-//           TokenType + "-" + extracted.dep + final_new_count + "*"
-//         );
-//       } else {
-//         pushToStack(
-//           extracted.department,
-//           TokenType + "-" + extracted.dep + final_new_count
-//         );
-//       }
-
-//       const insertQuery =
-//         "INSERT INTO dailytokencount (kiosk_id, dep, date, token_current_count, token_total_count, token_skip_count, updated_at, recallstatus, recallno, reassign_token) VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP, $7, $8, $9)";
-//       try {
-//         await client.query(insertQuery, [
-//           KioskId,
-//           extracted.department,
-//           currDt,
-//           0,
-//           1,
-//           0,
-//           0,
-//           0,
-//           0,
-//         ]);
-//         console.log("Values inserted successfully into dailytokencount table.");
-//         const final_new_count = padNumberWithZeros(1, 3); // initial number of 0
-
-//         const file_got1 = replaceSpecialForDate(file_got);
-//         const replacedString = replaceSpecialForToken(
-//           file_got1,
-//           extracted.dep + final_new_count
-//         );
-//         res
-//           .set("Content-Type", "text/plain")
-//           .send(
-//             `DEP: ${extracted.department} , CurrToken: ${extracted.dep}${final_new_count} , Print:${replacedString}`
-//           );
-//       } catch (error) {
-//         console.error(
-//           "Error inserting values into dailytokencount table:",
-//           error
-//         );
-//       }
-//     }
-//   } else {
-//     res.send("ERR");
-//   }
-// });
 
 app.get("/keypad", async (req, res) => {
   console.log("Keypad Request Received");
@@ -2896,7 +2586,7 @@ app.get("/storeToken", async (req, res) => {
   res.status(500).send("Error fetching departments");
 });
 
-// app.post("/storeToken", async (req, res) => {
+
 //   console.log("=== STORE TOKEN ===");
 //   const { tokenNumber, callTime, endTime, prefix } = req.body;
 
@@ -4844,14 +4534,10 @@ app.post("/printerEditor", async (req, res) => {
   }
 });
 
-const port = 5001;
-server.listen(port, () => {
-  console.log(`Server running at https://localhost:${port}`);
-});
 
-const HTTPSport = 4001;
-app.listen(HTTPSport, () => {
-  console.log(`Server running at http://localhost:${HTTPSport}`);
-});
+
+
 
 // Developed by GIRISH PAWAR & VISHAL PADYAL
+
+module.exports = app;

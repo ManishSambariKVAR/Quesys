@@ -9,8 +9,9 @@ const {
   splitToken
 } = require("../utils/helpers");
 
-// Token stacks (in-memory)
+
 const stacks = new Map();
+
 const CounterCurrentstacks = new Map();
 const VoiceStacks = [];
 
@@ -73,7 +74,6 @@ function getAllVoiceStacks() {
   return VoiceStacks;
 }
 
-// Function to check every second if there is a value in the array
 function checkAndPop() {
   const checkInterval = setInterval(() => {
     if (VoiceStacks.length > 0) {
@@ -94,69 +94,118 @@ checkAndPop();
 async function generateToken(req, res) {
   try {
     const { key, counter, kioskId, priority, grevience, tokenType, info } = req.query;
+
     const currDt = getCurrentDate();
     let TokenType = tokenType;
 
+    // Fetch department
     const extracted = await tokensService.getDepartmentByKioskAndKey(kioskId, key);
+
     if (!extracted) {
       return res.send("ERR");
     }
 
-    const dailyCount = await tokensService.getDailyTokenCount(kioskId, extracted.department, currDt);
+    // Get daily count
+    const dailyCount = await tokensService.getDailyTokenCount(
+      kioskId,
+      extracted.department,
+      currDt
+    );
+
     const tokenReport = await tokensService.getTokenReport();
-    
+
     const main = "/src/uploads/printerReport/";
     let file_got = getFileContentsSync(tokenReport.uploadlink, main);
+
     let newCount;
 
     if (dailyCount) {
       newCount = dailyCount.token_total_count + 1;
-      
+
+      const parsedInfo = JSON.parse(info?.replace(/'/g, '"') || "null");
+
       await tokensService.insertTokenLog({
-        userId: 0, tokenId: newCount, dep: extracted.department, kioskId, priority, info: JSON.parse(info?.replace(/'/g, '"') || "null")
+        userId: 0,
+        tokenId: newCount,
+        dep: extracted.department,
+        kioskId,
+        priority,
+        info: parsedInfo
       });
 
-      await tokensService.updateDailyTokenCount(kioskId, extracted.department, currDt, newCount);
+      await tokensService.updateDailyTokenCount(
+        kioskId,
+        extracted.department,
+        currDt,
+        newCount
+      );
 
       const file_got1 = replaceSpecialForDate(file_got);
-      const final_new_count = padNumberWithZeros(newCount, 3); 
-      const replacedString = replaceSpecialForToken(file_got1, extracted.dep + final_new_count);
+      const final_new_count = padNumberWithZeros(newCount, 3);
 
-      if (priority === "True") {
-        pushToStack(extracted.department + "-" + counter, TokenType + "-" + extracted.dep + final_new_count + "*");
-      } else {
-        pushToStack(extracted.department + "-" + counter, TokenType + "-" + extracted.dep + final_new_count);
-      }
-
-      res.set("Content-Type", "text/plain").send(
-        `DEP: ${extracted.department} , CurrToken:${extracted.dep}${final_new_count} , Print:${replacedString}`
+      const replacedString = replaceSpecialForToken(
+        file_got1,
+        extracted.dep + final_new_count
       );
+
+      const stackValue =
+        TokenType +
+        "-" +
+        extracted.dep +
+        final_new_count +
+        (priority === "True" ? "*" : "");
+
+      pushToStack(extracted.department + "-" + counter, stackValue);
+
+      const responseText = `DEP: ${extracted.department} , CurrToken:${extracted.dep}${final_new_count} , Print:${replacedString}`;
+
+      res.set("Content-Type", "text/plain").send(responseText);
+
     } else {
       stacks.clear();
       CounterCurrentstacks.clear();
-      
+
+      const parsedInfo = JSON.parse(info?.replace(/'/g, '"') || "null");
+
       await tokensService.insertTokenLog({
-        userId: 0, tokenId: 1, dep: extracted.department, kioskId, priority, info: JSON.parse(info?.replace(/'/g, '"') || "null")
+        userId: 0,
+        tokenId: 1,
+        dep: extracted.department,
+        kioskId,
+        priority,
+        info: parsedInfo
       });
 
-      await tokensService.insertDailyTokenCount(kioskId, extracted.department, currDt);
+      await tokensService.insertDailyTokenCount(
+        kioskId,
+        extracted.department,
+        currDt
+      );
 
       const file_got1 = replaceSpecialForDate(file_got);
-      const final_new_count = padNumberWithZeros(1, 3); 
-      const replacedString = replaceSpecialForToken(file_got1, extracted.dep + final_new_count);
+      const final_new_count = padNumberWithZeros(1, 3);
 
-      if (priority === "True") {
-        pushToStack(extracted.department, TokenType + "-" + extracted.dep + final_new_count + "*");
-      } else {
-        pushToStack(extracted.department, TokenType + "-" + extracted.dep + final_new_count);
-      }
-
-      res.set("Content-Type", "text/plain").send(
-        `DEP: ${extracted.department} , CurrToken: ${extracted.dep}${final_new_count} , Print:${replacedString}`
+      const replacedString = replaceSpecialForToken(
+        file_got1,
+        extracted.dep + final_new_count
       );
+
+      const stackValue =
+        TokenType +
+        "-" +
+        extracted.dep +
+        final_new_count +
+        (priority === "True" ? "*" : "");
+
+      pushToStack(extracted.department, stackValue);
+
+      const responseText = `DEP: ${extracted.department} , CurrToken: ${extracted.dep}${final_new_count} , Print:${replacedString}`;
+
+      res.set("Content-Type", "text/plain").send(responseText);
     }
+
   } catch (error) {
-    console.error("Error generating token:", error);
+    console.error(error);
     res.status(500).send("Internal Server Error");
   }
 }

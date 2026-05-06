@@ -47,8 +47,8 @@ async function getAdminData(req, res) {
     res.json({
       currDt,
       currTm,
-      departments: tokenData,   // ✅ was 'tokenData'
-      userLog: userLogs,        // ✅ was 'userLogs'
+      tokenData: tokenData,   // ✅ was 'tokenData'
+      userLogs: userLogs,        // ✅ was 'userLogs'
       companyName: companies[0]?.company_name || "KVAR Tech",
     });
   } catch (error) {
@@ -79,11 +79,19 @@ async function updateData(req, res) {
     });
 
     res.json({
-      data: dailyTokens.length > 0 ? dailyTokens : [{ token_total_count: 0 }],
+      // ✅ FIX: Provided a complete dummy object so the frontend doesn't render "Pundefined"
+      data: dailyTokens.length > 0 ? dailyTokens : [{ 
+        token_total_count: 0,
+        token_current_count: 0, 
+        token_skip_count: 0,
+        reassign_token: 0,
+        dep: userDepartment 
+      }],
       user: { id: userId, department: userDepartment, kioskId },
       currDt,
       prefix: departmentPrefix?.dep || "",
-      token_log: updatedTokenLogs,
+      // ✅ FIX: Fallback for token_log to ensure an array is always returned
+      token_log: updatedTokenLogs.length > 0 ? updatedTokenLogs : [],
     });
   } catch (error) {
     console.error("Error updating data:", error);

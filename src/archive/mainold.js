@@ -2,19 +2,16 @@ const express = require("express");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
-const { client, connectDatabase } = require("./config/database");
+const { client, connectDatabase } = require("./database");
 const bodyParser = require("body-parser");
 const { log, Console } = require("console");
 const multer = require("multer");
-const fs = require("fs"); // Import the file system module
+const fs = require("fs");
 const axios = require("axios");
 const notifier = require("node-notifier");
 const https = require("https");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const app = express.Router();
-
-const JWT_SECRET = process.env.JWT_SECRET || "quesys_jwt_secret_key_2024";
+const app = express();
 
 const DEFAULT_USER_ID = "kvar";
 const DEFAULT_PASSWORD = "kvar";
@@ -25,14 +22,16 @@ const stacks = new Map();
 const CounterCurrentstacks = new Map();
 
 const VoiceStacks = [];
-
+// Declare balanceTokens as a global variable
 let balanceTokens = 0;
 
 function pushToVoiceStack(token) {
+  // Add the token directly to the VoiceStacks array
   VoiceStacks.push(token);
 }
 
 function pushToStackCounter(grievance, token) {
+  // Check if the stack for the grievance already exists
   if (!CounterCurrentstacks.has(grievance)) {
     CounterCurrentstacks.set(grievance, []); // Create a new stack if it doesn't exist
   } else {
@@ -59,11 +58,12 @@ function pushToStack(grievance, token) {
 }
 
 function popFromAnyStack(value) {
+  // Normalize the input value by removing the asterisk (*) if present
   const normalizedValue = value.replace("*", "");
 
   // Iterate through each grievance and its stack in the Map
   for (const [grievance, stack] of stacks.entries()) {
- 
+    // Find the index of the token that matches the given value
     const index = stack.findIndex((token) => {
       // Ensure the token has a hyphen and a suffix
       if (typeof token === "string" && token.includes("-")) {
@@ -76,13 +76,10 @@ function popFromAnyStack(value) {
       return false; // Return false if no suffix is present
     });
 
-    // If a matching token is found, remove it from the stack and return it
     if (index !== -1) {
       return stack.splice(index, 1)[0];
     }
   }
-
-  // Return null if no matching token is found in any stack
   return null;
 }
 
@@ -98,8 +95,6 @@ function getAllVoiceStacks() {
   return VoiceStacks; // Return the entire array of tokens
 }
 
-// Function to pop the first element every 10 seconds
-// Function to check every second if there is a value in the array
 function checkAndPop() {
   const checkInterval = setInterval(() => {
     if (VoiceStacks.length > 0) {
@@ -118,25 +113,26 @@ function checkAndPop() {
     }
   }, 1000); // Check every second
 }
-// Start the checking and popping process
 checkAndPop();
 
+
+// Enable CORS for any origin: For Software KIOSK
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow any origin for requests coming to these ports
       if (
         !origin ||
         origin.endsWith(":7000") ||
         origin.endsWith(":4004") ||
         origin.endsWith(":5005") ||
-        origin.endsWith(":5173") // Vite React dev server
+        origin.endsWith(":2000") ||
+        origin.endsWith(":2001") ||
+        origin.endsWith(":5004")
       ) {
-        return callback(null, true); // Allow the request
+        return callback(null, true); 
       }
-      return callback(new Error("Not allowed by CORS")); // Reject other origins
+      return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true,
   })
 );
 
@@ -153,11 +149,23 @@ const options = {
   cert: fs.readFileSync("localhost.pem"),
 };
 
+const server = https.createServer(options, app);
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "src", "templates"));
+app.use("/src", express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: "KVAR", resave: false, saveUninitialized: false }));
 
 app.use(express.json());
 app.use(bodyParser.json());
+
+app.set("view engine", "ejs");
+
+connectDatabase().catch((err) => {
+  console.error("Exiting application due to database connection error");
+  process.exit(1);
+});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -186,7 +194,6 @@ const storage2 = multer.diskStorage({
 const upload = multer({ storage: storage });
 const upload2 = multer({ storage2: storage2 });
 
-// Authentication check middleware
 function isAuthenticated(req, res, next) {
   if (!req.session.user) {
     return res.redirect("/");
@@ -242,7 +249,6 @@ function getCurrentTime() {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-// Function to ensure that the directory exists, creating it if necessary
 function ensureDirectoryExistence(filePath) {
   const dirname = path.dirname(filePath);
   if (fs.existsSync(dirname)) {
@@ -251,7 +257,7 @@ function ensureDirectoryExistence(filePath) {
   ensureDirectoryExistence(dirname);
   fs.mkdirSync(dirname);
 }
-// Helper function to ensure directory existence
+
 function ensureDirectoryExistence(directoryPath) {
   if (!fs.existsSync(directoryPath)) {
     fs.mkdirSync(directoryPath, { recursive: true });
@@ -367,9 +373,11 @@ function replaceSpecialForSummary(inputString, data) {
     }
     // Split the value by comma to get department and field
     const [findDep, replaceValue] = value.split(",").map((v) => v.trim());
-
+    // Find the department in the data array
     const foundData = data.find((item) => item.dep === findDep);
+    // If department not found, return the original match
     if (!foundData) return match;
+    // If replaceValue is 'Name', replace with department name
     if (replaceValue === "Name") {
       return foundData.dep;
     }
@@ -416,150 +424,6 @@ function padNumberWithZeros(num, size) {
   }
   return numStr;
 }
-
-// JWT auth middleware for API routes
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Access denied. No token provided." });
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ error: "Invalid or expired token." });
-    req.user = user;
-    next();
-  });
-}
-
-
-app.get('/api/admin/dashboard', async (req, res) => {
-  try {
-    const currDt = getCurrentDate();
-    const currTm = getCurrentTime();
-
-    const result2 = await client.query(
-      'SELECT * FROM dailytokencount WHERE date = $1', [currDt]
-    );
-    const result3 = await client.query(
-      'SELECT * FROM userlogs WHERE datetime = $1', [currDt]
-    );
-
-    res.json({
-      data: result2.rows,
-      userLog: result3.rows,
-      currDt,
-      currTm,
-    });
-  } catch (err) {
-    console.error('Dashboard error:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-app.use("/api", require("./routes/auth.routes"));
-
-// GET /api/dashboard — returns all data needed by the dashboard page
-app.get("/api/dashboard", authenticateToken, async (req, res) => {
-  try {
-    const currDt = getCurrentDate();
-    const currTm = getCurrentTime();
-
-    // Factory settings
-    const factoryResult = await client.query("SELECT * FROM factory_settings");
-    const factoryData = factoryResult.rows[0];
-    const call = factoryData?.calltoack || 90;
-    const ack = factoryData?.acktoend || 90;
-    const end = factoryData?.endtocall || 90;
-
-    // Departments
-    const deptResult = await client.query("SELECT * FROM departments");
-    const departments = deptResult.rows;
-
-    // Company
-    const companyResult = await client.query("SELECT * FROM companies");
-    const companies = companyResult.rows;
-    const companyName = companies[0]?.company_name || "KVAR Tech";
-
-    // Auto logout
-    const autoLogoutResult = await client.query("SELECT * FROM auto_logout_settings");
-    const autoLogoutTime = autoLogoutResult.rows[0]?.auto_logout_time || 30;
-
-    // Software settings (feature flags)
-    const settingsResult = await client.query("SELECT * FROM software_settings");
-    const settings = settingsResult.rows[0];
-
-    res.json({
-      currDt,
-      currTm,
-      factorySettings: { call, ack, end },
-      departments,
-      companyName,
-      autoLogoutTime,
-      featureFlags: {
-        recallBtn: settings?.activate_recall ?? true,
-        reassignBtn: settings?.activate_reassign ?? true,
-        changeDept: settings?.activate_changedept ?? true,
-      },
-    });
-  } catch (error) {
-    console.error("API dashboard error:", error);
-    res.status(500).json({ error: "Failed to load dashboard data" });
-  }
-});
-
-// GET /api/admin — returns admin panel data
-app.get("/api/admin",authenticateToken, async (req, res) => {
-  try {
-    const currDt = getCurrentDate();
-    const currTm = getCurrentTime();
-
-    const tokenResult = await client.query("SELECT * FROM dailytokencount WHERE date = $1", [currDt]);
-    const userLogResult = await client.query("SELECT * FROM userlogs WHERE datetime = $1", [currDt]);
-    const companyResult = await client.query("SELECT * FROM companies");
-
-    res.json({
-      currDt,
-      currTm,
-      tokenData: tokenResult.rows,
-      userLogs: userLogResult.rows,
-      companyName: companyResult.rows[0]?.company_name || "KVAR Tech",
-    });
-  } catch (error) {
-    console.error("API admin error:", error);
-    res.status(500).json({ error: "Failed to load admin data" });
-  }
-});
-
-app.use("/api/users", require("./routes/users.routes"));
-app.use("/api/departments", require("./routes/departments.routes"));
-app.use("/api/admin/counters", require("./routes/counters.routes"));
-app.use("/api/admin/company", require("./routes/company.routes"));
-app.use("/api/admin/ota", require("./routes/ota.routes"));
-app.use("/api/admin/kiosks", require("./routes/kiosks.routes"));
-app.use("/api/admin/settings", require("./routes/settings.routes"));
-app.use("/api/admin/displays", require("./routes/displays.routes"));
-app.use("/api/admin/reports", require("./routes/reports.routes"));
-app.use("/api/admin/printer", require("./routes/printer.routes"));
-
-app.post("/api/user/change-department", authenticateToken, async (req, res) => {
-  const { userId, newDepartment } = req.body;
-
-  if (!userId || !newDepartment) {
-    return res.status(400).json({ error: "User ID and department required." });
-  }
-
-  try {
-    // Changed 'department' to 'userdept' to match your pgAdmin table schema
-    await client.query("UPDATE users SET userdept = $1 WHERE id = $2", [newDepartment, userId]);
-    
-    res.json({ 
-      message: "Department changed successfully.", 
-      department: newDepartment 
-    });
-  } catch (error) {
-    console.error("Error changing department:", error);
-    res.status(500).json({ error: "Failed to change department." });
-  }
-});
 
 // Example usage
 
@@ -773,6 +637,7 @@ app.get("/kioskSummary", async (req, res) => {
 });
 
 var TokenType = 0;
+//   console.log("Keypad Request Received");
 //   const key = req.query.key;
 //   console.log("Received key:", key);
 
@@ -1006,12 +871,11 @@ var TokenType = 0;
 
 app.get("/keypad", async (req, res) => {
   console.log("Keypad Request Received");
-  console.log("Query Parameters:", req.query);
   const key = req.query.key;
   console.log("Received key:", key);
 
   const recdCounter = req.query.counter;
-  console.log("Recieved Counter :", recdCounter);
+  console.log("Recieved Counter :" , recdCounter);
 
   const KioskId = req.query.kioskId;
   console.log("Received KioskId:", KioskId);
@@ -1135,14 +999,14 @@ app.get("/keypad", async (req, res) => {
 
         if (Priority === "True") {
           pushToStack(
-            extracted.department + "-" + recdCounter,
-            TokenType + "-" + extracted.dep + final_new_count + "*"  // +recdCounter
+            extracted.department + "-"+ recdCounter,
+            TokenType + "-" + extracted.dep + final_new_count +"*"  // +recdCounter
           );
           // pushToVoiceStack(extracted.department,
           //   TokenType + "-" + extracted.dep + final_new_count + "*");
         } else {
           pushToStack(
-            extracted.department + "-" + recdCounter,
+            extracted.department +"-"+ recdCounter,
             TokenType + "-" + extracted.dep + final_new_count // +recdCounter
           );
           // pushToVoiceStack(extracted.department,
@@ -1430,10 +1294,7 @@ app.get("/CompanyReg", async (req, res) => {
 app.post("/CompanyReg", upload.single("fileToUpload"), async (req, res) => {
   const companyName = req.body.companyName; // Ensure this matches your form's input name for company name
   const companyLogoPath = req.file.path;
-
-  //console.log(companyName);
-  // console.log(companyLogoPath);
-
+  
   try {
     const queryText = "SELECT * FROM companies ORDER BY id ASC LIMIT 1";
 
@@ -1967,14 +1828,12 @@ app.get("/admin", async (req, res) => {
     department: req.query.userDepartment,
   };
 
-  // Queries to get data
   const queryText2 = "SELECT * FROM dailytokencount WHERE date = $1 ";
   const result2 = await client.query(queryText2, [currDt]);
 
   const queryText3 = "SELECT * FROM userlogs WHERE datetime = $1 ";
   const result3 = await client.query(queryText3, [currDt]);
 
-  // Fetch company name and logo
   const queryText4 = "SELECT * FROM companies";
   const result4 = await client.query(queryText4);
 
@@ -2034,7 +1893,6 @@ app.get("/addCOunter", async (req, res) => {
     name: req.query.userName,
     department: req.query.userDepartment,
   };
-  //console.log(kiosks.rows);
 
   const queryText4 = "SELECT * FROM companies";
   const result4 = await client.query(queryText4);
@@ -2255,7 +2113,6 @@ app.get("/addWaitingRoomDisplay", async (req, res) => {
     name: req.query.userName,
     department: req.query.userDepartment,
   };
-  //console.log(kiosks.rows);
 
   const queryText4 = "SELECT * FROM companies";
   const result4 = await client.query(queryText4);
@@ -2702,7 +2559,7 @@ app.get("/dashboard", async (req, res) => {
   const queryCheck = `SELECT * FROM userlogs WHERE datetime = $1 AND userid = $2 AND department = $3`;
 
   const result = await client.query(queryCheck, [currDt, userId, department]);
-  //console.log(result.rows);
+
   if (result.rows && result.rows.length > 0) {
     console.log("Update");
     const updateQuery = `
@@ -2715,7 +2572,6 @@ app.get("/dashboard", async (req, res) => {
         datetime = $2 AND department = $3 AND userid = $4;`;
 
     const values = [counter, currDt, department, userId];
-    // console.log("Values" + values);
     await client.query(updateQuery, values);
     console.log("Entry Updated: LOG IN");
   } else {
@@ -2814,8 +2670,6 @@ app.get("/storeToken", async (req, res) => {
   };
   res.status(500).send("Error fetching departments");
 });
-
-// app.post("/storeToken", async (req, res) => {
 //   console.log("=== STORE TOKEN ===");
 //   const { tokenNumber, callTime, endTime, prefix } = req.body;
 
@@ -3189,7 +3043,7 @@ app.post("/storeToken", async (req, res) => {
       console.log("Time Difference:", timeDifference);
       console.log(
         "Time interval : Current Time : " +
-        JSON.stringify(data3_N.time_interval)
+          JSON.stringify(data3_N.time_interval)
       );
       const intervalString = `${timeDifference.seconds} seconds ${timeDifference.milliseconds} milliseconds`;
       const updateQuery2 = `
@@ -3395,8 +3249,6 @@ app.get("/updateData", async (req, res) => {
   };
 
   const currDt = getCurrentDate();
-  //console.log("=== Update Data ===");
-  //console.log(userDetails);
   const queryText2 =
     "SELECT * FROM dailytokencount WHERE kiosk_id = $1 AND dep = $2 AND date = $3";
 
@@ -3405,16 +3257,6 @@ app.get("/updateData", async (req, res) => {
     userDetails.department,
     currDt,
   ]);
-
-  // const queryText3 =
-  //   "SELECT * FROM token_logs WHERE kiosk_id = $1 AND user_id = $2 AND dep = $3 AND DATE(call_time) = $4";
-
-  // const result3 = await client.query(queryText3, [
-  //   userDetails.kioskId,
-  //   userDetails.id,
-  //   userDetails.department,
-  //   currDt,
-  // ]);
 
   const queryText3 = `
   SELECT * 
@@ -4763,10 +4605,14 @@ app.post("/printerEditor", async (req, res) => {
   }
 });
 
+const port = 2001;
+server.listen(port, () => {
+  console.log(`Server running at https://localhost:${port}`);
+});
 
-
-
+const HTTPSport = 2000;
+app.listen(HTTPSport, () => {
+  console.log(`Server running at http://localhost:${HTTPSport}`);
+});
 
 // Developed by GIRISH PAWAR & VISHAL PADYAL
-
-module.exports = app;
