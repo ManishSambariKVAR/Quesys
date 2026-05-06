@@ -28,9 +28,29 @@ async function saveSoftwareSettings(recall, reassign, changeDept) {
   }
 }
 
+async function getAutoLogoutSettings() {
+  const result = await client.query("SELECT * FROM auto_logout_settings");
+  return result.rows[0];
+}
+
+async function saveAutoLogoutSettings(userId, userName, userDepartment, autoLogoutTime) {
+  const query = `
+    INSERT INTO auto_logout_settings (user_id, user_name, user_department, auto_logout_time)
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT (user_id)
+    DO UPDATE SET 
+      user_name = EXCLUDED.user_name,
+      user_department = EXCLUDED.user_department,
+      auto_logout_time = EXCLUDED.auto_logout_time;
+  `;
+  await client.query(query, [userId, userName, userDepartment, autoLogoutTime]);
+}
+
 module.exports = {
   getFactorySettings,
   saveFactorySettings,
   getSoftwareSettings,
   saveSoftwareSettings,
+  getAutoLogoutSettings,
+  saveAutoLogoutSettings,
 };

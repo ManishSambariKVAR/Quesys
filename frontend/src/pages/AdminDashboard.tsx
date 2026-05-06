@@ -84,7 +84,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get<AdminDashboardData>('/admin/dashboard');
+        const res = await api.get<AdminDashboardData>('/admin/dashboard/admin');
         console.log("🔍 DATA FROM BACKEND:", res.data);
         setDashData(res.data);
       } catch (err) {

@@ -9,4 +9,7 @@ router.post("/factory", authenticateToken, settingsController.saveFactorySetting
 router.get("/software", authenticateToken, settingsController.getSoftwareSettings);
 router.post("/software", authenticateToken, settingsController.saveSoftwareSettings);
 
+router.get("/auto-logout", authenticateToken, settingsController.getAutoLogout);
+router.post("/auto-logout", authenticateToken, settingsController.saveAutoLogout);
+
 module.exports = router;

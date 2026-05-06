@@ -106,7 +106,23 @@ async function login(req, res) {
   }
 }
 
+async function logout(req, res) {
+  const userId = req.user?.userId;
+  const department = req.user?.department;
+  const counter = req.user?.counter;
+  try {
+    const { getCurrentDate } = require("../utils/helpers");
+    const currDt = getCurrentDate();
+    await authService.trackLogout(userId, department, counter, currDt);
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error during logout tracking:", error);
+    res.json({ message: "Logged out (tracking failed)" });
+  }
+}
+
 module.exports = {
   getAvailableCounters,
   login,
+  logout,
 };

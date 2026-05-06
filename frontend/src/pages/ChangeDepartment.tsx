@@ -37,7 +37,7 @@ export default function ChangeDepartment() {
 
         try {
             setLoading(true);
-            await api.post('/users/change-department', {
+            await api.post('/admin/users/change-department', {
                 userId: user.userId,
                 newDepartment: selectedDept,
             });

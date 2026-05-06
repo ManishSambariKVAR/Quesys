@@ -82,10 +82,39 @@ async function saveLink(req, res) {
   }
 }
 
+async function checkTvOTA(req, res) {
+  const { displayId } = req.query;
+  try {
+    const display = await otaService.getOTADisplay(displayId);
+    if (!display) {
+      return res.status(404).send("Display not found.");
+    }
+    if (display.status === "1") {
+      const filePath = path.join(process.cwd(), "src/uploads/otaForTV/", display.filename);
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).send("File not found.");
+      }
+      res.sendFile(filePath, async (err) => {
+        if (err) {
+          console.error("Error sending OTA file:", err);
+        } else {
+          await otaService.updateOTAStatus(displayId, "0");
+        }
+      });
+    } else {
+      res.status(200).send("No need for update.");
+    }
+  } catch (error) {
+    console.error("Error in /checkTvOTA:", error);
+    res.status(500).send("Internal server error.");
+  }
+}
+
 module.exports = {
   getFiles,
   saveFile,
   deleteFile,
   getDisplays,
   saveLink,
+  checkTvOTA,
 };

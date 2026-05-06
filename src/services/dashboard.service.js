@@ -65,6 +65,31 @@ async function getDepartmentPrefix(kioskId, department) {
   return result.rows[0];
 }
 
+async function trackUserLogin(userId, department, counter, date) {
+  try {
+    const check = await client.query(
+      "SELECT * FROM userlogs WHERE datetime = $1 AND userid = $2 AND department = $3",
+      [date, userId, department]
+    );
+
+    if (check.rows && check.rows.length > 0) {
+      await client.query(
+        `UPDATE userlogs SET counter = $1, updatedat = CURRENT_TIMESTAMP, log = 1 
+         WHERE datetime = $2 AND department = $3 AND userid = $4`,
+        [counter, date, department, userId]
+      );
+    } else {
+      await client.query(
+        `INSERT INTO userlogs (counter, department, userId, datetime, updatedat, log)
+         VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, 1)`,
+        [counter, department, userId, date]
+      );
+    }
+  } catch (error) {
+    console.error("Error tracking user login:", error);
+  }
+}
+
 module.exports = {
   getFactorySettings,
   getDepartments,
@@ -77,4 +102,5 @@ module.exports = {
   getTokenLogs,
   getDepartmentsByKiosk,
   getDepartmentPrefix,
+  trackUserLogin,
 };

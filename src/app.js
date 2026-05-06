@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 const session = require("express-session");
 
 const authRoutes = require("./routes/auth.routes");
@@ -19,6 +20,7 @@ const dashboardRoutes = require("./routes/dashboard.routes");
 const tokensController = require("./controllers/tokens.controller");
 const kiosksController = require("./controllers/kiosks.controller");
 const authController = require("./controllers/auth.controller");
+const otaController = require("./controllers/ota.controller");
 
 const app = express();
 
@@ -73,6 +75,7 @@ app.use("/api/admin/printer", printerRoutes);
 app.use("/api/admin/reports", reportsRoutes);
 app.use("/api/admin/settings", settingsRoutes);
 app.use("/api/admin/tokens", tokensRoutes);
+app.use("/api/admin/users", usersRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
 app.use("/api/admin", dashboardRoutes); 
 
@@ -83,12 +86,7 @@ app.get("/kioskSummary", kiosksController.getKioskSummary);
 app.get("/KioskRegistration", kiosksController.generateSerialNumber);
 app.get("/KioskRegConfirm", kiosksController.confirmRegistration);
 app.get("/AllData", kiosksController.getAllData);
+app.get("/checkTvOTA", otaController.checkTvOTA);
 
 module.exports = app;
 
-// router.get("/", authenticateToken, dashboardController.getAdminData);
-
-// // GET /api/admin/dashboard/user → getDashboardData (for user dashboard)
-// router.get("/user", authenticateToken, dashboardController.getDashboardData);
-
-// router.get("/update", authenticateToken, dashboardController.updateData);

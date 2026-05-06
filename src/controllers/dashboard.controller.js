@@ -6,6 +6,15 @@ async function getDashboardData(req, res) {
     const currDt = getCurrentDate();
     const currTm = getCurrentTime();
 
+    // Track operator login in userlogs (same as old /dashboard route)
+    const userId = req.user?.userId || req.query.userId;
+    const department = req.user?.department || req.query.userDepartment;
+    const counter = req.user?.counter || req.query.counter;
+
+    if (userId && department) {
+      await dashboardService.trackUserLogin(userId, department, counter, currDt);
+    }
+
     const factorySettings = await dashboardService.getFactorySettings();
     const departments = await dashboardService.getDepartments();
     const companies = await dashboardService.getCompanies();

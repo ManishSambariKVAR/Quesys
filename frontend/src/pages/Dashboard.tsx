@@ -19,12 +19,28 @@ interface TokenData {
     dep: string;
 }
 
+interface TokenLogEntry {
+    id?: number;
+    token_id: number;
+    call_time: string | null;
+    ack_time: string | null;
+    end_time: string | null;
+    time_interval: unknown;
+    dep: string;
+    reassign_dep?: string;
+    prefix: string;
+    priority?: string | boolean | null;
+    recallstatus?: boolean;
+}
+
 interface TokenUpdateResponse {
     data: TokenData[];
     prefix: string;
-    token_log: { time_interval: unknown }[];
+    token_log: TokenLogEntry[];
     user: unknown;
 }
+
+const ITEMS_PER_PAGE = 5;
 
 export default function Dashboard() {
     const { user } = useAuth();
@@ -36,6 +52,8 @@ export default function Dashboard() {
     const [balanceTokens, setBalanceTokens] = useState(0);
     const [skippedTokens, setSkippedTokens] = useState(0);
     const [assignedTokens, setAssignedTokens] = useState(0);
+    const [tokenLogs, setTokenLogs] = useState<TokenLogEntry[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
     const [timerDisplay, setTimerDisplay] = useState('00:00');
     const [callDisabled, setCallDisabled] = useState(false);
     const [ackDisabled, setAckDisabled] = useState(true);
@@ -73,7 +91,7 @@ export default function Dashboard() {
         return () => clearInterval(interval);
     }, []);
 
-    // Poll token data from /tokenData endpoint
+    // Poll token data from /update endpoint (same as old /updateData)
     const pollTokenData = useCallback(async () => {
         if (!user) return;
         try {
@@ -85,6 +103,7 @@ export default function Dashboard() {
             if (data) {
                 setTotalTokens(prefix + data.token_total_count);
                 setCurrentToken(prefix + data.token_current_count);
+                setOperatorToken(prefix + data.token_current_count);
                 setSkippedTokens(data.token_skip_count);
                 setAssignedTokens(data.reassign_token || 0);
 
@@ -94,8 +113,13 @@ export default function Dashboard() {
                 });
                 setBalanceTokens(balance);
             }
-        } catch {
 
+            // Update token logs for the table
+            if (res.data.token_log) {
+                setTokenLogs(res.data.token_log);
+            }
+        } catch {
+            // Silently handle polling errors
         }
     }, [user]);
 
@@ -170,6 +194,78 @@ export default function Dashboard() {
         setCallDisabled(false);
         setAckDisabled(true);
         setEndDisabled(true);
+    };
+
+    // Pagination
+    const totalPages = Math.max(1, Math.ceil(tokenLogs.length / ITEMS_PER_PAGE));
+    const paginatedLogs = tokenLogs.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const handleRecall = async (log: TokenLogEntry) => {
+        if (!user) return;
+        try {
+            await api.post(
+                `/admin/tokens/recall?userId=${user.userId}&userDepartment=${user.department}&counter=${user.counter}&kioskId=${user.kioskId}&tokenNumber=${log.token_id}`
+            );
+            pollTokenData();
+        } catch (err) {
+            console.error('Recall failed:', err);
+        }
+    };
+
+    const handleReassign = async (log: TokenLogEntry) => {
+        if (!user || !dashData) return;
+        // For now, show a simple prompt for reassign department
+        const departments = dashData.departments.filter(d => d.department !== user.department);
+        if (departments.length === 0) {
+            alert('No other departments available for reassign.');
+            return;
+        }
+        const deptList = departments.map(d => d.department).join(', ');
+        const targetDept = prompt(`Reassign token ${log.prefix}${String(log.token_id).padStart(3, '0')} to which department?\nAvailable: ${deptList}`);
+        if (!targetDept) return;
+
+        try {
+            await api.post(
+                `/admin/tokens/reassign?userId=${user.userId}&userName=${user.name}&userDepartment=${user.department}&counter=${user.counter}&kioskId=${user.kioskId}`,
+                {
+                    tokenId2: log.token_id,
+                    logId: log.id,
+                    ReassignDepT: targetDept,
+                    ReassignDepF: user.department,
+                }
+            );
+            pollTokenData();
+        } catch (err) {
+            console.error('Reassign failed:', err);
+        }
+    };
+
+    const formatAckTime = (ackTime: string | null): string => {
+        if (!ackTime) return 'N/A';
+        try {
+            const d = new Date(ackTime);
+            const date = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+            const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}.${String(d.getMilliseconds()).padStart(3, '0')}`;
+            return `${date}, ${time}`;
+        } catch {
+            return String(ackTime);
+        }
+    };
+
+    const formatTimeTaken = (timeInterval: unknown): string => {
+        if (timeInterval === null || timeInterval === undefined) return 'N/A';
+        if (typeof timeInterval === 'object' && timeInterval !== null) {
+            const interval = timeInterval as { hours?: number; minutes?: number; seconds?: number };
+            const parts = [];
+            if (interval.hours) parts.push(`${interval.hours}h`);
+            if (interval.minutes) parts.push(`${interval.minutes}m`);
+            if (interval.seconds) parts.push(`${interval.seconds}s`);
+            return parts.length > 0 ? parts.join(' ') : 'N/A';
+        }
+        return String(timeInterval);
     };
 
     if (!dashData) {
@@ -249,7 +345,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Table Placeholder */}
+            {/* Token Log Table */}
             <div className="dashboard-table-container">
                 <table className="dashboard-table">
                     <thead>
@@ -257,18 +353,72 @@ export default function Dashboard() {
                             <th>TOKEN ID</th>
                             <th>ACKNOWLEDGE TIME</th>
                             <th>TIME TAKEN</th>
-                            <th>RECALL</th>
-                            <th>REASSIGN</th>
+                            {dashData.featureFlags.recallBtn && <th>RECALL</th>}
+                            {dashData.featureFlags.reassignBtn && <th>REASSIGN</th>}
                         </tr>
                     </thead>
                     <tbody>
-                        {/* Table body empty for now as in old view without logs */}
+                        {paginatedLogs.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} style={{ textAlign: 'center', color: '#999', padding: '20px' }}>
+                                    No token logs
+                                </td>
+                            </tr>
+                        ) : (
+                            paginatedLogs.map((log, i) => {
+                                const tokenDisplay = log.prefix + String(log.token_id).padStart(3, '0');
+                                const isPriority = log.priority === 'True' || log.priority === true;
+                                return (
+                                    <tr key={i}>
+                                        <td style={{ color: isPriority ? '#e74c3c' : '#333', fontWeight: isPriority ? 700 : 400 }}>
+                                            {tokenDisplay}{isPriority ? '*' : ''}
+                                        </td>
+                                        <td style={{ color: log.ack_time ? '#e74c3c' : '#999' }}>
+                                            {formatAckTime(log.ack_time)}
+                                        </td>
+                                        <td>{formatTimeTaken(log.time_interval)}</td>
+                                        {dashData.featureFlags.recallBtn && (
+                                            <td>
+                                                <button
+                                                    className="table-action-btn recall-btn"
+                                                    onClick={() => handleRecall(log)}
+                                                >
+                                                    ReCall
+                                                </button>
+                                            </td>
+                                        )}
+                                        {dashData.featureFlags.reassignBtn && (
+                                            <td>
+                                                <button
+                                                    className="table-action-btn reassign-btn"
+                                                    onClick={() => handleReassign(log)}
+                                                >
+                                                    ReAssign
+                                                </button>
+                                            </td>
+                                        )}
+                                    </tr>
+                                );
+                            })
+                        )}
                     </tbody>
                 </table>
                 <div className="pagination">
-                    <button className="page-btn">&lt;</button>
-                    <span>Page 1 of 0</span>
-                    <button className="page-btn">&gt;</button>
+                    <button
+                        className="page-btn"
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage <= 1}
+                    >
+                        &lt;
+                    </button>
+                    <span>Page {currentPage} of {totalPages}</span>
+                    <button
+                        className="page-btn"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage >= totalPages}
+                    >
+                        &gt;
+                    </button>
                 </div>
             </div>
         </div>

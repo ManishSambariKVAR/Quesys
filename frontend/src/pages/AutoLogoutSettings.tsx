@@ -1,10 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../api';
 import './UserManagement.css'; 
 
 export default function AutoLogoutSettings() {
     const [autoLogoutTime, setAutoLogoutTime] = useState(30);
     const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+
+    // Fetch current auto-logout setting on mount
+    useEffect(() => {
+        const fetchSetting = async () => {
+            try {
+                const res = await api.get('/admin/auto-logout');
+                if (res.data.settings?.auto_logout_time) {
+                    setAutoLogoutTime(res.data.settings.auto_logout_time);
+                }
+            } catch {
+                // Use default 30
+            }
+        };
+        fetchSetting();
+    }, []);
 
     const showMsg = (text: string, type: 'success' | 'error') => {
         setMessage({ text, type });
@@ -14,7 +29,7 @@ export default function AutoLogoutSettings() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post('/autoLogoutSettings', { autoLogoutTime }); 
+            await api.post('/admin/auto-logout', { autoLogoutTime }); 
             showMsg('Settings updated successfully', 'success');
         } catch {
             showMsg('Failed to update settings', 'error');

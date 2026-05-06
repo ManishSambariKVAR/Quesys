@@ -28,6 +28,15 @@ async function insertOTALink(displayid, filename, status) {
   await client.query("INSERT INTO otadisplay (display_id, filename, status) VALUES ($1, $2, $3)", [displayid, filename, status]);
 }
 
+async function getOTADisplay(displayId) {
+  const result = await client.query("SELECT * FROM otadisplay WHERE display_id = $1", [displayId]);
+  return result.rows[0];
+}
+
+async function updateOTAStatus(displayId, status) {
+  await client.query("UPDATE otadisplay SET status = $1 WHERE display_id = $2", [status, displayId]);
+}
+
 module.exports = {
   getWaitingRoomDisplays,
   getCounterDisplays,
@@ -35,4 +44,6 @@ module.exports = {
   checkOTALink,
   updateOTALink,
   insertOTALink,
+  getOTADisplay,
+  updateOTAStatus,
 };

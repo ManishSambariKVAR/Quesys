@@ -24,9 +24,15 @@ async function getDepartmentByName(departmentName) {
   return result.rows;
 }
 
+async function trackLogout(userId, department, counter, currDt) {
+  const query = `UPDATE userlogs SET counter = $1, updatedat = CURRENT_TIMESTAMP, log = 0 WHERE datetime = $2 AND department = $3 AND userid = $4`;
+  await client.query(query, [counter, currDt, department, userId]);
+}
+
 module.exports = {
   getUserLogsByDate,
   getAllCounters,
   getUserById,
   getDepartmentByName,
+  trackLogout,
 };

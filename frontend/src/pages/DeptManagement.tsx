@@ -50,14 +50,8 @@ export default function DeptManagement() {
             setDepts(res.data.departments || []);
             setKiosks(res.data.kiosks || []);
         } catch (err) {
-            // fallback attempt if /admin/departments fails
-            try {
-                const res = await api.get<{ departments: Department[]; kiosks: Kiosk[] }>('/departments');
-                setDepts(res.data.departments || []);
-                setKiosks(res.data.kiosks || []);
-            } catch {
-                setMessage({ text: 'Failed to load departments', type: 'error' });
-            }
+            console.error('Failed to load departments', err);
+            setMessage({ text: 'Failed to load departments', type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -74,9 +68,9 @@ export default function DeptManagement() {
     const handleAdd = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post('/admin/departments/register', { // fallback mapped in frontend/api? using standard mapped endpoints
+            await api.post('/admin/departments/register', {
                 department: addName, kioskKey: addKey, depPrefix: addPrefix, kioskId: addKiosk,
-            }).catch(() => api.post('/departments/register', { department: addName, kioskKey: addKey, depPrefix: addPrefix, kioskId: addKiosk }));
+            });
             showMsg('Department registered', 'success');
             setAddName(''); setAddKey(''); setAddPrefix(''); setAddKiosk('');
             fetchDepts();
@@ -99,7 +93,7 @@ export default function DeptManagement() {
         e.preventDefault();
         if (!editDept) return;
         try {
-            await api.put('/departments/update', {
+            await api.put('/admin/departments/update', {
                 id: editDept.id, department: editName, kioskKey: editKey, depPrefix: editPrefix, kioskId: editKiosk,
             });
             showMsg('Department updated', 'success');
@@ -114,7 +108,7 @@ export default function DeptManagement() {
     const handleDelete = async (id: number) => {
         if (!window.confirm('Are you sure you want to delete this department?')) return;
         try {
-            await api.delete(`/departments/${id}`);
+            await api.delete(`/admin/departments/${id}`);
             showMsg('Department deleted', 'success');
             fetchDepts();
         } catch {

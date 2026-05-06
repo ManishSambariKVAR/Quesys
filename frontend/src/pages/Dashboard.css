@@ -224,3 +224,32 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* Table Action Buttons */
+.table-action-btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.table-action-btn:hover {
+    opacity: 0.85;
+}
+
+.recall-btn {
+    background-color: #4caf50;
+}
+
+.reassign-btn {
+    background-color: #2196F3;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

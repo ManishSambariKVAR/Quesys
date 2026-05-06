@@ -38,9 +38,34 @@ async function saveSoftwareSettings(req, res) {
   }
 }
 
+async function getAutoLogout(req, res) {
+  try {
+    const settings = await settingsService.getAutoLogoutSettings();
+    res.json({ settings: settings || { auto_logout_time: 30 } });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch auto-logout settings." });
+  }
+}
+
+async function saveAutoLogout(req, res) {
+  const { autoLogoutTime } = req.body;
+  const userId = req.user?.userId || '';
+  const userName = req.user?.name || '';
+  const userDepartment = req.user?.department || '';
+  try {
+    await settingsService.saveAutoLogoutSettings(userId, userName, userDepartment, autoLogoutTime);
+    res.json({ message: "Auto-logout settings updated." });
+  } catch (error) {
+    console.error("Error saving auto-logout settings:", error);
+    res.status(500).json({ error: "Failed to update auto-logout settings." });
+  }
+}
+
 module.exports = {
   getFactorySettings,
   saveFactorySettings,
   getSoftwareSettings,
   saveSoftwareSettings,
+  getAutoLogout,
+  saveAutoLogout,
 };
