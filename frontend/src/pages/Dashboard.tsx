@@ -89,6 +89,7 @@ export default function Dashboard() {
   const currentPrefix = useRef<string>('');
   const [currentPrefixState, setCurrentPrefixState] = useState('');
   const currentBypass = useRef<boolean>(false);
+  const currentNotInc = useRef<boolean>(false);
   const callTimeRef = useRef<string>('');
   const ackTimeRef = useRef<string>('');
   const acknowledgmentStatus = useRef<boolean>(false);
@@ -265,12 +266,16 @@ export default function Dashboard() {
   };
 
   const handleCall = async () => {
-    if (!user || localTokenCount.current >= totalTokenCount) return;
+    if (!user) return;
+    if (!currentNotInc.current && localTokenCount.current >= totalTokenCount) return;
 
     acknowledgmentStatus.current = false;
 
-    // Increment token locally
-    localTokenCount.current += 1;
+    // Increment token locally if not a recall
+    if (!currentNotInc.current) {
+      localTokenCount.current += 1;
+    }
+    currentNotInc.current = false;
     currentBypass.current = true;
     setLocalTokenCountState(localTokenCount.current);
 
@@ -288,6 +293,20 @@ export default function Dashboard() {
     setAckDisabled(false);
     setEndDisabled(false);
 
+    elapsedRef.current = 0;
+    resetProgressBar();
+
+    const callTimeSec = dashData?.factorySettings.call || 90;
+
+    startProgressBar(callTimeSec * 1000);
+    startTimer();
+
+    timeoutRef.current = setTimeout(() => {
+      if (!acknowledgmentStatus.current) {
+        setShowTimeoutModal(true);
+      }
+    }, callTimeSec * 1000);
+
     try {
       const fnToken = String(newTokenNum).padStart(3, '0');
       await api.post(
@@ -297,22 +316,6 @@ export default function Dashboard() {
     } catch (err) {
       console.error('Call failed:', err);
     }
-
-    elapsedRef.current = 0;
-
-    resetProgressBar();
-
-    const callTimeSec = dashData?.factorySettings.call || 90;
-
-    startProgressBar(callTimeSec * 1000);
-
-    startTimer();
-
-    timeoutRef.current = setTimeout(() => {
-      if (!acknowledgmentStatus.current) {
-        setShowTimeoutModal(true);
-      }
-    }, callTimeSec * 1000);
   };
 
   const handleAcknowledge = () => {
@@ -379,6 +382,7 @@ export default function Dashboard() {
         reqData
       );
       currentBypass.current = false;
+      currentNotInc.current = false;
     } catch (err) {
       console.error('End failed:', err);
     }
@@ -408,15 +412,15 @@ export default function Dashboard() {
     setLocalTokenCountState(log.token_id);
     setCurrentPrefixState(log.prefix);
     currentBypass.current = true;
+    currentNotInc.current = true;
 
     setCurrentToken(log.prefix + log.token_id);
     setOperatorToken(log.prefix + log.token_id);
 
     try {
       await api.post(
-        `/admin/tokens/recall?userId=${user.userId}&userDepartment=${user.department}&counter=${user.counter}&kioskId=${user.kioskId}`,
+        `/admin/tokens/recall?userId=${user.userId}&userDepartment=${user.department}&counter=${user.counter}&kioskId=${user.kioskId}&tokenNumber=${log.token_id}`,
         {
-          tokenNumber: log.token_id,
           prefix: log.prefix,
         }
       );
@@ -451,6 +455,8 @@ export default function Dashboard() {
   const confirmReassign = async () => {
     if (!user || !reassignLog || !targetDept) return;
 
+    setShowConfirmModal(false);
+
     try {
       await api.post(
         `/admin/tokens/reassign?userId=${user.userId}&userName=${user.name}&userDepartment=${user.department}&counter=${user.counter}&kioskId=${user.kioskId}`,
@@ -461,7 +467,6 @@ export default function Dashboard() {
           ReassignDepF: user.department,
         }
       );
-      setShowConfirmModal(false);
       setReassignLog(null);
       setTargetDept('');
       pollTokenData();
@@ -564,7 +569,7 @@ export default function Dashboard() {
           <button
             className="action-btn call-btn w-100"
             onClick={handleCall}
-            disabled={callDisabled || localTokenCountState >= totalTokenCount}
+            disabled={callDisabled || (!currentNotInc.current && localTokenCountState >= totalTokenCount)}
           >
             Call
           </button>

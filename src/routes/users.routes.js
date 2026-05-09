@@ -7,10 +7,6 @@ router.get('/', authenticateToken, usersController.getAllUsers);
 router.post('/register', authenticateToken, usersController.registerUser);
 router.put('/update', authenticateToken, usersController.updateUser);
 router.delete('/:id', authenticateToken, usersController.deleteUser);
-router.post(
-  '/change-department',
-  authenticateToken,
-  usersController.changeDepartment
-);
+router.post('/change-department',authenticateToken,usersController.changeDepartment);
 
 module.exports = router;

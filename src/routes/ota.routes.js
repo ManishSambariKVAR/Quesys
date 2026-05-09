@@ -7,7 +7,6 @@ const { upload } = require('../middlewares/upload.middleware');
 router.get('/files', authenticateToken, otaController.getFiles);
 router.post('/files', authenticateToken, upload.none(), otaController.saveFile);
 router.delete('/files/:filename', authenticateToken, otaController.deleteFile);
-
 router.get('/displays', authenticateToken, otaController.getDisplays);
 router.post('/links', authenticateToken, otaController.saveLink);
 
