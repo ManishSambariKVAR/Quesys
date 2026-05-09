@@ -12,7 +12,6 @@ let globalCompanyData: CompanyData = {
   companyName: 'KVAR TECH', // Default from your old logic
   logoPath: null,
 };
-let globalSetCompanyData: (data: CompanyData) => void;
 let listeners: (() => void)[] = [];
 
 // This hook will manage the global state and data fetching

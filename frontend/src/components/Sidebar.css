@@ -1,147 +1,147 @@
 .sidebar {
-    width: 280px;
-    height: 100vh;
-    background: #fff;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 100;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-    transition: transform 0.3s;
+  width: 280px;
+  height: 100vh;
+  background: #fff;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s;
 }
 
 .sidebar.closed {
-    transform: translateX(-100%);
+  transform: translateX(-100%);
 }
 
 .sidebar-header {
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid #f0f0f0;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .sidebar-logo {
-    height: 60px;
-    object-fit: contain;
+  height: 60px;
+  object-fit: contain;
 }
 
 .sidebar-user {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .sidebar-avatar-img {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
 }
 
 .sidebar-user-name {
-    font-size: 16px;
-    color: #333;
+  font-size: 16px;
+  color: #333;
 }
 
 .sidebar-section-label {
-    padding: 15px 25px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #a0a0a0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  padding: 15px 25px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a0a0a0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .sidebar-nav {
-    flex: 1;
-    overflow-y: auto;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .sidebar-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .sidebar-nav li a {
-    display: flex;
-    align-items: center;
-    padding: 12px 25px;
-    font-size: 15px;
-    color: #555;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-left: 4px solid transparent;
+  display: flex;
+  align-items: center;
+  padding: 12px 25px;
+  font-size: 15px;
+  color: #555;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid transparent;
 }
 
 .sidebar-nav li a:hover {
-    color: #2154c5;
-    background-color: #f8f9fa;
+  color: #2154c5;
+  background-color: #f8f9fa;
 }
 
 .sidebar-nav li a.active {
-    background-color: #fdf3f2;
-    color: #2154c5;
-    border-left-color: #f44336;
+  background-color: #fdf3f2;
+  color: #2154c5;
+  border-left-color: #f44336;
 }
 
 .sidebar-icon {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    margin-right: 15px;
-    filter: grayscale(100%) opacity(0.6);
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  margin-right: 15px;
+  filter: grayscale(100%) opacity(0.6);
 }
 
 .sidebar-nav li a.active .sidebar-icon,
 .sidebar-nav li a:hover .sidebar-icon {
-    filter: none;
+  filter: none;
 }
 
 /* Submenu styles */
 .submenu {
-    display: none;
-    background-color: #fcfcfc;
-    padding: 0;
+  display: none;
+  background-color: #fcfcfc;
+  padding: 0;
 }
 
 .has-submenu.expanded .submenu {
-    display: block;
+  display: block;
 }
 
 .submenu li a {
-    padding: 10px 25px 10px 50px;
-    font-size: 14px;
-    border-left: 4px solid transparent;
-    color: #666;
+  padding: 10px 25px 10px 50px;
+  font-size: 14px;
+  border-left: 4px solid transparent;
+  color: #666;
 }
 
 .submenu li a:hover {
-    background-color: #f8f9fa;
-    color: #2154c5;
+  background-color: #f8f9fa;
+  color: #2154c5;
 }
 
 .submenu li a.active {
-    color: #2154c5;
-    background-color: #f8f9fa;
-    border-left-color: #2154c5;
+  color: #2154c5;
+  background-color: #f8f9fa;
+  border-left-color: #2154c5;
 }
 
 .submenu-dot {
-    font-size: 16px;
-    margin-right: 10px;
-    color: #a0a0a0;
+  font-size: 16px;
+  margin-right: 10px;
+  color: #a0a0a0;
 }
 
 .submenu li a.active .submenu-dot {
-    color: #2154c5;
+  color: #2154c5;
 }

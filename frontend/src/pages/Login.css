@@ -33,9 +33,15 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Login Container */
@@ -65,10 +71,10 @@
 }
 
 .login-logo {
-    background: white;
-    display: block;
-    margin: 0 auto 10px auto;  /* center + spacing below */
-    max-width: 80px;           /* adjust size if needed */
+  background: white;
+  display: block;
+  margin: 0 auto 10px auto; /* center + spacing below */
+  max-width: 80px; /* adjust size if needed */
 }
 
 .login-header h4 {

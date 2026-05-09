@@ -6,8 +6,8 @@
   "bin": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/server.js -e js,ejs",
-    "start": "nodemon src/server.js -e js,ejs"
+    "dev": "nodemon src/server.js -e js",
+    "start": "nodemon src/server.js -e js"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,6 @@
     "connect-flash": "^0.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "ejs": "^3.1.10",
     "electron": "^34.0.0",
     "express": "^4.21.2",
     "express-session": "^1.18.0",
@@ -33,12 +32,15 @@
   },
   "pkg": {
     "assets": [
-      "views/**/*",
-      "public/**/*",
+      "frontend/dist/**/*",
+      "src/uploads/**/*",
       "node_modules/node-notifier/vendor/**/*"
     ],
     "targets": [
       "node16-win-x64"
     ]
+  },
+  "devDependencies": {
+    "prettier": "^3.8.3"
   }
 }

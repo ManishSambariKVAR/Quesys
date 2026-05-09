@@ -1,4 +1,4 @@
-const reportsService = require("../services/reports.service");
+const reportsService = require('../services/reports.service');
 
 async function getLogs(req, res) {
   const { fromDate, toDate } = req.query;
@@ -7,8 +7,8 @@ async function getLogs(req, res) {
     const reassigned = await reportsService.getReassignedData();
     res.json({ logs, reassigned });
   } catch (error) {
-    console.error("Error fetching report logs:", error);
-    res.status(500).json({ error: "Failed to load log data." });
+    console.error('Error fetching report logs:', error);
+    res.status(500).json({ error: 'Failed to load log data.' });
   }
 }
 
@@ -21,7 +21,7 @@ async function getSummary(req, res) {
 
     res.json({ summary, usernames, departments });
   } catch (error) {
-    res.status(500).json({ error: "Failed to load summary data." });
+    res.status(500).json({ error: 'Failed to load summary data.' });
   }
 }
 

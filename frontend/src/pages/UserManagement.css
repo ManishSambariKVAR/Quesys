@@ -1,273 +1,273 @@
 .um-page {
-    padding: 30px;
-    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-    min-height: 100vh;
-    background-color: #f4f6fb;
+  padding: 30px;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  min-height: 100vh;
+  background-color: #f4f6fb;
 }
 
 .um-page-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #000;
-    margin-top: 0;
-    margin-bottom: 25px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #000;
+  margin-top: 0;
+  margin-bottom: 25px;
 }
 
 .um-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .um-table {
-    width: 100%;
-    margin: 0 auto;
-    border-collapse: collapse;
-    background-color: transparent;
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: transparent;
 }
 
 .um-table th,
 .um-table td {
-    padding: 8px;
-    border: 1px solid #e0e0e0;
-    text-align: center; /* Center-aligned for user columns */
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  text-align: center; /* Center-aligned for user columns */
 }
 
 .um-table th {
-    font-size: 14px;
-    color: #888;
-    font-weight: 600;
-    background-color: #fdfdfd;
+  font-size: 14px;
+  color: #888;
+  font-weight: 600;
+  background-color: #fdfdfd;
 }
 
 .um-table td {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 .um-input-container {
-    position: relative;
-    display: flex;
-    width: 100%;
+  position: relative;
+  display: flex;
+  width: 100%;
 }
 
-.um-input-container input[type="text"],
+.um-input-container input[type='text'],
 .um-input-container select {
-    text-align: center;
-    flex: 1;
-    width: 100%;
-    padding: 8px;
-    font-size: 13px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.05);
-    background-color: #fff;
-    box-sizing: border-box;
-    color: #333;
+  text-align: center;
+  flex: 1;
+  width: 100%;
+  padding: 8px;
+  font-size: 13px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  box-sizing: border-box;
+  color: #333;
 }
 
-.um-input-container input[type="text"][readonly] {
-    background-color: #fff; 
-    cursor: default;
+.um-input-container input[type='text'][readonly] {
+  background-color: #fff;
+  cursor: default;
 }
 
 .um-input-container select {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 /* Edit and Delete Buttons */
 .um-edit-button {
-    font-size: 16px;
-    color: #4a90e2;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
+  font-size: 16px;
+  color: #4a90e2;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .um-edit-button:hover {
-    color: #ffffff;
-    background-color: #007bff;
-    outline: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  background-color: #007bff;
+  outline: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .um-delete-button {
-    color: #333; /* Darker grey/black for trash icon */
-    background-color: transparent;
-    border: none;
-    padding: 8px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
+  color: #333; /* Darker grey/black for trash icon */
+  background-color: transparent;
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .um-delete-button:hover {
-    color: #ff0000;
+  color: #ff0000;
 }
 
 /* ADD USER FORM (Vertical Layout) */
 .um-add-form {
-    width: 100%;
+  width: 100%;
 }
 
 .um-form-group {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .um-label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
-    margin-bottom: 8px;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
 }
 
 .um-form-control {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 14px;
-    color: #555;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    box-sizing: border-box;
-    transition: border-color 0.2s;
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 14px;
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
 .um-form-control:focus {
-    outline: none;
-    border-color: #2154c5;
+  outline: none;
+  border-color: #2154c5;
 }
 
 .um-form-control::placeholder {
-    color: #aaa;
+  color: #aaa;
 }
 
 select.um-form-control {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-    background-repeat: no-repeat;
-    background-position-x: 99%;
-    background-position-y: 5px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 99%;
+  background-position-y: 5px;
 }
 
 .um-submit-wrap {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .um-submit-btn {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #215bc5;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+  display: block;
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #215bc5;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .um-submit-btn:hover {
-    background-color: #1a4aa6;
+  background-color: #1a4aa6;
 }
 
 /* Modal */
 .um-modal {
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .um-modal-content {
-    background-color: #fefefe;
-    padding: 20px;
-    border: 1px solid #888;
-    border-radius: 5px;
-    width: auto;
-    max-width: 90%;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  width: auto;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .um-close-button {
-    color: #aaa;
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
+  color: #aaa;
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .um-close-button:hover {
-    color: black;
+  color: black;
 }
 
 .um-modal-form {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .um-modal-submit {
-    padding: 10px 20px;
-    color: #fff;
-    background-color: #4a90e2;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  padding: 10px 20px;
+  color: #fff;
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .um-modal-submit:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .um-loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 }
 
 .um-alert {
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    font-size: 14px;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .um-alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 .um-alert-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }

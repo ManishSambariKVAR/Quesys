@@ -1,14 +1,13 @@
-const tokensService = require("../services/tokens.service");
-const axios = require("axios");
-const { 
-  getCurrentDate, 
-  padNumberWithZeros, 
-  getFileContentsSync, 
-  replaceSpecialForDate, 
+const tokensService = require('../services/tokens.service');
+const axios = require('axios');
+const {
+  getCurrentDate,
+  padNumberWithZeros,
+  getFileContentsSync,
+  replaceSpecialForDate,
   replaceSpecialForToken,
-  splitToken
-} = require("../utils/helpers");
-
+  splitToken,
+} = require('../utils/helpers');
 
 const stacks = new Map();
 
@@ -36,13 +35,13 @@ function pushToVoiceStack(token) {
 }
 
 function popFromAnyStack(value) {
-  const normalizedValue = value.replace("*", "");
+  const normalizedValue = value.replace('*', '');
   for (const [grievance, stack] of stacks.entries()) {
     const index = stack.findIndex((token) => {
-      if (typeof token === "string" && token.includes("-")) {
-        const [, suffix] = token.split("-");
+      if (typeof token === 'string' && token.includes('-')) {
+        const [, suffix] = token.split('-');
         if (suffix) {
-          return suffix.replace("*", "") === normalizedValue;
+          return suffix.replace('*', '') === normalizedValue;
         }
       }
       return false;
@@ -93,16 +92,20 @@ checkAndPop();
 
 async function generateToken(req, res) {
   try {
-    const { key, counter, kioskId, priority, grevience, tokenType, info } = req.query;
+    const { key, counter, kioskId, priority, grevience, tokenType, info } =
+      req.query;
 
     const currDt = getCurrentDate();
     let TokenType = tokenType;
 
     // Fetch department
-    const extracted = await tokensService.getDepartmentByKioskAndKey(kioskId, key);
+    const extracted = await tokensService.getDepartmentByKioskAndKey(
+      kioskId,
+      key
+    );
 
     if (!extracted) {
-      return res.send("ERR");
+      return res.send('ERR');
     }
 
     // Get daily count
@@ -114,7 +117,7 @@ async function generateToken(req, res) {
 
     const tokenReport = await tokensService.getTokenReport();
 
-    const main = "/src/uploads/printerReport/";
+    const main = '/src/uploads/printerReport/';
     let file_got = getFileContentsSync(tokenReport.uploadlink, main);
 
     let newCount;
@@ -122,7 +125,7 @@ async function generateToken(req, res) {
     if (dailyCount) {
       newCount = dailyCount.token_total_count + 1;
 
-      const parsedInfo = JSON.parse(info?.replace(/'/g, '"') || "null");
+      const parsedInfo = JSON.parse(info?.replace(/'/g, '"') || 'null');
 
       await tokensService.insertTokenLog({
         userId: 0,
@@ -130,7 +133,7 @@ async function generateToken(req, res) {
         dep: extracted.department,
         kioskId,
         priority,
-        info: parsedInfo
+        info: parsedInfo,
       });
 
       await tokensService.updateDailyTokenCount(
@@ -150,22 +153,21 @@ async function generateToken(req, res) {
 
       const stackValue =
         TokenType +
-        "-" +
+        '-' +
         extracted.dep +
         final_new_count +
-        (priority === "True" ? "*" : "");
+        (priority === 'True' ? '*' : '');
 
-      pushToStack(extracted.department + "-" + counter, stackValue);
+      pushToStack(extracted.department + '-' + counter, stackValue);
 
       const responseText = `DEP: ${extracted.department} , CurrToken:${extracted.dep}${final_new_count} , Print:${replacedString}`;
 
-      res.set("Content-Type", "text/plain").send(responseText);
-
+      res.set('Content-Type', 'text/plain').send(responseText);
     } else {
       stacks.clear();
       CounterCurrentstacks.clear();
 
-      const parsedInfo = JSON.parse(info?.replace(/'/g, '"') || "null");
+      const parsedInfo = JSON.parse(info?.replace(/'/g, '"') || 'null');
 
       await tokensService.insertTokenLog({
         userId: 0,
@@ -173,7 +175,7 @@ async function generateToken(req, res) {
         dep: extracted.department,
         kioskId,
         priority,
-        info: parsedInfo
+        info: parsedInfo,
       });
 
       await tokensService.insertDailyTokenCount(
@@ -192,21 +194,20 @@ async function generateToken(req, res) {
 
       const stackValue =
         TokenType +
-        "-" +
+        '-' +
         extracted.dep +
         final_new_count +
-        (priority === "True" ? "*" : "");
+        (priority === 'True' ? '*' : '');
 
       pushToStack(extracted.department, stackValue);
 
       const responseText = `DEP: ${extracted.department} , CurrToken: ${extracted.dep}${final_new_count} , Print:${replacedString}`;
 
-      res.set("Content-Type", "text/plain").send(responseText);
+      res.set('Content-Type', 'text/plain').send(responseText);
     }
-
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 }
 
@@ -225,73 +226,112 @@ async function checkStack(req, res) {
       totalToken: totalToken,
     });
   } catch (error) {
-    console.error("Error retrieving stacks:", error);
-    res.status(500).send({ error: "Internal Server Error" });
+    console.error('Error retrieving stacks:', error);
+    res.status(500).send({ error: 'Internal Server Error' });
   }
 }
 
 async function storeToken(req, res) {
   try {
-    const { tokenNumber, callTime, endTime, prefix, ackTime, acknowledged } = req.body;
+    const { tokenNumber, callTime, endTime, prefix, ackTime, acknowledged } =
+      req.body;
     const { userId, userDepartment, kioskId, counter } = req.query;
     const currDt = getCurrentDate();
 
     const log = await tokensService.processStoreTokenLogic({
-      tokenNumber, callTime, endTime, ackTime, acknowledged, 
-      userId, department: userDepartment, kioskId, counter, currDt, prefix
+      tokenNumber,
+      callTime,
+      endTime,
+      ackTime,
+      acknowledged,
+      userId,
+      department: userDepartment,
+      kioskId,
+      counter,
+      currDt,
+      prefix,
     });
 
     res.json({
-      message: "Token log saved successfully",
-      log: log
+      message: 'Token log saved successfully',
+      log: log,
     });
   } catch (error) {
-    console.error("Error storing token:", error);
-    res.status(500).send("Server error");
+    console.error('Error storing token:', error);
+    res.status(500).send('Server error');
   }
 }
 
 async function displayToken(req, res) {
   try {
-    const { userId, userName, userDepartment, counter, kioskId, tokenNumber, tokenNumber2, priority } = req.query;
+    const {
+      userId,
+      userName,
+      userDepartment,
+      counter,
+      kioskId,
+      tokenNumber,
+      tokenNumber2,
+      priority,
+    } = req.query;
     const currDt = getCurrentDate();
 
     const data = await tokensService.getCounterDisplay(counter);
-    const resultgetPriority = await tokensService.getTokenLogById(tokenNumber2, userDepartment, currDt);
-    
+    const resultgetPriority = await tokensService.getTokenLogById(
+      tokenNumber2,
+      userDepartment,
+      currDt
+    );
+
     const final_new_count = padNumberWithZeros(tokenNumber, 3);
     const priorityData = resultgetPriority || { priority: null };
 
     if (priorityData.priority) {
-      pushToStackCounter(userDepartment + "-" + counter, tokenNumber + "*");
-      pushToVoiceStack(counter + "-" + tokenNumber + "*");
-      popFromAnyStack(tokenNumber + "*");
+      pushToStackCounter(userDepartment + '-' + counter, tokenNumber + '*');
+      pushToVoiceStack(counter + '-' + tokenNumber + '*');
+      popFromAnyStack(tokenNumber + '*');
     } else {
-      pushToStackCounter(userDepartment + "-" + counter, tokenNumber);
-      pushToVoiceStack(counter + "-" + tokenNumber);
+      pushToStackCounter(userDepartment + '-' + counter, tokenNumber);
+      pushToVoiceStack(counter + '-' + tokenNumber);
       popFromAnyStack(tokenNumber);
     }
 
-    const URL = "http://" + data.ipaddress + "/token" +
-      "?TOKENID=" + data.displayid +
-      "&value=" + final_new_count +
-      "&buzz=" + data.buzzer_active +
-      "&blinkCount=" + data.blink +
-      "&buzzActive=" + data.buzzer_time +
-      "&priority=" + priorityData.priority;
+    const URL =
+      'http://' +
+      data.ipaddress +
+      '/token' +
+      '?TOKENID=' +
+      data.displayid +
+      '&value=' +
+      final_new_count +
+      '&buzz=' +
+      data.buzzer_active +
+      '&blinkCount=' +
+      data.blink +
+      '&buzzActive=' +
+      data.buzzer_time +
+      '&priority=' +
+      priorityData.priority;
 
-    await tokensService.updateDisplayTokensDaily(tokenNumber2, userId, userDepartment, kioskId, currDt, final_new_count);
+    await tokensService.updateDisplayTokensDaily(
+      tokenNumber2,
+      userId,
+      userDepartment,
+      kioskId,
+      currDt,
+      final_new_count
+    );
 
     try {
       await axios.get(URL);
     } catch (error) {
-      console.error("Hardware Display ping failed");
+      console.error('Hardware Display ping failed');
     }
 
-    res.send("OK");
+    res.send('OK');
   } catch (error) {
-    console.error("Error displaying token:", error);
-    res.status(500).send("Server error");
+    console.error('Error displaying token:', error);
+    res.status(500).send('Server error');
   }
 }
 
@@ -300,11 +340,16 @@ async function recallToken(req, res) {
     const { userId, userDepartment, counter, kioskId, tokenNumber } = req.query;
     const currDt = getCurrentDate();
 
-    await tokensService.updateRecallStatus(kioskId, userDepartment, currDt, tokenNumber);
+    await tokensService.updateRecallStatus(
+      kioskId,
+      userDepartment,
+      currDt,
+      tokenNumber
+    );
     res.json({ success: true });
   } catch (error) {
-    console.error("Error handling recall:", error);
-    res.status(500).json({ success: false, error: "Error handling recall" });
+    console.error('Error handling recall:', error);
+    res.status(500).json({ success: false, error: 'Error handling recall' });
   }
 }
 
@@ -315,15 +360,27 @@ async function reassignToken(req, res) {
     const currDt = getCurrentDate();
 
     await tokensService.processReassignToken({
-      tokenId: tokenId2, logId, departmentTo: ReassignDepT, departmentFrom: ReassignDepF,
-      userId, kioskId, currDt
+      tokenId: tokenId2,
+      logId,
+      departmentTo: ReassignDepT,
+      departmentFrom: ReassignDepF,
+      userId,
+      kioskId,
+      currDt,
     });
 
-    res.redirect(`/dashboard?userId=${userId}&userName=${userName}&userDepartment=${userDepartment}&counter=${counter}&kioskId=${kioskId}`);
+    res.json({ success: true, message: 'Token reassigned successfully' });
   } catch (error) {
-    console.error("Error reassigning token:", error);
-    res.json("ERR");
+    console.error('Error reassigning token:', error);
+    res.status(500).json({ success: false, error: 'Error reassigning token' });
   }
 }
 
-module.exports = { generateToken, checkStack, storeToken, displayToken, recallToken, reassignToken };
+module.exports = {
+  generateToken,
+  checkStack,
+  storeToken,
+  displayToken,
+  recallToken,
+  reassignToken,
+};

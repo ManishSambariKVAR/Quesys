@@ -1,43 +1,49 @@
-const { client } = require("../config/database");
+const { client } = require('../config/database');
 
 async function getFactorySettings() {
-  const result = await client.query("SELECT * FROM factory_settings");
+  const result = await client.query('SELECT * FROM factory_settings');
   return result.rows[0];
 }
 
 async function getDepartments() {
-  const result = await client.query("SELECT * FROM departments");
+  const result = await client.query('SELECT * FROM departments');
   return result.rows;
 }
 
 async function getCompanies() {
-  const result = await client.query("SELECT * FROM companies");
+  const result = await client.query('SELECT * FROM companies');
   return result.rows;
 }
 
 async function getAutoLogoutSettings() {
-  const result = await client.query("SELECT * FROM auto_logout_settings");
+  const result = await client.query('SELECT * FROM auto_logout_settings');
   return result.rows[0];
 }
 
 async function getSoftwareSettings() {
-  const result = await client.query("SELECT * FROM software_settings");
+  const result = await client.query('SELECT * FROM software_settings');
   return result.rows[0];
 }
 
 async function getTokenDataByDate(date) {
-  const result = await client.query("SELECT * FROM dailytokencount WHERE date = $1", [date]);
+  const result = await client.query(
+    'SELECT * FROM dailytokencount WHERE date = $1',
+    [date]
+  );
   return result.rows;
 }
 
 async function getUserLogsByDate(date) {
-  const result = await client.query("SELECT * FROM userlogs WHERE datetime = $1", [date]);
+  const result = await client.query(
+    'SELECT * FROM userlogs WHERE datetime = $1',
+    [date]
+  );
   return result.rows;
 }
 
 async function getDailyTokenCount(kioskId, department, date) {
   const result = await client.query(
-    "SELECT * FROM dailytokencount WHERE kiosk_id = $1 AND dep = $2 AND date = $3",
+    'SELECT * FROM dailytokencount WHERE kiosk_id = $1 AND dep = $2 AND date = $3',
     [kioskId, department, date]
   );
   return result.rows;
@@ -53,13 +59,16 @@ async function getTokenLogs(kioskId, department, date) {
 }
 
 async function getDepartmentsByKiosk(kioskId) {
-  const result = await client.query("SELECT * FROM departments WHERE kiosk_id = $1", [kioskId]);
+  const result = await client.query(
+    'SELECT * FROM departments WHERE kiosk_id = $1',
+    [kioskId]
+  );
   return result.rows;
 }
 
 async function getDepartmentPrefix(kioskId, department) {
   const result = await client.query(
-    "SELECT * FROM departments WHERE kiosk_id = $1 AND department = $2",
+    'SELECT * FROM departments WHERE kiosk_id = $1 AND department = $2',
     [kioskId, department]
   );
   return result.rows[0];
@@ -68,7 +77,7 @@ async function getDepartmentPrefix(kioskId, department) {
 async function trackUserLogin(userId, department, counter, date) {
   try {
     const check = await client.query(
-      "SELECT * FROM userlogs WHERE datetime = $1 AND userid = $2 AND department = $3",
+      'SELECT * FROM userlogs WHERE datetime = $1 AND userid = $2 AND department = $3',
       [date, userId, department]
     );
 
@@ -86,7 +95,7 @@ async function trackUserLogin(userId, department, counter, date) {
       );
     }
   } catch (error) {
-    console.error("Error tracking user login:", error);
+    console.error('Error tracking user login:', error);
   }
 }
 

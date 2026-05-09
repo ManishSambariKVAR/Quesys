@@ -1,7 +1,8 @@
-const { client } = require("../config/database");
+const { client } = require('../config/database');
 
 async function getReportLogs(fromDate, toDate) {
-  let query = "SELECT *, info::json AS info_json FROM token_logs WHERE user_id != '0'";
+  let query =
+    "SELECT *, info::json AS info_json FROM token_logs WHERE user_id != '0'";
   const queryParams = [];
 
   if (fromDate) {
@@ -12,19 +13,19 @@ async function getReportLogs(fromDate, toDate) {
     queryParams.push(toDate);
     query += ` AND DATE(call_time) <= $${queryParams.length}`;
   }
-  query += " ORDER BY call_time DESC";
+  query += ' ORDER BY call_time DESC';
 
   const result = await client.query(query, queryParams);
   return result.rows;
 }
 
 async function getReassignedData() {
-  const result = await client.query("SELECT * FROM reassignedTokenData");
+  const result = await client.query('SELECT * FROM reassignedTokenData');
   return result.rows;
 }
 
 async function getSummaryData(fromDate, toDate) {
-  let query = "SELECT * FROM dailytokencount WHERE 1=1";
+  let query = 'SELECT * FROM dailytokencount WHERE 1=1';
   const queryParams = [];
 
   if (fromDate) {
@@ -41,12 +42,14 @@ async function getSummaryData(fromDate, toDate) {
 }
 
 async function getUsernames() {
-  const result = await client.query("SELECT name FROM users WHERE adminlevel != 'Admin'");
+  const result = await client.query(
+    "SELECT name FROM users WHERE adminlevel != 'Admin'"
+  );
   return result.rows.map((u) => u.name);
 }
 
 async function getDepartments() {
-  const result = await client.query("SELECT department FROM departments");
+  const result = await client.query('SELECT department FROM departments');
   return result.rows.map((d) => d.department);
 }
 

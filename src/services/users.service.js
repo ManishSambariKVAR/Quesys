@@ -1,18 +1,24 @@
-const { client } = require("../config/database");
+const { client } = require('../config/database');
 
 async function getAllUsers() {
-  const result = await client.query("SELECT * FROM users");
+  const result = await client.query('SELECT * FROM users');
   return result.rows;
 }
 
 async function getAllDepartments() {
-  const result = await client.query("SELECT * FROM departments");
+  const result = await client.query('SELECT * FROM departments');
   return result.rows;
 }
 
 async function createUser(name, userId, hashedPassword, userDept, adminlevel) {
   const insertQuery = `INSERT INTO users (name, userId, password, userDept, adminLevel) VALUES ($1, $2, $3, $4, $5)`;
-  await client.query(insertQuery, [name, userId, hashedPassword, userDept, adminlevel]);
+  await client.query(insertQuery, [
+    name,
+    userId,
+    hashedPassword,
+    userDept,
+    adminlevel,
+  ]);
 }
 
 async function updateUser(id, name, userId, userDept, adminLevel) {
@@ -21,7 +27,7 @@ async function updateUser(id, name, userId, userDept, adminLevel) {
 }
 
 async function deleteUser(id) {
-  const result = await client.query("DELETE FROM users WHERE id = $1", [id]);
+  const result = await client.query('DELETE FROM users WHERE id = $1', [id]);
   return result.rowCount;
 }
 

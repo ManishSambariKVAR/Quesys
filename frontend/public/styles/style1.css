@@ -1,5 +1,5 @@
-body{
-    /* background-color: #c9c9c9; */
+body {
+  /* background-color: #c9c9c9; */
 }
 
 body,
@@ -134,16 +134,22 @@ label {
 }
 
 @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .blink {
-    animation: blink 1s linear infinite;
+  animation: blink 1s linear infinite;
 }
 
-.time-inputs{
+.time-inputs {
   margin-right: 5%;
 }
 /* .time-inputs {

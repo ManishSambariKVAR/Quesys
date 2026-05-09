@@ -1,40 +1,61 @@
-const { client } = require("../config/database");
+const { client } = require('../config/database');
 
 async function getWaitingRoomDisplays() {
-  const result = await client.query("SELECT display_id FROM waiting_room_displays");
+  const result = await client.query(
+    'SELECT display_id FROM waiting_room_displays'
+  );
   return result.rows;
 }
 
 async function getCounterDisplays() {
-  const result = await client.query("SELECT displayid as display_id FROM counterdisplay");
+  const result = await client.query(
+    'SELECT displayid as display_id FROM counterdisplay'
+  );
   return result.rows;
 }
 
 async function getOTADisplayLinks() {
-  const result = await client.query("SELECT display_id, filename, status FROM otadisplay");
+  const result = await client.query(
+    'SELECT display_id, filename, status FROM otadisplay'
+  );
   return result.rows;
 }
 
 async function checkOTALink(displayid) {
-  const check = await client.query("SELECT display_id FROM otadisplay WHERE display_id = $1", [displayid]);
+  const check = await client.query(
+    'SELECT display_id FROM otadisplay WHERE display_id = $1',
+    [displayid]
+  );
   return check.rows.length > 0;
 }
 
 async function updateOTALink(displayid, filename, status) {
-  await client.query("UPDATE otadisplay SET filename = $1, status = $2 WHERE display_id = $3", [filename, status, displayid]);
+  await client.query(
+    'UPDATE otadisplay SET filename = $1, status = $2 WHERE display_id = $3',
+    [filename, status, displayid]
+  );
 }
 
 async function insertOTALink(displayid, filename, status) {
-  await client.query("INSERT INTO otadisplay (display_id, filename, status) VALUES ($1, $2, $3)", [displayid, filename, status]);
+  await client.query(
+    'INSERT INTO otadisplay (display_id, filename, status) VALUES ($1, $2, $3)',
+    [displayid, filename, status]
+  );
 }
 
 async function getOTADisplay(displayId) {
-  const result = await client.query("SELECT * FROM otadisplay WHERE display_id = $1", [displayId]);
+  const result = await client.query(
+    'SELECT * FROM otadisplay WHERE display_id = $1',
+    [displayId]
+  );
   return result.rows[0];
 }
 
 async function updateOTAStatus(displayId, status) {
-  await client.query("UPDATE otadisplay SET status = $1 WHERE display_id = $2", [status, displayId]);
+  await client.query(
+    'UPDATE otadisplay SET status = $1 WHERE display_id = $2',
+    [status, displayId]
+  );
 }
 
 module.exports = {

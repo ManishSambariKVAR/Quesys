@@ -1,7 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const companyService = require("../services/company.service");
-const { ensureDirectoryExistence } = require("../utils/helpers");
+const fs = require('fs');
+const path = require('path');
+const companyService = require('../services/company.service');
+const { ensureDirectoryExistence } = require('../utils/helpers');
 
 async function getCompany(req, res) {
   try {
@@ -9,14 +9,14 @@ async function getCompany(req, res) {
     if (company) {
       res.json({
         companyName: company.company_name,
-        logoPath: "/src/uploads/companyLogo.png"
+        logoPath: '/src/uploads/companyLogo.png',
       });
     } else {
-      res.json({ companyName: "KVAR TECH", logoPath: null });
+      res.json({ companyName: 'KVAR TECH', logoPath: null });
     }
   } catch (error) {
-    console.error("API company error:", error);
-    res.status(500).json({ error: "Failed to load company details" });
+    console.error('API company error:', error);
+    res.status(500).json({ error: 'Failed to load company details' });
   }
 }
 
@@ -28,7 +28,10 @@ async function updateCompany(req, res) {
 
     if (req.file) {
       const companyLogoPath = req.file.path;
-      const targetPath = path.join(process.cwd(), "src/uploads/companyLogo.png");
+      const targetPath = path.join(
+        process.cwd(),
+        'src/uploads/companyLogo.png'
+      );
       ensureDirectoryExistence(path.dirname(targetPath));
       fs.copyFileSync(companyLogoPath, targetPath);
       fs.unlinkSync(companyLogoPath);
@@ -37,13 +40,16 @@ async function updateCompany(req, res) {
     if (company) {
       await companyService.updateCompany(company.id, companyName);
     } else {
-      await companyService.insertCompany(companyName, "src/uploads/companyLogo.png");
+      await companyService.insertCompany(
+        companyName,
+        'src/uploads/companyLogo.png'
+      );
     }
 
-    res.json({ message: "Company settings updated successfully" });
+    res.json({ message: 'Company settings updated successfully' });
   } catch (error) {
-    console.error("API company update error:", error);
-    res.status(500).json({ error: "Failed to update company settings" });
+    console.error('API company update error:', error);
+    res.status(500).json({ error: 'Failed to update company settings' });
   }
 }
 

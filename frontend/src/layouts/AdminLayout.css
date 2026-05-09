@@ -1,70 +1,97 @@
 .admin-layout {
-    display: flex;
-    min-height: 100vh;
-    background-color: #f4f6fb;
-    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  display: flex;
+  min-height: 100vh;
+  background-color: #f4f6fb;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
 }
 
 .admin-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-left: 280px;
-    transition: margin-left 0.3s;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 280px;
+  transition: margin-left 0.3s;
 }
 
 .sidebar-closed .admin-main {
-    margin-left: 0;
+  margin-left: 0;
 }
 
 .admin-topbar {
-    height: 80px;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    z-index: 10;
+  min-height: 100px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  z-index: 10;
 }
 
 .topbar-left {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .hamburger-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 10px;
-    margin-left: -10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  margin-left: -10px;
 }
 
 .hamburger-btn .line {
-    width: 24px;
-    height: 3px;
-    background-color: #2154c5;
-    border-radius: 2px;
+  width: 24px;
+  height: 3px;
+  background-color: #2154c5;
+  border-radius: 2px;
 }
 
 .topbar-center .company-title {
-    margin: 0;
-    font-size: 26px;
-    font-weight: 700;
-    color: #555;
-    text-transform: uppercase;
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #555;
+  text-transform: uppercase;
 }
 
 .topbar-right .quesys-logo {
-    height: 50px;
-    object-fit: contain;
+  height: 50px;
+  object-fit: contain;
 }
 
 .admin-content-inner {
-    padding: 0;
-    flex: 1;
+  padding: 0;
+  flex: 1;
+}
+
+.footer {
+  padding: 20px 0;
+  margin-top: auto;
+  background-color: transparent;
+}
+
+.copyright {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.copyright p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.copyright a {
+  color: #1f5ca9;
+  text-decoration: none;
+  font-weight: 600;
 }

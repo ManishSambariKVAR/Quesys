@@ -1,5 +1,5 @@
-const dashboardService = require("../services/dashboard.service");
-const { getCurrentDate, getCurrentTime } = require("../utils/helpers");
+const dashboardService = require('../services/dashboard.service');
+const { getCurrentDate, getCurrentTime } = require('../utils/helpers');
 
 async function getDashboardData(req, res) {
   try {
@@ -12,7 +12,12 @@ async function getDashboardData(req, res) {
     const counter = req.user?.counter || req.query.counter;
 
     if (userId && department) {
-      await dashboardService.trackUserLogin(userId, department, counter, currDt);
+      await dashboardService.trackUserLogin(
+        userId,
+        department,
+        counter,
+        currDt
+      );
     }
 
     const factorySettings = await dashboardService.getFactorySettings();
@@ -30,7 +35,7 @@ async function getDashboardData(req, res) {
         end: factorySettings?.endtocall || 90,
       },
       departments,
-      companyName: companies[0]?.company_name || "KVAR Tech",
+      companyName: companies[0]?.company_name || 'KVAR Tech',
       autoLogoutTime: autoLogoutSettings?.auto_logout_time || 30,
       featureFlags: {
         recallBtn: softwareSettings?.activate_recall ?? true,
@@ -39,8 +44,8 @@ async function getDashboardData(req, res) {
       },
     });
   } catch (error) {
-    console.error("API dashboard error:", error);
-    res.status(500).json({ error: "Failed to load dashboard data" });
+    console.error('API dashboard error:', error);
+    res.status(500).json({ error: 'Failed to load dashboard data' });
   }
 }
 
@@ -56,13 +61,13 @@ async function getAdminData(req, res) {
     res.json({
       currDt,
       currTm,
-      tokenData: tokenData,   // ✅ was 'tokenData'
-      userLogs: userLogs,        // ✅ was 'userLogs'
-      companyName: companies[0]?.company_name || "KVAR Tech",
+      tokenData: tokenData, // ✅ was 'tokenData'
+      userLogs: userLogs, // ✅ was 'userLogs'
+      companyName: companies[0]?.company_name || 'KVAR Tech',
     });
   } catch (error) {
-    console.error("API admin error:", error);
-    res.status(500).json({ error: "Failed to load admin data" });
+    console.error('API admin error:', error);
+    res.status(500).json({ error: 'Failed to load admin data' });
   }
 }
 
@@ -71,15 +76,29 @@ async function updateData(req, res) {
     const { userId, userDepartment, kioskId } = req.query;
     const currDt = getCurrentDate();
 
-    const dailyTokens = await dashboardService.getDailyTokenCount(kioskId, userDepartment, currDt);
-    const tokenLogs = await dashboardService.getTokenLogs(kioskId, userDepartment, currDt);
+    const dailyTokens = await dashboardService.getDailyTokenCount(
+      kioskId,
+      userDepartment,
+      currDt
+    );
+    const tokenLogs = await dashboardService.getTokenLogs(
+      kioskId,
+      userDepartment,
+      currDt
+    );
     const departments = await dashboardService.getDepartmentsByKiosk(kioskId);
-    const departmentPrefix = await dashboardService.getDepartmentPrefix(kioskId, userDepartment);
+    const departmentPrefix = await dashboardService.getDepartmentPrefix(
+      kioskId,
+      userDepartment
+    );
 
     const updatedTokenLogs = tokenLogs.map((log) => {
-      let prefix = "";
+      let prefix = '';
       for (let i = 0; i < departments.length; i++) {
-        if (departments[i].department === log.dep || departments[i].department === log.reassign_dep) {
+        if (
+          departments[i].department === log.dep ||
+          departments[i].department === log.reassign_dep
+        ) {
           prefix = departments[i].dep;
           break;
         }
@@ -89,22 +108,27 @@ async function updateData(req, res) {
 
     res.json({
       // ✅ FIX: Provided a complete dummy object so the frontend doesn't render "Pundefined"
-      data: dailyTokens.length > 0 ? dailyTokens : [{ 
-        token_total_count: 0,
-        token_current_count: 0, 
-        token_skip_count: 0,
-        reassign_token: 0,
-        dep: userDepartment 
-      }],
+      data:
+        dailyTokens.length > 0
+          ? dailyTokens
+          : [
+              {
+                token_total_count: 0,
+                token_current_count: 0,
+                token_skip_count: 0,
+                reassign_token: 0,
+                dep: userDepartment,
+              },
+            ],
       user: { id: userId, department: userDepartment, kioskId },
       currDt,
-      prefix: departmentPrefix?.dep || "",
+      prefix: departmentPrefix?.dep || '',
       // ✅ FIX: Fallback for token_log to ensure an array is always returned
       token_log: updatedTokenLogs.length > 0 ? updatedTokenLogs : [],
     });
   } catch (error) {
-    console.error("Error updating data:", error);
-    res.status(500).json({ error: "Failed to update data" });
+    console.error('Error updating data:', error);
+    res.status(500).json({ error: 'Failed to update data' });
   }
 }
 
